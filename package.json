@@ -1,0 +1,66 @@
+{
+  "name": "framewroks100500",
+  "version": "1.0.0",
+  "description": "framework100500 simple web API framework",
+  "main": "framework/index.js",
+  "scripts": {
+    "lint": "eslint ./framework",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "jest --config=jest.config.json"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm test"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lifter21/framework100500.git"
+  },
+  "private": true,
+  "keywords": [
+    "web",
+    "http",
+    "routing",
+    "express.js",
+    "express",
+    "koa.js",
+    "koa",
+    "node.js",
+    "API",
+    "framework",
+    "dependency injection",
+    "DI",
+    "injection-js",
+    "jest.js",
+    "angular.js",
+    "angular",
+    "IOC",
+    "inversion of control",
+    "REST"
+  ],
+  "author": "Oleksandr Bondarenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lifter21/framework100500/issues"
+  },
+  "engines": {
+    "node": ">=10.15.0"
+  },
+  "homepage": "https://github.com/lifter21/framework100500#README",
+  "devDependencies": {
+    "eslint": "^6.2.2",
+    "eslint-plugin-node": "^9.2.0",
+    "husky": "^3.0.4",
+    "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "http-status-codes": "^1.3.2",
+    "injection-js": "^2.2.2",
+    "lodash": "^4.17.15",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7"
+  }
+}

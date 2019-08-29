@@ -1,0 +1,9 @@
+{
+  "moduleFileExtensions": [
+    "js"
+  ],
+  "testRegex": "/framework/.*\\.(spec|test).(js)$",
+  "collectCoverageFrom" : ["framework/**/*.{js}"],
+  "coverageReporters": ["text"],
+  "coveragePathIgnorePatterns": ["/framework/.*\\.(mock|stub).(js)$"]
+}

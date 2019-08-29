@@ -1,0 +1,83 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended"
+  ],
+  "rules": {
+    "node/exports-style": ["error", "module.exports"],
+    "node/file-extension-in-import": ["error", "always"],
+    "node/prefer-global/buffer": ["error", "always"],
+    "node/prefer-global/console": ["error", "always"],
+    "node/prefer-global/process": ["error", "always"],
+    "node/prefer-global/url-search-params": ["error", "always"],
+    "node/prefer-global/url": ["error", "always"],
+    "node/prefer-promises/dns": "error",
+    "node/prefer-promises/fs": "error",
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "no-const-assign": "error",
+    "no-dupe-class-members": "error",
+    "no-multi-spaces": "error",
+    "no-duplicate-imports": "error",
+    "no-useless-constructor": "error",
+    "no-nested-ternary": "error",
+    "no-magic-numbers": "error",
+    "no-var": "error",
+    "key-spacing": ["error", { "afterColon": true }],
+    "keyword-spacing": ["error", { "before": true }],
+    "lines-between-class-members": ["error", "always"],
+    "max-len": ["error", { "code": 120,
+      "ignoreComments": true,
+      "ignoreUrls": true,
+      "tabWidth": 2,
+      "ignoreStrings": true
+    }],
+    "object-curly-spacing": ["error", "always"],
+    "prefer-const": ["error", {
+      "destructuring": "any"
+    }],
+    "prefer-template": "error",
+    "arrow-spacing": ["error",  { "before": true, "after": true }],
+    "no-trailing-spaces": ["error", { "ignoreComments": true }],
+    "spaced-comment": ["error", "always", { "exceptions": ["*", "-", "+"] }]
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js","*.spec.js"],
+      "rules": {
+        "no-undef": "off",
+        "node/exports-style": "off",
+        "node/file-extension-in-import": "off",
+        "node/prefer-global/buffer": "off",
+        "node/prefer-global/console": "off",
+        "node/prefer-global/process": "off",
+        "node/prefer-global/url-search-params": "off",
+        "node/prefer-global/url": "off",
+        "node/prefer-promises/dns": "off",
+        "node/prefer-promises/fs": "off",
+        "semi": "off",
+        "quotes": "off",
+        "comma-spacing": "off",
+        "no-const-assign": "off",
+        "no-dupe-class-members": "off",
+        "no-multi-spaces": "off",
+        "no-duplicate-imports": "off",
+        "no-useless-constructor": "off",
+        "no-nested-ternary": "off",
+        "no-magic-numbers": "off",
+        "no-var": "off",
+        "key-spacing": "off",
+        "keyword-spacing": "off",
+        "lines-between-class-members": "off",
+        "max-len": "off",
+        "object-curly-spacing": "off",
+        "prefer-const": "off",
+        "prefer-template": "off",
+        "arrow-spacing": "off",
+        "no-trailing-spaces": "off",
+        "spaced-comment": "off"
+      }
+    }
+  ]
+}

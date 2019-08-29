@@ -19,7 +19,27 @@
     "url": "git+https://github.com/lifter21/framework100500.git"
   },
   "private": true,
-  "keywords": [],
+  "keywords": [
+    "web",
+    "http",
+    "routing",
+    "express.js",
+    "express",
+    "koa.js",
+    "koa",
+    "node.js",
+    "API",
+    "framework",
+    "dependency injection",
+    "DI",
+    "injection-js",
+    "jest.js",
+    "angular.js",
+    "angular",
+    "IOC",
+    "inversion of control",
+    "REST"
+  ],
   "author": "Oleksandr Bondarenko",
   "license": "ISC",
   "bugs": {

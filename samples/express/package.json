@@ -1,0 +1,36 @@
+{
+  "name": "framework100500-sample-express-app",
+  "version": "1.0.0",
+  "description": "Sample app of framework100500 usage with express.js server",
+  "main": "index.js",
+  "scripts": {
+    "start:env": "npm run start:env:pm2-runtime",
+    "start:env:pm2": "npm run pm2:kill && pm2 start ./src/main.js -i 0",
+    "start:env:pm2-runtime": "pm2-runtime start ./src/main.js -i 0",
+    "start:dev:pm2": "npm run pm2:kill && pm2 start ./src/main.js --watch=\"src\" --no-daemon --node-args=\"--inspect\" -i 1 -f",
+    "start:dev:nodemon": "nodemon --inspect ./src/main.js -w ./src -L",
+    "pm2:kill": "pm2 kill",
+    "lint": "eslint src",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "jest --config=jest.config.json"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm test"
+    }
+  },
+  "author": "Oleksandr Bondarenko",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-plugin-node": "^9.2.0",
+    "husky": "^2.7.0",
+    "jest": "^24.9.0",
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pm2": "^3.5.1"
+  }
+}

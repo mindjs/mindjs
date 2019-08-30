@@ -1,10 +1,10 @@
 {
-  "name": "framewroks100500",
+  "name": "framewroks100500-repository",
   "version": "1.0.0",
   "description": "framework100500 simple web API framework",
-  "main": "framework/index.js",
+  "main": "packages/index.js",
   "scripts": {
-    "lint": "eslint ./framework",
+    "lint": "eslint packages",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest --config=jest.config.json"
   },
@@ -14,9 +14,12 @@
       "pre-push": "npm test"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lifter21/framework100500.git"
+    "url": "https://github.com/lifter21/framework100500.git"
   },
   "private": true,
   "keywords": [

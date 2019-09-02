@@ -1,6 +1,6 @@
 const request = require('request-promise-native');
 
-const { providableClass } = require('../core');
+const { providableClass } = require('../../core');
 
 const { HTTP_CLIENT } = require('./DI.tokens');
 const HttpClient = require('./http.client');

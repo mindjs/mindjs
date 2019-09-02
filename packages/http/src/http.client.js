@@ -1,4 +1,4 @@
-const { providableClass, Inject } = require('../core');
+const { providableClass, Inject } = require('../../core');
 const { HTTP_CLIENT, HTTP_REQUEST_INTERCEPTOR } = require('./DI.tokens');
 
 class HttpClient {

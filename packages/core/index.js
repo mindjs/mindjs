@@ -6,10 +6,9 @@ const {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   MODULE_INJECTOR,
-} = require('./DI.tokens');
-const { HTTP_METHODS } = require('./constants');
-const { providableClass, Inject } = require('./decorators');
-const Framework100500 = require('./core');
+} = require('./src/DI.tokens');
+const { providableClass, Inject } = require('./src/decorators');
+const Framework100500 = require('./src/core');
 
 module.exports = {
   APP_INITIALIZER,
@@ -19,8 +18,6 @@ module.exports = {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   MODULE_INJECTOR,
-
-  HTTP_METHODS,
 
   providableClass,
   Inject,

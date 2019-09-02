@@ -49,7 +49,47 @@ function injectDecorator(token) {
   return new Inject(token);
 }
 
+function moduleDecorator(targetClass, {
+  providers = [],
+  imports = [],
+} = {}) {
+  if (!isFunction(targetClass)) {
+    return targetClass;
+  }
+
+  const injectionToken = new InjectionToken(targetClass.name);
+
+  Object.defineProperties(targetClass, {
+    token: {
+      value: injectionToken,
+      writable: false,
+    },
+    provide: {
+      value: injectionToken,
+      writable: false,
+    },
+    useClass: {
+      value: targetClass,
+      writable: false,
+    },
+    providers: {
+      value: [ ...providers ],
+    },
+    imports: {
+      value: [ ...imports ],
+    },
+  });
+
+  return targetClass;
+}
+
+function injectableDecorator() {
+
+}
+
 module.exports = {
+  Module: moduleDecorator,
+  Injectable: injectableDecorator,
   providableClass: providableClassDecorator,
   Inject: injectDecorator,
 };

@@ -2,7 +2,7 @@ const { Inject } = require('injection-js');
 
 const { isFunction, isArray } = require('lodash');
 
-const { providableClass, MODULE_INJECTOR, HTTP_METHODS } = require('../core');
+const { providableClass, MODULE_INJECTOR, HTTP_METHODS } = require('../../core');
 
 const {
   APP_ROUTER_DESCRIPTOR_RESOLVER,

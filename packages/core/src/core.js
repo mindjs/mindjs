@@ -15,7 +15,7 @@ const {
   APP_ROUTERS_RESOLVER,
   // RoutingModule,
   // APP_ROUTER_DESCRIPTOR_RESOLVER,
-} = require('../routing');
+} = require('../../routing/src');
 
 module.exports = class Framework100500 {
 

@@ -1,6 +1,6 @@
 {
   "name": "framewroks100500-repository",
-  "version": "1.0.0",
+  "version": "1.0.0.beta",
   "description": "framework100500 simple web API framework",
   "main": "packages/index.js",
   "scripts": {
@@ -13,9 +13,6 @@
       "pre-commit": "npm run lint",
       "pre-push": "npm test"
     }
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "repository": {
     "type": "git",
@@ -56,7 +53,8 @@
     "eslint": "^6.2.2",
     "eslint-plugin-node": "^9.2.0",
     "husky": "^3.0.4",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "lerna": "^3.16.4"
   },
   "dependencies": {
     "debug": "^4.1.1",

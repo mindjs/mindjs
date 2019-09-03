@@ -1,7 +1,7 @@
 {
   "name": "@framework100500/core",
-  "version": "1.0.0.beta",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Framework100500 is a simple web API pure Node.js framework @core",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,14 +10,21 @@
     "node": ">=10.15.0"
   },
   "dependencies": {
-
+    "uuid": "3.3.3",
+    "lodash": "4.17.15",
+    "debug": "4.1.1"
   },
   "peerDependencies": {
-
+    "framework100500/routing": "1.0.0",
+    "injection-js": "2.2.2"
   },
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lifter21/framework100500.git"
+  },
   "author": "Oleksandr Bondarenko",
-  "license": "ISC"
+  "license": "MIT"
 }

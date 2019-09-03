@@ -8,6 +8,12 @@ const HTTP_METHODS = {
   OPTIONS: 'options',
 };
 
+const HTTP_PROTOCOLS = {
+  HTTP: 'http',
+  HTTPS: 'https',
+};
+
 module.exports = {
   HTTP_METHODS,
+  HTTP_PROTOCOLS,
 };

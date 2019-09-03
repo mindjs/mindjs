@@ -1,4 +1,4 @@
-const { InjectionToken } = require('injection-js');
+const { InjectionToken } = require('./constants');
 
 /*
   NOTE: For DI on a high level we use the `injection-js` npm package
@@ -13,6 +13,7 @@ const { InjectionToken } = require('injection-js');
 const APP_INITIALIZER = new InjectionToken('AppInitializer');
 const APP_MIDDLEWARE = new InjectionToken('AppMiddleware');
 const APP_SERVER = new InjectionToken('AppServer');
+
 /*
   Listeners
  */
@@ -22,6 +23,7 @@ const APP_SERVER_NET_LISTENER = new InjectionToken('AppServerNetListener');
 /*
   Injectors
  */
+// TODO: investigate if it can be replaced with injection-js's Injector
 const APP_INJECTOR = new InjectionToken('ApplicationInjector');
 const MODULE_INJECTOR = new InjectionToken('ModuleInjector');
 

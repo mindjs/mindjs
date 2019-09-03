@@ -1,4 +1,4 @@
-const { InjectionToken } = require('injection-js');
+const { InjectionToken } = require('@framework100500/core');
 
 /*
   NOTE: For DI on a high level we use the `injection-js` npm package

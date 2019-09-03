@@ -1,6 +1,8 @@
-const { InjectionToken, Inject } = require('injection-js');
+const uuidv4 = require('uuid/v4');
 
 const { isFunction } = require('lodash');
+
+const { InjectionToken, Inject } = require('./constants');
 
 /**
  *
@@ -9,12 +11,13 @@ const { isFunction } = require('lodash');
  * @param imports
  * @returns {*}
  */
-function providableClassDecorator(targetClass, { providers = [], imports = [] } = {}) {
-  if (!isFunction(targetClass)) {
+function providableClassDecorator(targetClass) {
+  if (!(targetClass && isFunction(targetClass))) {
     return targetClass;
   }
 
-  const injectionToken = new InjectionToken(targetClass.name);
+  const tokenName = targetClass.name ? targetClass.name : `class-${ uuidv4() }`;
+  const injectionToken = new InjectionToken(tokenName);
 
   Object.defineProperties(targetClass, {
     token: {
@@ -29,6 +32,27 @@ function providableClassDecorator(targetClass, { providers = [], imports = [] } 
       value: targetClass,
       writable: false,
     },
+  });
+
+  return targetClass;
+}
+
+/**
+ *
+ * @param {Class|function|*} targetClass
+ * @param {[*]} providers
+ * @param {[*]} imports
+ * @returns {Class|function|*}
+ */
+function moduleDecorator(targetClass, {
+  providers = [],
+  imports = [],
+} = {}) {
+  if (!isFunction(targetClass)) {
+    return targetClass;
+  }
+
+  Object.defineProperties(providableClassDecorator(targetClass), {
     providers: {
       value: [ ...providers ],
     },
@@ -41,7 +65,7 @@ function providableClassDecorator(targetClass, { providers = [], imports = [] } 
 }
 
 /**
- * Shortcut for new Inject()
+ * Shorthand decorator for a new Inject() statement
  * @param {string} token
  * @returns {Inject}
  */
@@ -49,47 +73,8 @@ function injectDecorator(token) {
   return new Inject(token);
 }
 
-function moduleDecorator(targetClass, {
-  providers = [],
-  imports = [],
-} = {}) {
-  if (!isFunction(targetClass)) {
-    return targetClass;
-  }
-
-  const injectionToken = new InjectionToken(targetClass.name);
-
-  Object.defineProperties(targetClass, {
-    token: {
-      value: injectionToken,
-      writable: false,
-    },
-    provide: {
-      value: injectionToken,
-      writable: false,
-    },
-    useClass: {
-      value: targetClass,
-      writable: false,
-    },
-    providers: {
-      value: [ ...providers ],
-    },
-    imports: {
-      value: [ ...imports ],
-    },
-  });
-
-  return targetClass;
-}
-
-function injectableDecorator() {
-
-}
-
 module.exports = {
-  Module: moduleDecorator,
-  Injectable: injectableDecorator,
-  providableClass: providableClassDecorator,
   Inject: injectDecorator,
+  Module: moduleDecorator,
+  ProvidableClass: providableClassDecorator,
 };

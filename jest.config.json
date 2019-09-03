@@ -2,7 +2,7 @@
   "moduleFileExtensions": [
     "js"
   ],
-  "testRegex": "/tests/.*\\.(spec|test).(js)$",
+  "testRegex": "packages/**/.*\\.(spec|test).(js)$",
   "collectCoverageFrom" : ["tests/**/*.{js}"],
   "coverageReporters": ["text"],
   "coveragePathIgnorePatterns": ["/tests/.*\\.(mock|stub).(js)$"]

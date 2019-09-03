@@ -1,7 +1,7 @@
 {
   "name": "@framework100500/testing",
-  "version": "1.0.0.beta",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Framework100500 is a simple web API pure Node.js framework @testing",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +12,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "@framework100500/common": "1.0.0",
+    "@framework100500/core": "1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lifter21/framework100500.git"
+  },
   "author": "Oleksandr Bondarenko",
-  "license": "ISC"
+  "license": "MIT"
 }

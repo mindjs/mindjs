@@ -2,5 +2,8 @@
   "packages": [
     "packages/*"
   ],
-  "version": "independent"
+  "version":"1.0.0",
+  "ignoreChanges": [
+    "packages/testing/*"
+  ]
 }

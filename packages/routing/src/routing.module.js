@@ -1,8 +1,7 @@
-const { Inject } = require('injection-js');
-
 const { isFunction, isArray } = require('lodash');
 
-const { providableClass, MODULE_INJECTOR, HTTP_METHODS } = require('../../core');
+const { HTTP_METHODS } = require('@framework100500/common');
+const { Module, MODULE_INJECTOR, Inject } = require('@framework100500/core');
 
 const {
   APP_ROUTER_DESCRIPTOR_RESOLVER,
@@ -22,16 +21,16 @@ const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('.
       routerDescriptor: {
          prefix: {string},
          commonMiddleware: {Function[]},
-         injectCommonMiddleware: {InjectionToken[]|providableClass[]},
+         injectCommonMiddleware: {InjectionToken[]|ProvidableClass[]},
          routes: [
           {
             path: {string},
             method: HTTP_METHODS,
 
-            injectMiddleware?: {InjectionToken[]|providableClass[]},
+            injectMiddleware?: {InjectionToken[]|ProvidableClass[]},
             middleware?: {Function[]},
 
-            injectHandler?: {InjectionToken|providableClass},
+            injectHandler?: {InjectionToken|ProvidableClass},
             handler?: {Function},
           },
         ],
@@ -82,8 +81,8 @@ class RoutingModule {
 
   static get parameters() {
     return [
-      new Inject(MODULE_INJECTOR),
-      new Inject(APP_SERVER_ROUTER_PROVIDER),
+      Inject(MODULE_INJECTOR),
+      Inject(APP_SERVER_ROUTER_PROVIDER),
     ];
   }
 
@@ -103,7 +102,7 @@ class RoutingModule {
    */
   static forRoot({ providers = [], routerDescriptor = {} }) {
     return {
-      module: providableClass(RoutingModule),
+      module: Module(RoutingModule),
       providers: [
         ...providers,
         {
@@ -216,7 +215,7 @@ class RoutingModule {
       path: normalizeRoutePath(path),
       method: method,
       middleware: [
-        ...(isValidMiddlewareList(middleware) ? middleware : []), // TODO: rework filtering valid middleware
+        ...(isValidMiddlewareList(middleware) ? middleware : []), // TODO: improve/rework filtering valid middleware
         ...(isValidMiddlewareList(injectedMiddleware) ? injectedMiddleware : []),
       ],
       handler: handlerToUse,

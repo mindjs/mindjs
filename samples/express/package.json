@@ -10,8 +10,6 @@
     "start:dev:pm2": "npm run pm2:kill && pm2 start ./src/main.js --watch=\"src\" --no-daemon --node-args=\"--inspect\" -i 1 -f",
     "start:dev:nodemon": "nodemon --inspect ./src/main.js -w ./src -L",
     "pm2:kill": "pm2 kill",
-    "lint": "eslint src",
-    "lint:fix": "npm run lint -- --fix",
     "test": "jest --config=jest.config.json"
   },
   "husky": {
@@ -21,7 +19,7 @@
     }
   },
   "author": "Oleksandr Bondarenko",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-plugin-node": "^9.2.0",

@@ -1,6 +1,11 @@
-const { providableClass, Inject } = require('../../core');
+const { ProvidableClass, Inject } = require('@framework100500/core');
+
 const { HTTP_CLIENT, HTTP_REQUEST_INTERCEPTOR } = require('./DI.tokens');
 
+/**
+ * NOTE:
+ *  refer to https://github.com/angular/angular/tree/master/packages/http for further help and improvements
+ */
 class HttpClient {
 
   static get parameters() {
@@ -53,4 +58,4 @@ class HttpClient {
 
 }
 
-module.exports = providableClass(HttpClient);
+module.exports = ProvidableClass(HttpClient);

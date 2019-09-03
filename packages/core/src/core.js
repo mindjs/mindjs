@@ -1,7 +1,6 @@
-const { ReflectiveInjector } = require('injection-js');
-
 const { every, difference, flatten, isArray, first, isFunction } = require('lodash');
 
+const { ReflectiveInjector } = require('./constants');
 const {
   APP_INJECTOR,
   MODULE_INJECTOR,
@@ -15,7 +14,7 @@ const {
   APP_ROUTERS_RESOLVER,
   // RoutingModule,
   // APP_ROUTER_DESCRIPTOR_RESOLVER,
-} = require('../../routing/src');
+} = require('@framework100500/routing');
 
 module.exports = class Framework100500 {
 
@@ -70,6 +69,7 @@ module.exports = class Framework100500 {
 
     await Framework100500.invokeInitializers(appInjector);
 
+    // TODO: complete routing initiation...
     // APP_ROUTERS_RESOLVER - first - inject a routing resolver or create it combining all APP_ROUTER_DESCRIPTOR_RESOLVER
     // APP_ROUTER_DESCRIPTOR_RESOLVER
 

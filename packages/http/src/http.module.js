@@ -1,13 +1,16 @@
 const request = require('request-promise-native');
 
-const { providableClass } = require('../../core');
+const { Module } = require('@framework100500/core');
 
 const { HTTP_CLIENT } = require('./DI.tokens');
 const HttpClient = require('./http.client');
 
+/**
+ * TODO: add separate entities: Handler, Request, HttpParams, etc..
+ */
 class HttpModule {
   static forRoot({ httpClient } = { httpClient: request }) {
-    return providableClass(HttpModule, {
+    return Module(HttpModule, {
       providers: [
         {
           provide: HTTP_CLIENT,
@@ -19,7 +22,7 @@ class HttpModule {
   }
 }
 
-module.exports = providableClass(HttpModule, {
+module.exports = Module(HttpModule, {
   providers: [
     {
       provide: HTTP_CLIENT,

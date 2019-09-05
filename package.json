@@ -7,7 +7,7 @@
   "scripts": {
     "new-version": "lerna version --conventional-commits --yes",
     "diff": "lerna diff",
-    "publish:beta": "lerna publish --npm-tag=beta --access public -m \"chore(@framework100500) publish %s release\"",
+    "publish:beta": "lerna publish --dist-tag=beta",
     "lint": "eslint -c eslintConfig.json packages --no-eslintrc --ignore-pattern \"*.spec.js\" --ignore-pattern \"*.test.js\" --ignore-pattern \"node_modules\"",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest --config=jest.config.json"

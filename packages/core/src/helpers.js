@@ -1,4 +1,4 @@
-const { first, flatten, isArray, isFunction } = require('lodash');
+const { flatten, isArray, isFunction } = require('lodash');
 
 /**
  * Checks if value is a Promise
@@ -37,7 +37,7 @@ async function invokeFn(fn, ...args) {
     return await fn(...args);
   }
 
-  let result = fn(...args);
+  const result = fn(...args);
 
   return isPromise(result) ? await result : result;
 }
@@ -53,8 +53,7 @@ async function invokeAll(...args) {
     return [];
   }
 
-  const firstArg = first(args);
-  const restArgs = args.slice(1);
+  const [firstArg, ...restArgs] = args;
 
   return await Promise.all([
     isArray(firstArg) && firstArg.length ? invokeAll(...firstArg) : invokeFn(firstArg),

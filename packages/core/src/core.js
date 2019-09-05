@@ -136,7 +136,7 @@ module.exports = class Framework100500 {
 
     } catch (e) {
       const resolvedProvidersWithMWInitializer = ReflectiveInjector.resolve([{
-        provide:  APP_INITIALIZER,
+        provide: APP_INITIALIZER,
         useClass: MiddlewareInitializer,
       }]);
       initializeInjector = appInjector.createChildFromResolved(resolvedProvidersWithMWInitializer);

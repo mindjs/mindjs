@@ -7,7 +7,7 @@ const {
   ReflectiveInjector,
   ResolvedReflectiveFactory,
   ReflectiveKey,
-} = require('./constants');
+} = require('./DI');
 
 const Framework100500 = require('./core');
 
@@ -26,6 +26,9 @@ const {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   MODULE_INJECTOR,
+  APP_ROUTER_DESCRIPTOR_RESOLVER,
+  APP_ROUTERS_RESOLVER,
+  APP_SERVER_ROUTER_PROVIDER,
 } = require('./DI.tokens');
 
 module.exports = {
@@ -46,10 +49,13 @@ module.exports = {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   MODULE_INJECTOR,
+  APP_ROUTER_DESCRIPTOR_RESOLVER,
+  APP_ROUTERS_RESOLVER,
+  APP_SERVER_ROUTER_PROVIDER,
 
   Inject,
   Module,
-  InjectableClass: InjectableClass,
+  InjectableClass,
 
   Framework100500,
 };

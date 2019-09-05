@@ -5,12 +5,14 @@ const {
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
   APP_MIDDLEWARE,
+  APP_SERVER_ROUTER_PROVIDER,
   // APP_INITIALIZER,
 } = require('@framework100500/core');
+
 const {
-  APP_SERVER_ROUTER_PROVIDER,
   RoutingModule,
 } = require('@framework100500/routing');
+
 const {
   HTTP_METHODS
 } = require('@framework100500/common');

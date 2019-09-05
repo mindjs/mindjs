@@ -5,6 +5,8 @@ const {
   APP_SERVER,
 } = require('./DI.tokens');
 
+const { Inject } = require('./decorators');
+
 class MiddlewareInitializer {
 
   static get parameters() {

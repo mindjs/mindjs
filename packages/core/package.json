@@ -12,10 +12,8 @@
   "dependencies": {
     "uuid": "3.3.3",
     "lodash": "4.17.15",
-    "debug": "4.1.1"
-  },
-  "peerDependencies": {
-    "@framework100500/routing": "1.0.0",
+    "debug": "4.1.1",
+    "cli-color": "^1.4.0",
     "injection-js": "2.2.2"
   },
   "publishConfig": {

@@ -5,10 +5,6 @@
  */
 
 const {
-  APP_ROUTER_DESCRIPTOR_RESOLVER,
-  APP_ROUTERS_RESOLVER,
-  APP_SERVER_ROUTER_PROVIDER,
-
   stubHandler,
 
   isValidMiddlewareList,
@@ -19,10 +15,6 @@ const {
 } = require('./src');
 
 module.exports = {
-  APP_ROUTER_DESCRIPTOR_RESOLVER,
-  APP_ROUTERS_RESOLVER,
-  APP_SERVER_ROUTER_PROVIDER,
-
   stubHandler,
 
   isValidMiddlewareList,

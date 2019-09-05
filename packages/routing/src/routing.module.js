@@ -1,12 +1,14 @@
 const { isFunction, isArray } = require('lodash');
 
 const { HTTP_METHODS } = require('@framework100500/common');
-const { Module, MODULE_INJECTOR, Inject } = require('@framework100500/core');
-
 const {
+  Module,
+  MODULE_INJECTOR,
+  Inject,
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_SERVER_ROUTER_PROVIDER,
-} = require('./DI.tokens');
+} = require('@framework100500/core');
+
 const { stubHandler } = require('./constants');
 const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('./helpers');
 

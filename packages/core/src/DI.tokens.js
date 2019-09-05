@@ -12,6 +12,7 @@ const { InjectionToken } = require('./constants');
  */
 const APP_INITIALIZER = new InjectionToken('AppInitializer');
 const APP_MIDDLEWARE = new InjectionToken('AppMiddleware');
+const APP_MIDDLEWARE_INITIALIZER = new InjectionToken('AppMiddlewareInitializer');
 const APP_SERVER = new InjectionToken('AppServer');
 
 /*
@@ -31,6 +32,7 @@ module.exports = {
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,
+  APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,

@@ -5,10 +5,14 @@ const {
   APP_INJECTOR,
   MODULE_INJECTOR,
   APP_INITIALIZER,
+  APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
 } = require('./DI.tokens');
+
+const { invokeFn, invokeOnAll } = require('./helpers');
+const { MiddlewareInitializer } = require('./initializers');
 
 const {
   APP_ROUTERS_RESOLVER,
@@ -119,21 +123,33 @@ module.exports = class Framework100500 {
    * @returns {Promise<any[]>}
    */
   static async invokeInitializers(appInjector) {
+    let appMiddlewareInitializer;
     let appInitializers = [];
+    let initializeInjector = appInjector;
 
     try {
-      appInitializers = appInjector.get(APP_INITIALIZER);
+      appMiddlewareInitializer = appInjector.get(APP_MIDDLEWARE_INITIALIZER);
+
+      isArray(appMiddlewareInitializer)
+        ? await invokeOnAll('init', appMiddlewareInitializer)
+        : await invokeFn(appMiddlewareInitializer.init);
+
+    } catch (e) {
+      const resolvedProvidersWithMWInitializer = ReflectiveInjector.resolve([{
+        provide:  APP_INITIALIZER,
+        useClass: MiddlewareInitializer,
+      }]);
+      initializeInjector = appInjector.createChildFromResolved(resolvedProvidersWithMWInitializer);
+    }
+
+    try {
+      appInitializers = initializeInjector.get(APP_INITIALIZER);
     } catch (e) {
       // eslint-disable-next-line
       console.warn('APP_INITIALIZERs are not found');
     }
 
-    return await Promise.all(
-      appInitializers
-        .filter(Boolean)
-        .filter(i => isFunction(i.init))
-        .map(async (i) => await i.init()),
-    );
+    return await invokeOnAll('init', appInitializers);
   }
 
   /**

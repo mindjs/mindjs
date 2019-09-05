@@ -21,16 +21,16 @@ const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('.
       routerDescriptor: {
          prefix: {string},
          commonMiddleware: {Function[]},
-         injectCommonMiddleware: {InjectionToken[]|ProvidableClass[]},
+         injectCommonMiddleware: {InjectionToken[]|InjectableClass[]},
          routes: [
           {
             path: {string},
             method: HTTP_METHODS,
 
-            injectMiddleware?: {InjectionToken[]|ProvidableClass[]},
+            injectMiddleware?: {InjectionToken[]|InjectableClass[]},
             middleware?: {Function[]},
 
-            injectHandler?: {InjectionToken|ProvidableClass},
+            injectHandler?: {InjectionToken|InjectableClass},
             handler?: {Function},
           },
         ],

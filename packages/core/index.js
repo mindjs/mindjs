@@ -17,12 +17,13 @@ const {
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,
+  APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   MODULE_INJECTOR,
 
-  ProvidableClass,
+  InjectableClass,
   Inject,
   Module,
 
@@ -42,6 +43,7 @@ module.exports = {
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,
+  APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
@@ -49,7 +51,7 @@ module.exports = {
 
   Inject,
   Module,
-  ProvidableClass,
+  InjectableClass,
 
   Framework100500,
 };

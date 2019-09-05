@@ -7,11 +7,9 @@ const { InjectionToken, Inject } = require('./constants');
 /**
  *
  * @param targetClass
- * @param providers
- * @param imports
  * @returns {*}
  */
-function providableClassDecorator(targetClass) {
+function injectableClassDecorator(targetClass) {
   if (!(targetClass && isFunction(targetClass))) {
     return targetClass;
   }
@@ -52,7 +50,7 @@ function moduleDecorator(targetClass, {
     return targetClass;
   }
 
-  Object.defineProperties(providableClassDecorator(targetClass), {
+  Object.defineProperties(injectableClassDecorator(targetClass), {
     providers: {
       value: [ ...providers ],
     },
@@ -76,5 +74,5 @@ function injectDecorator(token) {
 module.exports = {
   Inject: injectDecorator,
   Module: moduleDecorator,
-  ProvidableClass: providableClassDecorator,
+  InjectableClass: injectableClassDecorator,
 };

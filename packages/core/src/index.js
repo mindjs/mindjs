@@ -14,13 +14,14 @@ const Framework100500 = require('./core');
 const {
   Inject,
   Module,
-  ProvidableClass,
+  InjectableClass,
 } = require('./decorators');
 
 const {
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,
+  APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
@@ -40,6 +41,7 @@ module.exports = {
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,
+  APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
@@ -47,7 +49,7 @@ module.exports = {
 
   Inject,
   Module,
-  ProvidableClass,
+  InjectableClass: InjectableClass,
 
   Framework100500,
 };

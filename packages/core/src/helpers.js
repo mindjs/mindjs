@@ -23,8 +23,17 @@ function isAsyncFunction(fn) {
 }
 
 /**
- * Asynchronously invokes a function with provided arguments
+ *
  * @param {Function} fn
+ * @returns {boolean}
+ */
+function isArrowFunction(fn) {
+  return isFunction(fn) && !fn.prototype;
+}
+
+/**
+ * Asynchronously invokes a function with provided arguments
+ * @param {Function|*} fn
  * @param {*} args - list of arguments to invoke provided function with
  * @returns {Promise<*>}
  */
@@ -63,15 +72,21 @@ async function invokeAll(...args) {
 
 /**
  * Invokes a given method without passing arguments to them on all provided objects
- * @param {string}methodName
  * @param {*} objects
+ * @param {string}methodName
  * @returns {Promise<Array|*[]>}
  */
-async function invokeOnAll(methodName, objects) {
+async function invokeOnAll(objects, methodName) {
   if (!(methodName && isArray(objects) && objects.length)) {
     return [];
   }
-  return await invokeAll(objects.map(obj => obj[methodName]));
+
+  return await Promise.all(
+    objects
+      .filter(Boolean)
+      .filter(obj => isFunction(obj[methodName]))
+      .map(async (obj) => await invokeFn(obj[methodName]())),
+  );
 }
 
 module.exports = {

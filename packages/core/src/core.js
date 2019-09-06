@@ -10,10 +10,7 @@ const {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_ROUTERS_RESOLVER,
-  // RoutingModule,
-  // APP_ROUTER_DESCRIPTOR_RESOLVER,
 } = require('./DI.tokens');
-
 const { invokeFn, invokeOnAll } = require('./helpers');
 const { MiddlewareInitializer } = require('./initializers');
 
@@ -32,16 +29,18 @@ module.exports = class Framework100500 {
   }
 
   /**
-   * TODO: extract helpers/methods
+   * TODO: extract helpers/methods and routing handling...
    * @static
    * @param appModule
    * @returns {Promise<{appInjector: ReflectiveInjector, clientRouters: any[]} | Promise<any[] | never>>}
    */
-  static async initialize(appModule) {
+  static async initModuleAndRouting(appModule) {
     const { imports = [], providers = [] } = appModule;
 
     const modulesWithModuleProp = imports.filter(im => every([im, im.module]));
     const modulesWithoutModuleProp = difference(imports, modulesWithModuleProp);
+
+    /* ROUTING */
     const routingModules = modulesWithModuleProp.filter(m => m.module.name === 'RoutingModule');
 
     const nonRoutingModulesWithModuleProp = difference(modulesWithModuleProp, routingModules);
@@ -59,10 +58,10 @@ module.exports = class Framework100500 {
       }, [...importedProviders]);
       appProviders = [...appProviders, ...importedProviders];
     }
-    console.log('%O', appProviders);
+
     const resolvedAppProviders = ReflectiveInjector.resolve(appProviders);
     let appInjector = ReflectiveInjector.fromResolvedProviders(resolvedAppProviders);
-    const appInjectorProvider = ReflectiveInjector.resolve([{
+    const appInjectorProvider = ReflectiveInjector.resolve([{ // TODO: check if it can be skipped or repalced with 'injection-js' Injector
       provide: APP_INJECTOR,
       useValue: appInjector,
     }]);
@@ -70,27 +69,34 @@ module.exports = class Framework100500 {
 
     await Framework100500.invokeInitializers(appInjector);
 
-    // TODO: complete routing initiation...
-    // APP_ROUTERS_RESOLVER - first - inject a routing resolver or create it combining all APP_ROUTER_DESCRIPTOR_RESOLVER
-    // APP_ROUTER_DESCRIPTOR_RESOLVER
-
+    /* ROUTING */
+    /*
+    * 1. APP_ROUTERS_RESOLVER
+    * */
     let appRoutersResolver;
     try {
       appRoutersResolver = appInjector.get(APP_ROUTERS_RESOLVER);
-      appRoutersResolver = isArray(appRoutersResolver) ? first(appRoutersResolver) : appRoutersResolver;
     } catch (e) {
-      // eslint-disable-next-line
-      console.warn('Unable to get the APP_ROUTERS_RESOLVER');
+      // console.warn('Unable to get the APP_ROUTERS_RESOLVER'); // TODO: add debug log
     }
-
-    const resolved = appRoutersResolver ? await appRoutersResolver.resolve() : [];
-
-    const routers = await Promise.all(resolved.map(async ({ module, providers }) => {
-
+    /* ROUTING */
+    // TODO: extract helper..
+    /*
+    * 2. APP_ROUTER_DESCRIPTOR_RESOLVER
+    * */
+    let resolved = [];
+    /* ROUTING */
+    if (appRoutersResolver) {
+      resolved = appRoutersResolver && isArray(appRoutersResolver)
+        ? await invokeOnAll(appRoutersResolver, 'resolve')
+        : [await invokeFn(appRoutersResolver.resolve())];
+    }
+    /* ROUTING */
+    const allRouters = [...resolved, ...routingModules];
+    /* ROUTING */
+    const routers = await Promise.all(allRouters.map(async ({ module, providers }) => {
       const resolvedRoutingProviders = ReflectiveInjector.resolve(providers);
-
       let routingInjector = appInjector.createChildFromResolved(resolvedRoutingProviders);
-
       const restRoutingProviders = [
         {
           provide: MODULE_INJECTOR,
@@ -100,17 +106,17 @@ module.exports = class Framework100500 {
       ];
 
       const resolvedRestRoutingProviders = ReflectiveInjector.resolve(restRoutingProviders);
-
       routingInjector = routingInjector.createChildFromResolved(resolvedRestRoutingProviders);
-
       const routingModule = routingInjector.get(module);
 
       return await routingModule.resolveRouters();
     }));
 
+    // TODO: Provide APP_ROUTERS and return just injector
+
     return {
       injector: appInjector,
-      routers: flatten(routers),
+      routers: flatten(routers), /* ROUTING */
     };
   }
 
@@ -128,13 +134,14 @@ module.exports = class Framework100500 {
       appMiddlewareInitializer = appInjector.get(APP_MIDDLEWARE_INITIALIZER);
 
       isArray(appMiddlewareInitializer)
-        ? await invokeOnAll('init', appMiddlewareInitializer)
+        ? await invokeOnAll(appMiddlewareInitializer, 'init')
         : await invokeFn(appMiddlewareInitializer.init);
 
     } catch (e) {
       const resolvedProvidersWithMWInitializer = ReflectiveInjector.resolve([{
         provide: APP_INITIALIZER,
         useClass: MiddlewareInitializer,
+        multi: true,
       }]);
       initializeInjector = appInjector.createChildFromResolved(resolvedProvidersWithMWInitializer);
     }
@@ -142,11 +149,10 @@ module.exports = class Framework100500 {
     try {
       appInitializers = initializeInjector.get(APP_INITIALIZER);
     } catch (e) {
-      // eslint-disable-next-line
-      console.warn('APP_INITIALIZERs are not found');
+      // console.warn('APP_INITIALIZERs are not found');   // TODO: add debug log
     }
 
-    return await invokeOnAll('init', appInitializers);
+    return await invokeOnAll(appInitializers, 'init');
   }
 
   /**
@@ -156,7 +162,8 @@ module.exports = class Framework100500 {
    */
   static mountRoutes(appInjector, clientRouters) {
     const appServer = appInjector.get(APP_SERVER);
-    clientRouters.map(r => appServer.use(r.routes()));
+
+    clientRouters.map(r => appServer.use(r.routes())); // TODO provide router mounter or smth else
   }
 
   /**
@@ -193,7 +200,7 @@ module.exports = class Framework100500 {
    * @returns {Promise<void>}
    */
   static async bootstrap(appModule) {
-    const { injector, routers } = await Framework100500.initialize(appModule);
+    const { injector, routers } = await Framework100500.initModuleAndRouting(appModule);
     Framework100500.mountRoutes(injector, routers);
     Framework100500.startServer(injector, appModule); // TODO: use BOOTSTRAP_MODULE Injection token
   }

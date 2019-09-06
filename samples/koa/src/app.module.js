@@ -35,7 +35,7 @@ module.exports = Module(AppModule, {
     RoutingModule.forRoot({
       // providers: [],
       routerDescriptor: {
-        // prefix: '',
+        prefix: '/api',
         commonMiddleware: [],
         injectCommonMiddleware: [],
         routes: [{
@@ -45,7 +45,7 @@ module.exports = Module(AppModule, {
           middleware: [
             async (ctx, next) => {
               console.log('Request query: %O', ctx.request.query);
-              return  next();
+              return next();
             }
           ],
           // AND/OR

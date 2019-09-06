@@ -5,15 +5,6 @@
  */
 
 const {
-  _Inject,
-  InjectionToken,
-  Injector,
-  forwardRef,
-  resolveForwardRef,
-  ReflectiveInjector,
-  ResolvedReflectiveFactory,
-  ReflectiveKey,
-
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,
@@ -34,15 +25,6 @@ const {
 } = require('./src');
 
 module.exports = {
-  _Inject,
-  InjectionToken,
-  Injector,
-  forwardRef,
-  resolveForwardRef,
-  ReflectiveInjector,
-  ResolvedReflectiveFactory,
-  ReflectiveKey,
-
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,

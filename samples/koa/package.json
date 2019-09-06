@@ -7,7 +7,7 @@
     "start:env": "npm run start:env:pm2-runtime",
     "start:env:pm2": "npm run pm2:kill && pm2 start index.js -i 0",
     "start:env:pm2-runtime": "pm2-runtime start index.js -i 0",
-    "start:dev:pm2": "npm run pm2:kill && pm2 start index.js --watch --no-daemon --node-args=\"--inspect\" -i 1 -f",
+    "start:dev:pm2": "npm run pm2:kill && pm2 start index.js --watch=\"./src/\", --no-daemon --node-args=\"--inspect\" -i 1 -f",
     "start:dev:nodemon": "nodemon --inspect index.js -w -L",
     "pm2:kill": "pm2 kill"
   },

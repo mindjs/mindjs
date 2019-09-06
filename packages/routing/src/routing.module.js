@@ -60,24 +60,6 @@ const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('.
     },
     deps: [],
    }
-
-   or provide APP_ROUTER_DESCRIPTOR_RESOLVER in your module providers
-
-   {
-     provide: APP_ROUTER_DESCRIPTOR_RESOLVER,
-     useFactory: function () {
-      return {
-        async resolve() {
-          return {
-            prefix: 'prefix',
-            injectCommonMiddleware: [],
-            routes: [],
-          },;
-      };
-    },
-    deps: [],
-    multi: true
-  }
  */
 class RoutingModule {
 
@@ -156,13 +138,13 @@ class RoutingModule {
       routes = [],
     } = await routerDescriptorResolver.resolve();
 
-    const router = new this.routerProvider({ prefix: normalizeRoutePath(prefix) });
+    const router = new this.routerProvider();
 
     const resolvedCommonMiddleware = this._injectAllAndResolve(injectCommonMiddleware);
 
     router.use(...commonMiddleware, ...resolvedCommonMiddleware);
 
-    const preparedRoutesDescriptors = this._prepareRoutesDescriptors(routes);
+    const preparedRoutesDescriptors = this._prepareRoutesDescriptors(routes, prefix);
 
     preparedRoutesDescriptors.map(({ path, method = HTTP_METHODS.GET, middleware = [], handler }) => {
       router[method](path, ...middleware, handler);
@@ -174,20 +156,22 @@ class RoutingModule {
   /**
    *
    * @param routesDescriptors
+   * @param {string} prefix
    * @returns {{path: (string|*), handler: (function(*): {message: string, statusCode: number}), method: string, middleware: *[]}[]}
    * @private
    */
-  _prepareRoutesDescriptors(routesDescriptors = []) {
-    return routesDescriptors.map(r => this._prepareRouteDescriptor(r));
+  _prepareRoutesDescriptors(routesDescriptors = [], prefix = '') {
+    return routesDescriptors.map(r => this._prepareRouteDescriptor(r, prefix));
   }
 
   /**
    *
    * @param routeDescriptor
+   * @param {string} prefix
    * @returns {{path: (string|*), handler: (function(*): {message: string, statusCode: number}), method: string, middleware: *[]}}
    * @private
    */
-  _prepareRouteDescriptor(routeDescriptor) {
+  _prepareRouteDescriptor(routeDescriptor, prefix = '') {
     if (!(this.moduleInjector && routeDescriptor)) {
       throw new Error('Invalid input.');
     }
@@ -212,9 +196,10 @@ class RoutingModule {
     }
 
     const injectedMiddleware = this._injectAllAndResolve(injectMiddleware);
+    const routePath = `${ prefix ? normalizeRoutePath(prefix) : prefix }${normalizeRoutePath(path) }`;
 
     return {
-      path: normalizeRoutePath(path),
+      path: routePath,
       method: method,
       middleware: [
         ...(isValidMiddlewareList(middleware) ? middleware : []), // TODO: improve/rework filtering valid middleware
@@ -257,7 +242,7 @@ class RoutingModule {
   }
 
   /**
-   *
+   * TODO: use invokeFn
    * @param token
    * @param resolveParams
    * @returns {undefined}

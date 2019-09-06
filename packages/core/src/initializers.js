@@ -2,6 +2,7 @@ const { isArray, isFunction } = require('lodash');
 
 const {
   APP_MIDDLEWARE,
+  APP_ROUTERS,
   APP_SERVER,
 } = require('./DI.tokens');
 
@@ -29,6 +30,42 @@ class MiddlewareInitializer {
   }
 }
 
+class AppRoutersInitializer {
+
+  static get parameters() {
+    return [
+      Inject(APP_SERVER),
+      Inject(APP_ROUTERS)
+    ];
+  }
+
+  constructor(
+    appServer,
+    appRouters,
+  ) {
+    this.appServer = appServer;
+    this.appRouters = appRouters;
+  }
+
+  async init() {
+    if (!(this.appServer && isArray(this.appRouters))) {
+      return;
+    }
+
+    this.appRouters.map(r => {
+      if (isFunction(r.routes)) {
+        this.appServer.use(r.routes());
+        return;
+      }
+
+      if (isFunction(r)) {
+        this.appServer.use(r());
+      }
+    });
+  }
+}
+
 module.exports = {
   MiddlewareInitializer,
+  AppRoutersInitializer,
 };

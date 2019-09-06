@@ -1,4 +1,4 @@
-const { every, difference, flatten, isArray, first, isFunction } = require('lodash');
+const { every, difference, flatten, isArray, isFunction } = require('lodash');
 
 const { ReflectiveInjector } = require('./DI');
 const {
@@ -6,13 +6,14 @@ const {
   MODULE_INJECTOR,
   APP_INITIALIZER,
   APP_MIDDLEWARE_INITIALIZER,
-  APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_ROUTERS_RESOLVER,
+  APP_ROUTERS,
+  APP_ROUTERS_INITIALIZER,
 } = require('./DI.tokens');
-const { invokeFn, invokeOnAll } = require('./helpers');
-const { MiddlewareInitializer } = require('./initializers');
+const { invokeFn, invokeOnAll, injectAsync, injectOneAsync } = require('./helpers');
+const { MiddlewareInitializer, AppRoutersInitializer } = require('./initializers');
 
 module.exports = class Framework100500 {
 
@@ -32,7 +33,7 @@ module.exports = class Framework100500 {
    * TODO: extract helpers/methods and routing handling...
    * @static
    * @param appModule
-   * @returns {Promise<{appInjector: ReflectiveInjector, clientRouters: any[]} | Promise<any[] | never>>}
+   * @returns {Promise<ReflectiveInjector>}
    */
   static async initModuleAndRouting(appModule) {
     const { imports = [], providers = [] } = appModule;
@@ -67,7 +68,6 @@ module.exports = class Framework100500 {
     }]);
     appInjector = appInjector.createChildFromResolved(appInjectorProvider);
 
-    await Framework100500.invokeInitializers(appInjector);
 
     /* ROUTING */
     /*
@@ -114,10 +114,29 @@ module.exports = class Framework100500 {
 
     // TODO: Provide APP_ROUTERS and return just injector
 
-    return {
-      injector: appInjector,
-      routers: flatten(routers), /* ROUTING */
-    };
+
+    const routersFlattened = flatten(routers);
+    if (!routersFlattened.length) {
+      return appInjector;
+    }
+
+    const routersProviders = [{
+      provide: APP_ROUTERS,
+      useValue: routersFlattened,
+    }];
+
+    const routersInitializer = await injectAsync(APP_ROUTERS_INITIALIZER);
+
+    if (!routersInitializer) {
+      routersProviders.push({
+        provide: APP_ROUTERS_INITIALIZER,
+        useClass: AppRoutersInitializer
+      });
+    }
+
+    const routersProvider = ReflectiveInjector.resolve(routersProviders);
+
+    return appInjector.createChildFromResolved(routersProvider);
   }
 
   /**
@@ -160,10 +179,9 @@ module.exports = class Framework100500 {
    * @param appInjector
    * @param clientRouters
    */
-  static mountRoutes(appInjector, clientRouters) {
-    const appServer = appInjector.get(APP_SERVER);
-
-    clientRouters.map(r => appServer.use(r.routes())); // TODO provide router mounter or smth else
+  static async mountRouters(appInjector) {
+    const appRoutersInitializer = await injectOneAsync(appInjector, APP_ROUTERS_INITIALIZER);
+    await invokeFn(isFunction(appRoutersInitializer.init) && appRoutersInitializer.init());
   }
 
   /**
@@ -200,8 +218,9 @@ module.exports = class Framework100500 {
    * @returns {Promise<void>}
    */
   static async bootstrap(appModule) {
-    const { injector, routers } = await Framework100500.initModuleAndRouting(appModule);
-    Framework100500.mountRoutes(injector, routers);
+    const injector = await Framework100500.initModuleAndRouting(appModule);
+    await Framework100500.invokeInitializers(injector);
+    await Framework100500.mountRouters(injector);
     Framework100500.startServer(injector, appModule); // TODO: use BOOTSTRAP_MODULE Injection token
   }
 

@@ -31,8 +31,13 @@ const MODULE_INJECTOR = new InjectionToken('ModuleInjector');
 /*
 Routing
 */
-const APP_SERVER_ROUTER_PROVIDER = new InjectionToken('AppServerRouter');
+/*
+  This token is intended to be used for providing a Router constructor
+*/
+const APP_ROUTER_PROVIDER = new InjectionToken('AppServerRouter');
 const APP_ROUTERS_RESOLVER = new InjectionToken('AppRoutersResolver');
+const APP_ROUTERS = new InjectionToken('AppRouters');
+const APP_ROUTERS_INITIALIZER = new InjectionToken('AppRoutersInitializer');
 const APP_ROUTER_DESCRIPTOR_RESOLVER = new InjectionToken('AppRouterResolver');
 
 module.exports = {
@@ -44,7 +49,9 @@ module.exports = {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   MODULE_INJECTOR,
-  APP_ROUTERS_RESOLVER,
   APP_ROUTER_DESCRIPTOR_RESOLVER,
-  APP_SERVER_ROUTER_PROVIDER,
+  APP_ROUTER_PROVIDER,
+  APP_ROUTERS_RESOLVER,
+  APP_ROUTERS,
+  APP_ROUTERS_INITIALIZER,
 };

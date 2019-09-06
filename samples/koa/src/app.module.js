@@ -5,7 +5,7 @@ const {
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
   APP_MIDDLEWARE,
-  APP_SERVER_ROUTER_PROVIDER,
+  APP_ROUTER_PROVIDER,
   // APP_INITIALIZER,
 } = require('@framework100500/core');
 
@@ -66,7 +66,7 @@ module.exports = Module(AppModule, {
       useValue: new Koa(),
     },
     {
-      provide: APP_SERVER_ROUTER_PROVIDER,
+      provide: APP_ROUTER_PROVIDER,
       useFactory: function () {
         return Router;
       },

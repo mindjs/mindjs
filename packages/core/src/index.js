@@ -1,14 +1,3 @@
-const {
-  _Inject,
-  InjectionToken,
-  Injector,
-  forwardRef,
-  resolveForwardRef,
-  ReflectiveInjector,
-  ResolvedReflectiveFactory,
-  ReflectiveKey,
-} = require('./DI');
-
 const Framework100500 = require('./core');
 
 const {
@@ -28,19 +17,12 @@ const {
   MODULE_INJECTOR,
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_ROUTERS_RESOLVER,
-  APP_SERVER_ROUTER_PROVIDER,
+  APP_ROUTERS,
+  APP_ROUTERS_INITIALIZER,
+  APP_ROUTER_PROVIDER,
 } = require('./DI.tokens');
 
 module.exports = {
-  _Inject,
-  InjectionToken,
-  Injector,
-  forwardRef,
-  resolveForwardRef,
-  ReflectiveInjector,
-  ResolvedReflectiveFactory,
-  ReflectiveKey,
-
   APP_INITIALIZER,
   APP_INJECTOR,
   APP_MIDDLEWARE,
@@ -51,7 +33,9 @@ module.exports = {
   MODULE_INJECTOR,
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_ROUTERS_RESOLVER,
-  APP_SERVER_ROUTER_PROVIDER,
+  APP_ROUTER_PROVIDER,
+  APP_ROUTERS,
+  APP_ROUTERS_INITIALIZER,
 
   Inject,
   Module,

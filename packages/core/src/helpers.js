@@ -1,4 +1,4 @@
-const { flatten, isArray, isFunction } = require('lodash');
+const { first, flatten, isArray, isFunction } = require('lodash');
 
 /**
  * Checks if value is a Promise
@@ -89,8 +89,35 @@ async function invokeOnAll(objects, methodName) {
   );
 }
 
+async function injectAsync(injector, token) {
+  if (!(injector && token)) {
+    return;
+  }
+
+  let result;
+  try {
+    result = injector.get(token);
+  } catch (e) {
+    console.warn('No dependency was found');
+  }
+  return result;
+}
+
+async function injectOneAsync(injector, token) {
+  if (!(injector && token)) {
+    return;
+  }
+
+  const injected = await injectAsync(injector, token);
+
+  return isArray(injected) ? first(injected) : injected;
+}
+
 module.exports = {
+  isArrowFunction,
   invokeFn,
   invokeAll,
   invokeOnAll,
+  injectAsync,
+  injectOneAsync,
 };

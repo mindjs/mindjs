@@ -6,7 +6,7 @@ const {
   MODULE_INJECTOR,
   Inject,
   APP_ROUTER_DESCRIPTOR_RESOLVER,
-  APP_SERVER_ROUTER_PROVIDER,
+  APP_ROUTER_PROVIDER,
 } = require('@framework100500/core');
 
 const { stubHandler } = require('./constants');
@@ -66,7 +66,7 @@ class RoutingModule {
   static get parameters() {
     return [
       Inject(MODULE_INJECTOR),
-      Inject(APP_SERVER_ROUTER_PROVIDER),
+      Inject(APP_ROUTER_PROVIDER),
     ];
   }
 

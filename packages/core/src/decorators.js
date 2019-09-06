@@ -2,7 +2,7 @@ const uuidv4 = require('uuid/v4');
 
 const { isFunction } = require('lodash');
 
-const { InjectionToken, Inject } = require('./constants');
+const { InjectionToken, _Inject } = require('./DI');
 
 /**
  *
@@ -68,7 +68,7 @@ function moduleDecorator(targetClass, {
  * @returns {Inject}
  */
 function injectDecorator(token) {
-  return new Inject(token);
+  return new _Inject(token);
 }
 
 module.exports = {

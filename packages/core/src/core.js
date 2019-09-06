@@ -1,6 +1,6 @@
 const { every, difference, flatten, isArray, first, isFunction } = require('lodash');
 
-const { ReflectiveInjector } = require('./constants');
+const { ReflectiveInjector } = require('./DI');
 const {
   APP_INJECTOR,
   MODULE_INJECTOR,
@@ -9,16 +9,13 @@ const {
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
+  APP_ROUTERS_RESOLVER,
+  // RoutingModule,
+  // APP_ROUTER_DESCRIPTOR_RESOLVER,
 } = require('./DI.tokens');
 
 const { invokeFn, invokeOnAll } = require('./helpers');
 const { MiddlewareInitializer } = require('./initializers');
-
-const {
-  APP_ROUTERS_RESOLVER,
-  // RoutingModule,
-  // APP_ROUTER_DESCRIPTOR_RESOLVER,
-} = require('@framework100500/routing');
 
 module.exports = class Framework100500 {
 
@@ -62,7 +59,7 @@ module.exports = class Framework100500 {
       }, [...importedProviders]);
       appProviders = [...appProviders, ...importedProviders];
     }
-
+    console.log('%O', appProviders);
     const resolvedAppProviders = ReflectiveInjector.resolve(appProviders);
     let appInjector = ReflectiveInjector.fromResolvedProviders(resolvedAppProviders);
     const appInjectorProvider = ReflectiveInjector.resolve([{

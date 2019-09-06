@@ -1,4 +1,4 @@
-const { InjectionToken } = require('./constants');
+const { InjectionToken } = require('./DI');
 
 /*
   NOTE: For DI on a high level we use the `injection-js` npm package
@@ -28,6 +28,13 @@ const APP_SERVER_NET_LISTENER = new InjectionToken('AppServerNetListener');
 const APP_INJECTOR = new InjectionToken('ApplicationInjector');
 const MODULE_INJECTOR = new InjectionToken('ModuleInjector');
 
+/*
+Routing
+*/
+const APP_SERVER_ROUTER_PROVIDER = new InjectionToken('AppServerRouter');
+const APP_ROUTERS_RESOLVER = new InjectionToken('AppRoutersResolver');
+const APP_ROUTER_DESCRIPTOR_RESOLVER = new InjectionToken('AppRouterResolver');
+
 module.exports = {
   APP_INITIALIZER,
   APP_INJECTOR,
@@ -37,4 +44,7 @@ module.exports = {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   MODULE_INJECTOR,
+  APP_ROUTERS_RESOLVER,
+  APP_ROUTER_DESCRIPTOR_RESOLVER,
+  APP_SERVER_ROUTER_PROVIDER,
 };

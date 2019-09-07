@@ -1,4 +1,4 @@
-const { every, difference, flatten, isArray, isFunction } = require('lodash');
+const { difference, flatten, isArray, isFunction } = require('lodash');
 
 const { ReflectiveInjector } = require('./DI');
 const {
@@ -12,7 +12,7 @@ const {
   APP_ROUTERS,
   APP_ROUTERS_INITIALIZER,
 } = require('./DI.tokens');
-const { invokeFn, invokeOnAll, injectAsync, injectOneAsync } = require('./helpers');
+const { invokeFn, invokeOnAll, injectAsync, injectOneAsync, isModuleWithProviders } = require('./helpers');
 const { MiddlewareInitializer, AppRoutersInitializer } = require('./initializers');
 
 module.exports = class Framework100500 {
@@ -38,24 +38,21 @@ module.exports = class Framework100500 {
   static async initModuleAndRouting(appModule) {
     const { imports = [], providers = [] } = appModule;
 
-    const modulesWithModuleProp = imports.filter(im => every([im, im.module]));
-    // TODO: clarify/improve...
-    const modulesWithoutModuleProp = difference(imports, modulesWithModuleProp);
-
+    const modulesWithProviders = imports.filter(isModuleWithProviders);
+    const ordinaryModules = difference(imports, modulesWithProviders);
     /* ROUTING */
-    const routingModules = modulesWithModuleProp.filter(m => m.module.name === 'RoutingModule');
-
-    const nonRoutingModulesWithModuleProp = difference(modulesWithModuleProp, routingModules);
+    const routingModules = modulesWithProviders.filter(m => m.module.name === 'RoutingModule');
+    const restModulesWithProviders = difference(modulesWithProviders, routingModules);
 
     let appProviders = [
       ...providers,
-      ...modulesWithoutModuleProp,
+      // ...ordinaryModules, // TODO: init it recursively and provide after DI tree is built
       appModule, // TODO: add providable check...
     ];
 
     if (imports && imports.length) {
-      let importedProviders = modulesWithoutModuleProp.reduce((m, { providers }) => ([...m, ...providers]), []);
-      importedProviders = nonRoutingModulesWithModuleProp.reduce((m, { module, providers }) => {
+      let importedProviders = ordinaryModules.reduce((m, { providers }) => ([...m, ...providers]), []);
+      importedProviders = restModulesWithProviders.reduce((m, { module, providers }) => {
         return [...m, module, ...providers];
       }, [...importedProviders]);
       appProviders = [...appProviders, ...importedProviders];

@@ -23,16 +23,16 @@ const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('.
       routerDescriptor: {
          prefix: {string},
          commonMiddleware: {Function[]},
-         injectCommonMiddleware: {InjectionToken[]|InjectableClass[]},
+         injectCommonMiddlewareResolvers: {InjectionToken[]|InjectableClass[]},
          routes: [
           {
             path: {string},
             method: HTTP_METHODS,
 
-            injectMiddleware?: {InjectionToken[]|InjectableClass[]},
+            injectMiddlewareResolvers?: {InjectionToken[]|InjectableClass[]},
             middleware?: {Function[]},
 
-            injectHandler?: {InjectionToken|InjectableClass},
+            injectHandlerResolver?: {InjectionToken|InjectableClass},
             handler?: {Function},
           },
         ],
@@ -51,7 +51,7 @@ const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('.
               providers: [],
               routerDescriptor: {
                 prefix: 'prefix',
-                injectCommonMiddleware: [],
+                injectCommonMiddlewareResolvers: [],
                 routes: [],
               },
             }),
@@ -111,7 +111,12 @@ class RoutingModule {
    * @returns {Promise<Router[]>}
    */
   async resolveRouters() {
-    const routerDescriptorResolvers = this.moduleInjector.get(APP_ROUTER_DESCRIPTOR_RESOLVER);
+    const routerDescriptorResolvers = this._inject(APP_ROUTER_DESCRIPTOR_RESOLVER);
+
+    if (!routerDescriptorResolvers) {
+      this.routers = [];
+      return this.routers;
+    }
 
     this.routers = isArray(routerDescriptorResolvers)
       ? await Promise.all(routerDescriptorResolvers
@@ -133,14 +138,14 @@ class RoutingModule {
   async _resolveRouter(routerDescriptorResolver) {
     const {
       prefix = '',
-      injectCommonMiddleware = [],
+      injectCommonMiddlewareResolvers = [],
       commonMiddleware = [],
       routes = [],
     } = await routerDescriptorResolver.resolve();
 
     const router = new this.routerProvider();
 
-    const resolvedCommonMiddleware = this._injectAllAndResolve(injectCommonMiddleware);
+    const resolvedCommonMiddleware = this._injectAllAndResolve(injectCommonMiddlewareResolvers);
 
     router.use(...commonMiddleware, ...resolvedCommonMiddleware);
 
@@ -179,24 +184,27 @@ class RoutingModule {
     let handlerToUse;
 
     const {
-      handler,
-      injectHandler,
-      injectHandlerResolveParams,
-      injectMiddleware = [],
-      method = HTTP_METHODS.GET,
-      middleware = [],
       path,
+
+      method = HTTP_METHODS.GET,
+
+      handler,
+      injectHandlerResolver,
+      injectHandlerResolveParams,
+
+      middleware = [],
+      injectMiddlewareResolvers = [],
     } = routeDescriptor;
 
     if (isValidHandler(handler)) {
       handlerToUse = handler;
-    } else if (injectHandler) {
-      const injectedAndResolvedHandler = this._injectAndResolve(injectHandler, injectHandlerResolveParams);
+    } else if (injectHandlerResolver) {
+      const injectedAndResolvedHandler = this._injectAndResolve(injectHandlerResolver, injectHandlerResolveParams);
       handlerToUse = isValidHandler(injectedAndResolvedHandler) ? injectedAndResolvedHandler : stubHandler;
     }
 
-    const injectedMiddleware = this._injectAllAndResolve(injectMiddleware);
-    const routePath = `${ prefix ? normalizeRoutePath(prefix) : prefix }${normalizeRoutePath(path) }`;
+    const injectedMiddleware = this._injectAllAndResolve(injectMiddlewareResolvers);
+    const routePath = `${ prefix ? normalizeRoutePath(prefix) : prefix }${ normalizeRoutePath(path) }`;
 
     return {
       path: routePath,
@@ -238,7 +246,14 @@ class RoutingModule {
     if (!(this.moduleInjector && token)) {
       return;
     }
-    return this.moduleInjector.get(token);
+
+    let result;
+    try {
+      result = this.moduleInjector.get(token);
+    } catch (e) {
+      // ...
+    }
+    return result;
   }
 
   /**

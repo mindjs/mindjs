@@ -39,6 +39,7 @@ module.exports = class Framework100500 {
     const { imports = [], providers = [] } = appModule;
 
     const modulesWithModuleProp = imports.filter(im => every([im, im.module]));
+    // TODO: clarify/improve...
     const modulesWithoutModuleProp = difference(imports, modulesWithModuleProp);
 
     /* ROUTING */
@@ -68,17 +69,12 @@ module.exports = class Framework100500 {
     }]);
     appInjector = appInjector.createChildFromResolved(appInjectorProvider);
 
-
     /* ROUTING */
     /*
     * 1. APP_ROUTERS_RESOLVER
     * */
-    let appRoutersResolver;
-    try {
-      appRoutersResolver = appInjector.get(APP_ROUTERS_RESOLVER);
-    } catch (e) {
-      // console.warn('Unable to get the APP_ROUTERS_RESOLVER'); // TODO: add debug log
-    }
+    const appRoutersResolver = await injectAsync(appInjector, APP_ROUTERS_RESOLVER);
+
     /* ROUTING */
     // TODO: extract helper..
     /*
@@ -107,13 +103,10 @@ module.exports = class Framework100500 {
 
       const resolvedRestRoutingProviders = ReflectiveInjector.resolve(restRoutingProviders);
       routingInjector = routingInjector.createChildFromResolved(resolvedRestRoutingProviders);
-      const routingModule = routingInjector.get(module);
+      const routingModule = await injectAsync(routingInjector, module);
 
-      return await routingModule.resolveRouters();
+      return await invokeFn(routingModule.resolveRouters());
     }));
-
-    // TODO: Provide APP_ROUTERS and return just injector
-
 
     const routersFlattened = flatten(routers);
     if (!routersFlattened.length) {
@@ -125,7 +118,7 @@ module.exports = class Framework100500 {
       useValue: routersFlattened,
     }];
 
-    const routersInitializer = await injectAsync(APP_ROUTERS_INITIALIZER);
+    const routersInitializer = await injectAsync(appInjector, APP_ROUTERS_INITIALIZER);
 
     if (!routersInitializer) {
       routersProviders.push({
@@ -139,24 +132,29 @@ module.exports = class Framework100500 {
     return appInjector.createChildFromResolved(routersProvider);
   }
 
+  // static async initApplicationModule(appModule) {
+  //
+  // }
+  //
+  // static async initModule(appInjector, appModule) {
+  //
+  // }
+  //
+  // static async initApplicationRouting(appInjector, routingModules) {
+  //
+  // }
+
   /**
    *
    * @param appInjector
-   * @returns {Promise<any[]>}
+   * @returns {Promise<*>}
    */
   static async invokeInitializers(appInjector) {
-    let appMiddlewareInitializer;
-    let appInitializers = [];
     let initializeInjector = appInjector;
 
-    try {
-      appMiddlewareInitializer = appInjector.get(APP_MIDDLEWARE_INITIALIZER);
+    const appMiddlewareInitializer = await injectAsync(appInjector, APP_MIDDLEWARE_INITIALIZER);
 
-      isArray(appMiddlewareInitializer)
-        ? await invokeOnAll(appMiddlewareInitializer, 'init')
-        : await invokeFn(appMiddlewareInitializer.init);
-
-    } catch (e) {
+    if (!appMiddlewareInitializer) {
       const resolvedProvidersWithMWInitializer = ReflectiveInjector.resolve([{
         provide: APP_INITIALIZER,
         useClass: MiddlewareInitializer,
@@ -165,19 +163,21 @@ module.exports = class Framework100500 {
       initializeInjector = appInjector.createChildFromResolved(resolvedProvidersWithMWInitializer);
     }
 
-    try {
-      appInitializers = initializeInjector.get(APP_INITIALIZER);
-    } catch (e) {
-      // console.warn('APP_INITIALIZERs are not found');   // TODO: add debug log
-    }
+    const appInitializers = await injectAsync(appInjector, APP_INITIALIZER);
+    const restInitializers = await injectAsync(initializeInjector, APP_INITIALIZER);
 
-    return await invokeOnAll(appInitializers, 'init');
+    const allInitializers = [
+      ...(isArray(appInitializers) ? appInitializers : [appInitializers]),
+      ...(isArray(restInitializers) ? restInitializers : [restInitializers]),
+      ...(isArray(appMiddlewareInitializer) ? appMiddlewareInitializer : [appMiddlewareInitializer]),
+    ];
+
+    await invokeOnAll(allInitializers, 'init');
   }
 
   /**
    * @static
    * @param appInjector
-   * @param clientRouters
    */
   static async mountRouters(appInjector) {
     const appRoutersInitializer = await injectOneAsync(appInjector, APP_ROUTERS_INITIALIZER);
@@ -189,27 +189,29 @@ module.exports = class Framework100500 {
    * @param appInjector
    * @param appModule
    */
-  static startServer(appInjector, appModule) {
-    const appModuleInstance = appInjector.get(appModule);
-
-    let errorListeners;
-    try {
-      errorListeners = appInjector.get(APP_SERVER_ERROR_LISTENER);
-    } catch (e) {
-      errorListeners = [];
+  static async startServer(appInjector, appModule) {
+    if (!(appInjector && appModule)) {
+      throw new Error('App Injector and/or App Module was/were not provided');
     }
 
-    if (isArray(errorListeners)) {
-      errorListeners.forEach(l => l.listen());
-    }
+    const appModuleInstance = await injectOneAsync(appInjector, appModule);
+    const errorListeners = await injectAsync(appInjector, APP_SERVER_ERROR_LISTENER);
+    const serverListener = await injectOneAsync(appInjector, APP_SERVER_NET_LISTENER);
 
+    /*
+    * Start server using a custom startServer method on bootstrap module or with provided server listeners
+    * */
     if (isFunction(appModuleInstance.startServer) ) {
-      appModuleInstance.startServer();
+      await invokeFn(appModuleInstance.startServer());
       return;
     }
 
-    const serverListener = appInjector.get(APP_SERVER_NET_LISTENER);
-    serverListener.listen && serverListener.listen();
+    const listeners = [
+      ...(isArray(errorListeners) ? errorListeners : [errorListeners]),
+      ...[serverListener],
+    ];
+
+    await invokeOnAll(listeners, 'listen');
   }
 
   /**
@@ -221,7 +223,7 @@ module.exports = class Framework100500 {
     const injector = await Framework100500.initModuleAndRouting(appModule);
     await Framework100500.invokeInitializers(injector);
     await Framework100500.mountRouters(injector);
-    Framework100500.startServer(injector, appModule); // TODO: use BOOTSTRAP_MODULE Injection token
+    await Framework100500.startServer(injector, appModule); // TODO: use BOOTSTRAP_MODULE Injection token
   }
 
 };

@@ -51,6 +51,9 @@ function moduleDecorator(targetClass, {
   }
 
   Object.defineProperties(injectableClassDecorator(targetClass), {
+    module: {
+      value: targetClass,
+    },
     providers: {
       value: [ ...providers ],
     },

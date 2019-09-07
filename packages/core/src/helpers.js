@@ -98,7 +98,7 @@ async function injectAsync(injector, token) {
   try {
     result = injector.get(token);
   } catch (e) {
-    console.warn('No dependency was found');
+    console.info('Dependency was not found: %s', token); // TODO: use debug log instead
   }
   return result;
 }

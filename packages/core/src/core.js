@@ -1,18 +1,17 @@
-const { difference, flatten, isArray, isFunction } = require('lodash');
+const { flatten, isArray, isFunction } = require('lodash');
 
 const { ReflectiveInjector } = require('./DI');
 const {
-  APP_INJECTOR,
   MODULE_INJECTOR,
   APP_INITIALIZER,
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  APP_ROUTERS_RESOLVER,
+  APP_ROUTING_MODULES_RESOLVER,
   APP_ROUTERS,
   APP_ROUTERS_INITIALIZER,
 } = require('./DI.tokens');
-const { invokeFn, invokeOnAll, injectAsync, injectOneAsync, isModuleWithProviders } = require('./helpers');
+const { invokeFn, invokeOnAll, injectAsync, injectOneAsync, isModuleWithProviders, isRoutingModule } = require('./helpers');
 const { MiddlewareInitializer, AppRoutersInitializer } = require('./initializers');
 
 module.exports = class Framework100500 {
@@ -38,58 +37,53 @@ module.exports = class Framework100500 {
   static async initModuleAndRouting(appModule) {
     const { imports = [], providers = [] } = appModule;
 
-    const modulesWithProviders = imports.filter(isModuleWithProviders);
-    const ordinaryModules = difference(imports, modulesWithProviders);
-    /* ROUTING */
-    const routingModules = modulesWithProviders.filter(m => m.module.name === 'RoutingModule');
-    const restModulesWithProviders = difference(modulesWithProviders, routingModules);
+    if (!(isArray(imports) && isArray(providers))) {
+      return ReflectiveInjector.resolveAndCreate([appModule]);
+    }
 
-    let appProviders = [
+    /**
+     * `Modules with providers` - share their providers with parent module
+     * `Ordinary modules` - encapsulate their providers within own scope. At the same time an Ordinary module has an access to parent scope
+     * `Routing modules` - do not have their own imports; encapsulate their providers for building application routing.
+     */
+
+    const ordinaryModules = imports.filter(m => !isModuleWithProviders(m));
+    const restModulesWithProviders = imports.filter(m => isModuleWithProviders(m) && !isRoutingModule(m));
+
+    /*
+    *  1. Init top-level providers with all modules with providers and top-level routing modules
+    * */
+    /*
+     * 2. Init recursively injectors of all `Ordinary modules`
+     * */
+
+    const importedProviders = restModulesWithProviders.reduce((memo, { module, providers }) => {
+      return [...memo, module, ...providers];
+    }, []);
+
+    const rootProviders = [
       ...providers,
-      // ...ordinaryModules, // TODO: init it recursively and provide after DI tree is built
-      appModule, // TODO: add providable check...
+      ...importedProviders,
+      ...ordinaryModules, // provide ordinary modules on a root level
+      appModule,
     ];
 
-    if (imports && imports.length) {
-      let importedProviders = ordinaryModules.reduce((m, { providers }) => ([...m, ...providers]), []);
-      importedProviders = restModulesWithProviders.reduce((m, { module, providers }) => {
-        return [...m, module, ...providers];
-      }, [...importedProviders]);
-      appProviders = [...appProviders, ...importedProviders];
-    }
+    const resolvedRootProviders = ReflectiveInjector.resolve(rootProviders);
+    const rootInjector = ReflectiveInjector.fromResolvedProviders(resolvedRootProviders);
 
-    const resolvedAppProviders = ReflectiveInjector.resolve(appProviders);
-    let appInjector = ReflectiveInjector.fromResolvedProviders(resolvedAppProviders);
-    const appInjectorProvider = ReflectiveInjector.resolve([{ // TODO: check if it can be skipped or repalced with 'injection-js' Injector
-      provide: APP_INJECTOR,
-      useValue: appInjector,
-    }]);
-    appInjector = appInjector.createChildFromResolved(appInjectorProvider);
+    // TODO: check if it can be skipped or repalced with 'injection-js' Injector
+    // const rootInjectorProvider = ReflectiveInjector.resolve([{
+    //   provide: APP_INJECTOR,
+    //   useValue: rootInjector,
+    // }]);
+    // rootInjector = rootInjector.createChildFromResolved(rootInjectorProvider);
+
+    const rootRoutingModules = Framework100500.extractRoutingModules(appModule, rootInjector);
 
     /* ROUTING */
-    /*
-    * 1. APP_ROUTERS_RESOLVER
-    * */
-    const appRoutersResolver = await injectAsync(appInjector, APP_ROUTERS_RESOLVER);
-
-    /* ROUTING */
-    // TODO: extract helper..
-    /*
-    * 2. APP_ROUTER_DESCRIPTOR_RESOLVER
-    * */
-    let resolved = [];
-    /* ROUTING */
-    if (appRoutersResolver) {
-      resolved = appRoutersResolver && isArray(appRoutersResolver)
-        ? await invokeOnAll(appRoutersResolver, 'resolve')
-        : [await invokeFn(appRoutersResolver.resolve())];
-    }
-    /* ROUTING */
-    const allRouters = [...resolved, ...routingModules];
-    /* ROUTING */
-    const routers = await Promise.all(allRouters.map(async ({ module, providers }) => {
+    const routers = await Promise.all(rootRoutingModules.map(async ({ module, providers }) => {
       const resolvedRoutingProviders = ReflectiveInjector.resolve(providers);
-      let routingInjector = appInjector.createChildFromResolved(resolvedRoutingProviders);
+      let routingInjector = rootInjector.createChildFromResolved(resolvedRoutingProviders);
       const restRoutingProviders = [
         {
           provide: MODULE_INJECTOR,
@@ -107,7 +101,7 @@ module.exports = class Framework100500 {
 
     const routersFlattened = flatten(routers);
     if (!routersFlattened.length) {
-      return appInjector;
+      return rootInjector;
     }
 
     const routersProviders = [{
@@ -115,7 +109,7 @@ module.exports = class Framework100500 {
       useValue: routersFlattened,
     }];
 
-    const routersInitializer = await injectAsync(appInjector, APP_ROUTERS_INITIALIZER);
+    const routersInitializer = await injectAsync(rootInjector, APP_ROUTERS_INITIALIZER);
 
     if (!routersInitializer) {
       routersProviders.push({
@@ -126,20 +120,43 @@ module.exports = class Framework100500 {
 
     const routersProvider = ReflectiveInjector.resolve(routersProviders);
 
-    return appInjector.createChildFromResolved(routersProvider);
+    return rootInjector.createChildFromResolved(routersProvider);
   }
 
-  // static async initApplicationModule(appModule) {
+  // static async initModule(parentInjector, appModule) {
   //
   // }
   //
-  // static async initModule(appInjector, appModule) {
+  // static async initRoutingModule(parentInjector, routingModule) {
   //
   // }
-  //
-  // static async initApplicationRouting(appInjector, routingModules) {
-  //
-  // }
+
+  /**
+   * TODO: leave as is or move to ordinary helper
+   * @param module
+   * @param moduleInjector
+   * @returns {Promise<*[]>}
+   */
+  static async extractRoutingModules(module, moduleInjector) {
+    const { imports } = module;
+    let resolvedRoutingModules = [];
+
+    const routingModules = imports.filter(m => isModuleWithProviders(m) && isRoutingModule(m));
+
+    const routingModulesResolver = await injectAsync(moduleInjector, APP_ROUTING_MODULES_RESOLVER);
+    if (routingModulesResolver) {
+      resolvedRoutingModules = routingModulesResolver && isArray(routingModulesResolver)
+        ? await invokeOnAll(routingModulesResolver, 'resolve')
+        : [await invokeFn(routingModulesResolver.resolve())];
+    }
+    /* ROUTING */
+    const moduleRoutingModules = [
+      ...resolvedRoutingModules,
+      ...routingModules,
+    ];
+
+    return moduleRoutingModules;
+  }
 
   /**
    *
@@ -198,7 +215,7 @@ module.exports = class Framework100500 {
     /*
     * Start server using a custom startServer method on bootstrap module or with provided server listeners
     * */
-    if (isFunction(appModuleInstance.startServer) ) {
+    if (isFunction(appModuleInstance.startServer)) {
       await invokeFn(appModuleInstance.startServer());
       return;
     }

@@ -1,4 +1,4 @@
-const { first, flatten, isArray, isFunction } = require('lodash');
+const { first, flatten, get, isArray, isFunction } = require('lodash');
 
 /**
  * Checks if value is a Promise
@@ -126,6 +126,10 @@ function isModuleWithProviders(moduleOrDescriptor) {
   return !(moduleOrDescriptor.imports) && !!(moduleOrDescriptor.module && moduleOrDescriptor.providers);
 }
 
+function isRoutingModule(m) {
+  return get(m, 'module.name', '') === 'RoutingModule';
+}
+
 module.exports = {
   isArrowFunction,
   invokeFn,
@@ -134,4 +138,5 @@ module.exports = {
   injectAsync,
   injectOneAsync,
   isModuleWithProviders,
+  isRoutingModule,
 };

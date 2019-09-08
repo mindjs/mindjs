@@ -39,10 +39,10 @@ const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('.
       },
    });
 
-   or just provide APP_ROUTERS_RESOLVER as follows
+   or just provide APP_ROUTING_MODULES_RESOLVER as follows
 
    {
-     provide: APP_ROUTERS_RESOLVER,
+     provide: APP_ROUTING_MODULES_RESOLVER,
      useFactory: function () {
       return {
         async resolve() {

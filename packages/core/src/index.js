@@ -3,7 +3,7 @@ const Framework100500 = require('./core');
 const {
   Inject,
   Module,
-  InjectableClass,
+  Injectable,
 } = require('./decorators');
 
 const {
@@ -35,7 +35,7 @@ module.exports = {
 
   Inject,
   Module,
-  InjectableClass,
+  Injectable,
 
   Framework100500,
 };

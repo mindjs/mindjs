@@ -1,4 +1,4 @@
-const { InjectableClass, Inject } = require('@framework100500/core');
+const { Injectable, Inject } = require('@framework100500/core');
 
 const { HTTP_CLIENT, HTTP_REQUEST_INTERCEPTOR } = require('./DI.tokens');
 
@@ -58,4 +58,4 @@ class HttpClient {
 
 }
 
-module.exports = InjectableClass(HttpClient);
+module.exports = Injectable(HttpClient);

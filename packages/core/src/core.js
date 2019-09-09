@@ -29,18 +29,22 @@ module.exports = class Framework100500 {
 
   /**
    *
-   * @param appModule
-   * @returns {Promise<{module: *, injector: *, child: *[]}>}
+   * @param {{module: *, injector?: *, child?: {module: *, injector?: *, child?: *}[]}} moduleDI
+   * @returns {Promise<{module: *, injector: *, child: *}|{module: *, injector: *, child: []}>}
    */
-  static async initModuleAndRouting(appModule = {}) {
+  static async initModuleAndRouting(moduleDI) {
+    const { module: appModule, injector: parentInjector } = moduleDI;
     const { imports = [], providers = [] } = appModule;
 
     if (!(isArray(imports) && isArray(providers))) {
+      const resolvedModuleProviders = ReflectiveInjector.resolve([appModule]);
+      const moduleInjector = parentInjector
+        ? parentInjector.createChildFromResolved(resolvedModuleProviders)
+        : ReflectiveInjector.fromResolvedProviders(resolvedModuleProviders);
+
       return {
         module: appModule,
-        injector: ReflectiveInjector.resolveAndCreate([
-          appModule,
-        ]),
+        injector: moduleInjector,
         child: [],
       };
     }
@@ -67,38 +71,57 @@ module.exports = class Framework100500 {
       appModule,
     ];
     const resolvedRootProviders = ReflectiveInjector.resolve(rootProviders);
-    const rootInjector = ReflectiveInjector.fromResolvedProviders(resolvedRootProviders);
-
-    const routingInitInjector = await Framework100500.initAndMountRoutingModules({
-      module: appModule,
-      injector: rootInjector,
-    });
+    const rootInjector = parentInjector
+      ? parentInjector.createChildFromResolved(resolvedRootProviders)
+      : ReflectiveInjector.fromResolvedProviders(resolvedRootProviders);
 
     /*
-     * 2. Init recursively injectors of `Ordinary modules`
+     * 2. Init injectors of Routing and Ordinary modules
      * */
-    const ordinaryModulesInjectors = await Promise.all(
-      ordinaryModules.map(async (m) => await Framework100500.initModuleAndRouting(m))
-    );
+    const [routingInitInjector, ordinaryModulesInjectors] = await Promise.all([
+      Framework100500.initAndMountRoutingModules({
+        module: appModule,
+        injector: rootInjector,
+      }),
+      Promise.all(
+        ordinaryModules.map(async (m) => await Framework100500.initModuleAndRouting({
+          module: m,
+          injector: rootInjector,
+        }))
+      ),
+    ]);
+
+    const childInjectors = routingInitInjector ? [
+      routingInitInjector,
+      ...ordinaryModulesInjectors,
+    ] : [
+      ...ordinaryModulesInjectors,
+    ];
 
     return {
       module: appModule,
       injector: rootInjector,
-      child: [
-        routingInitInjector,
-        ...ordinaryModulesInjectors,
-      ]
+      child: childInjectors,
     };
   }
 
-  static async initAndMountRoutingModules(DITree) {
-    const { injector: parentModuleInjector, module: parentModule } = DITree;
+  /**
+   *
+   * @param {{module: *, injector: *, child?: {module: *, injector: *, child: []}[]}} moduleDI
+   * @returns {Promise<{module: *, injector: *, child: {module: *, injector: *, child: []}[]}>}
+   */
+  static async initAndMountRoutingModules(moduleDI) {
+    const { injector: parentModuleInjector, module: parentModule } = moduleDI;
 
-    const rootRoutingModules = await Framework100500.extractRoutingModules(parentModule, parentModuleInjector);
+    const routingModules = await Framework100500.extractRoutingModules(parentModule, parentModuleInjector);
+
+    if (!routingModules.length) {
+      return;
+    }
 
     // TODO: extract a helper
     const routingModulesInjectors = await Promise.all(
-      rootRoutingModules.map(async ({ module, providers }) => {
+      routingModules.map(async ({ module, providers }) => {
         const routingModuleProviders = ReflectiveInjector.resolve([
           ...providers,
           module,
@@ -110,14 +133,14 @@ module.exports = class Framework100500 {
           injector: routingModuleInjector,
           child: [],
         };
-      })
+      }),
     );
 
     const resolvedRouters = await Promise.all(
       routingModulesInjectors.map(async ({ module, injector }) => {
         const routingModule = await injectAsync(injector, module);
         return await invokeFn(routingModule.resolveRouters());
-      })
+      }),
     );
 
     const routingInitProviders = [{
@@ -131,7 +154,7 @@ module.exports = class Framework100500 {
     if (!routersInitializer) {
       routingInitProviders.push({
         provide: APP_ROUTERS_INITIALIZER,
-        useClass: AppRoutersInitializer
+        useClass: AppRoutersInitializer,
       });
     }
 
@@ -156,7 +179,7 @@ module.exports = class Framework100500 {
    * @returns {Promise<*[]>}
    */
   static async extractRoutingModules(appModule, appModuleInjector) {
-    const { imports } = appModule;
+    const { imports = [] } = appModule;
     let resolvedRoutingModules = [];
 
     const routingModules = imports.filter(m => isModuleWithProviders(m) && isRoutingModule(m));
@@ -222,11 +245,11 @@ module.exports = class Framework100500 {
 
   /**
    *
-   * @param appDITree
+   * @param moduleDI
    * @returns {Promise<void>}
    */
-  static async startServer(appDITree = {}) {
-   const { module: rootModule, injector: rootInjector } = appDITree;
+  static async startServer(moduleDI = {}) {
+    const { module: rootModule, injector: rootInjector } = moduleDI;
 
     if (!(rootModule && rootInjector)) {
       throw new Error('App Injector and/or App Module was/were not provided');
@@ -258,9 +281,10 @@ module.exports = class Framework100500 {
    * @returns {Promise<void>}
    */
   static async bootstrap(rootModule) {
-    const appDITree = await Framework100500.initModuleAndRouting(rootModule);
-    await Framework100500.invokeInitializers(appDITree);
-    await Framework100500.startServer(appDITree); // TODO: use BOOTSTRAP_MODULE Injection token
+    // TODO: add possibility to visualize DI tree
+    const rootModuleDI = await Framework100500.initModuleAndRouting({ module: rootModule });
+    await Framework100500.invokeInitializers(rootModuleDI);
+    await Framework100500.startServer(rootModuleDI); // TODO: use BOOTSTRAP_MODULE Injection token
   }
 
 };

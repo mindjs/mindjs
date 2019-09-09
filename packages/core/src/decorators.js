@@ -80,5 +80,5 @@ function injectDecorator(token) {
 module.exports = {
   Inject: injectDecorator,
   Module: moduleDecorator,
-  InjectableClass: injectableClassDecorator,
+  Injectable: injectableClassDecorator,
 };

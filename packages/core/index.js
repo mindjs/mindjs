@@ -17,7 +17,7 @@ const {
   APP_ROUTERS,
   APP_ROUTERS_INITIALIZER,
 
-  InjectableClass,
+  Injectable,
   Inject,
   Module,
 
@@ -39,7 +39,7 @@ module.exports = {
 
   Inject,
   Module,
-  InjectableClass,
+  Injectable,
 
   Framework100500,
 };

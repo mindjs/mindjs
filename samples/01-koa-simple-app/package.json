@@ -1,5 +1,5 @@
 {
-  "name": "framework100500-sample-koa-app",
+  "name": "framework100500-sample-koa-sample-app",
   "version": "1.0.0",
   "description": "Sample app of framework100500 usage with koa.js server",
   "main": "index.js",

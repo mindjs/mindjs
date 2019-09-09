@@ -1,7 +1,7 @@
 const {
   Module,
   Inject,
-  InjectableClass,
+  Injectable,
   APP_SERVER,
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
@@ -29,9 +29,9 @@ const helmet = require('koa-helmet');
 const logger = require('koa-logger');
 
 const AppConfigService = require('./config.service');
-const { EnableProxyAppInitializer } = require('./app.initializers')
+const { EnableProxyAppInitializer } = require('./app.initializers');
 
-const HelloWorldHandlerResolver =  InjectableClass(class HelloWorldHandlerResolver {
+const HelloWorldHandlerResolver =  Injectable(class HelloWorldHandlerResolver {
   resolve() {
     return async (ctx) => {
       ctx.body = `hello, ${ ctx.state.name }`
@@ -39,7 +39,7 @@ const HelloWorldHandlerResolver =  InjectableClass(class HelloWorldHandlerResolv
   }
 });
 
-const AddExclamationMarkMiddlewareResolver = InjectableClass(class AddExclamationMarkMiddlewareResolver {
+const AddExclamationMarkMiddlewareResolver = Injectable(class AddExclamationMarkMiddlewareResolver {
 
   static get parameters() {
     return [
@@ -61,7 +61,7 @@ const AddExclamationMarkMiddlewareResolver = InjectableClass(class AddExclamatio
   }
 });
 
-const LogOutTimeMiddlewareResolver =  InjectableClass(class LogOutTimeMiddlewareResolver {
+const LogOutTimeMiddlewareResolver =  Injectable(class LogOutTimeMiddlewareResolver {
 
   resolve() {
     return async (ctx, next) => {

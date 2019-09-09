@@ -1,4 +1,4 @@
-const { InjectableClass } = require('@framework100500/core');
+const { Injectable } = require('@framework100500/core');
 
 const DEFAULT_PORT = 3000;
 
@@ -23,4 +23,4 @@ class ConfigService {
     }
   }
 }
-module.exports = InjectableClass(ConfigService);
+module.exports = Injectable(ConfigService);

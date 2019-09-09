@@ -22,13 +22,6 @@ const APP_SERVER_ERROR_LISTENER = new InjectionToken('AppServerErrorListener');
 const APP_SERVER_NET_LISTENER = new InjectionToken('AppServerNetListener');
 
 /*
-  Injectors
- */
-// TODO: investigate if it can be replaced with injection-js's Injector
-const APP_INJECTOR = new InjectionToken('ApplicationInjector');
-const MODULE_INJECTOR = new InjectionToken('ModuleInjector');
-
-/*
 Routing
 */
 /*
@@ -42,16 +35,14 @@ const APP_ROUTER_DESCRIPTOR_RESOLVER = new InjectionToken('AppRouterResolver');
 
 module.exports = {
   APP_INITIALIZER,
-  APP_INJECTOR,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  MODULE_INJECTOR,
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_ROUTER_PROVIDER,
-  APP_ROUTING_MODULES_RESOLVER: APP_ROUTING_MODULES_RESOLVER,
+  APP_ROUTING_MODULES_RESOLVER,
   APP_ROUTERS,
   APP_ROUTERS_INITIALIZER,
 };

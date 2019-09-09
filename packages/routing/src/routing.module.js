@@ -3,11 +3,11 @@ const { isFunction, isArray } = require('lodash');
 const { HTTP_METHODS } = require('@framework100500/common');
 const {
   Module,
-  MODULE_INJECTOR,
   Inject,
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_ROUTER_PROVIDER,
 } = require('@framework100500/core');
+const { Injector } = require('@framework100500/core/DI');
 
 const { stubHandler } = require('./constants');
 const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('./helpers');
@@ -65,7 +65,7 @@ class RoutingModule {
 
   static get parameters() {
     return [
-      Inject(MODULE_INJECTOR),
+      Inject(Injector),
       Inject(APP_ROUTER_PROVIDER),
     ];
   }

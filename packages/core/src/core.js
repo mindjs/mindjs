@@ -78,7 +78,7 @@ module.exports = class Framework100500 {
     /*
      * 2. Init injectors of Routing and Ordinary modules
      * */
-    const [routingInitInjector, ordinaryModulesInjectors] = await Promise.all([
+    const [routingInitDI, ordinaryModulesInjectors] = await Promise.all([
       Framework100500.initAndMountRoutingModules({
         module: appModule,
         injector: rootInjector,
@@ -91,8 +91,12 @@ module.exports = class Framework100500 {
       ),
     ]);
 
-    const childInjectors = routingInitInjector ? [
-      routingInitInjector,
+    if (routingInitDI) {
+      await Framework100500.mountRouters(routingInitDI);
+    }
+
+    const childInjectors = routingInitDI ? [
+      routingInitDI,
       ...ordinaryModulesInjectors,
     ] : [
       ...ordinaryModulesInjectors,
@@ -108,7 +112,7 @@ module.exports = class Framework100500 {
   /**
    *
    * @param {{module: *, injector: *, child?: {module: *, injector: *, child: []}[]}} moduleDI
-   * @returns {Promise<{module: *, injector: *, child: {module: *, injector: *, child: []}[]}>}
+   * @returns {Promise<{module: *, injector: *, child: {module: *, injector: *, child: []}[]}>|undefined}
    */
   static async initAndMountRoutingModules(moduleDI) {
     const { injector: parentModuleInjector, module: parentModule } = moduleDI;
@@ -120,7 +124,7 @@ module.exports = class Framework100500 {
     }
 
     // TODO: extract a helper
-    const routingModulesInjectors = await Promise.all(
+    const routingModulesDI = await Promise.all(
       routingModules.map(async ({ module, providers }) => {
         const routingModuleProviders = ReflectiveInjector.resolve([
           ...providers,
@@ -137,7 +141,7 @@ module.exports = class Framework100500 {
     );
 
     const resolvedRouters = await Promise.all(
-      routingModulesInjectors.map(async ({ module, injector }) => {
+      routingModulesDI.map(async ({ module, injector }) => {
         const routingModule = await injectAsync(injector, module);
         return await invokeFn(routingModule.resolveRouters());
       }),
@@ -161,13 +165,11 @@ module.exports = class Framework100500 {
     const resolvedRoutingInitProviders = ReflectiveInjector.resolve(routingInitProviders);
     const routingInitInjector = parentModuleInjector.createChildFromResolved(resolvedRoutingInitProviders);
 
-    await Framework100500.mountRouters(routingInitInjector);
-
     return {
       module: parentModule,
       injector: routingInitInjector,
       child: [
-        ...routingModulesInjectors,
+        ...routingModulesDI,
       ],
     };
   }
@@ -236,9 +238,10 @@ module.exports = class Framework100500 {
 
   /**
    * @static
-   * @param moduleInjector
+   * @param moduleDI
    */
-  static async mountRouters(moduleInjector) {
+  static async mountRouters(moduleDI) {
+    const { injector: moduleInjector } = moduleDI;
     const moduleRoutingInitializer = await injectOneAsync(moduleInjector, APP_ROUTERS_INITIALIZER);
     await invokeFn(isFunction(moduleRoutingInitializer.init) && moduleRoutingInitializer.init());
   }
@@ -284,7 +287,7 @@ module.exports = class Framework100500 {
     // TODO: add possibility to visualize DI tree
     const rootModuleDI = await Framework100500.initModuleAndRouting({ module: rootModule });
     await Framework100500.invokeInitializers(rootModuleDI);
-    await Framework100500.startServer(rootModuleDI); // TODO: use BOOTSTRAP_MODULE Injection token
+    await Framework100500.startServer(rootModuleDI);
   }
 
 };

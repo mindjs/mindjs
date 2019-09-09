@@ -19,7 +19,7 @@ module.exports = RoutingModule.forRoot({
       }
     ],
     injectCommonMiddlewareResolvers: [
-      LogOutTimeMiddlewareResolver,
+
     ],
     routes: [{
       path: 'hello-world',
@@ -35,7 +35,8 @@ module.exports = RoutingModule.forRoot({
       ],
       // AND/OR
       injectMiddlewareResolvers: [
-        AddExclamationMarkMiddlewareResolver
+        AddExclamationMarkMiddlewareResolver,
+        LogOutTimeMiddlewareResolver,
       ],
 
       injectHandlerResolver: HelloWorldHandlerResolver,

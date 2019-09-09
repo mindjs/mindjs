@@ -1,4 +1,5 @@
 const { Injectable, Inject } = require('@framework100500/core');
+const { HttpStatus} = require('@framework100500/common');
 
 const { HELLO_WORD } = require('../DI.tokens');
 
@@ -18,7 +19,10 @@ class HelloWorldHandlerResolver {
 
   resolve() {
     return async (ctx) => {
-      ctx.body = `${ this.helloWord }, ${ ctx.state.name }`
+      ctx.body = {
+        status: HttpStatus.OK,
+        message: `${ this.helloWord }, ${ ctx.state.name }`,
+    }
     }
   }
 }

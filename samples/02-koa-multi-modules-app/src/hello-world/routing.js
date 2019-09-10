@@ -18,9 +18,7 @@ module.exports = RoutingModule.forRoot({
         return next();
       }
     ],
-    injectCommonMiddlewareResolvers: [
-
-    ],
+    injectCommonMiddlewareResolvers: [],
     routes: [{
       path: 'hello-world',
       method: HTTP_METHODS.GET,

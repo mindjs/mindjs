@@ -1,6 +1,6 @@
 {
   "name": "@framework100500/routing",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Framework100500 is a simple web API pure Node.js framework @routing",
   "main": "src/index.js",
   "scripts": {
@@ -10,8 +10,8 @@
     "node": ">=10.15.0"
   },
   "dependencies": {
-    "lodash": "4.17.15",
-    "debug": "4.1.1"
+    "debug": "4.1.1",
+    "lodash": "4.17.15"
   },
   "peerDependencies": {
     "@framework100500/common": "1.0.0",

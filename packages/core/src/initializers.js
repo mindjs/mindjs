@@ -35,11 +35,13 @@ function appRoutersInitializer(appServer, appRouters) {
   }
 
   appRouters.map(r => {
+    // Koa.js stuff
     if (isFunction(r.routes)) {
       appServer.use(r.routes());
       return;
     }
 
+    // Express.js stuff
     if (isFunction(r)) {
       appServer.use(r());
     }

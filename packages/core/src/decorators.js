@@ -14,7 +14,8 @@ function injectableClassDecorator(targetClass) {
     return targetClass;
   }
 
-  const tokenName = targetClass.name ? targetClass.name : `class-${ uuidv4() }`;
+  const fwPrefix = 'Framework100500-';
+  const tokenName = targetClass.name ? `${ fwPrefix }${ targetClass.name }` : `${ fwPrefix }-class-${ uuidv4() }`;
   const injectionToken = new InjectionToken(tokenName);
 
   Object.defineProperties(targetClass, {
@@ -69,7 +70,7 @@ function moduleDecorator(targetClass, {
 }
 
 /**
- * Shorthand decorator for a new Inject() statement
+ * Shorthand decorator for a `new Inject()` statement
  * @param {string} token
  * @returns {Inject}
  */

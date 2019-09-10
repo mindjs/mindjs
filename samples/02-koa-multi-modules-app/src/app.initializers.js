@@ -15,7 +15,7 @@ class EnableProxyAppInitializer {
   static get parameters() {
     return [
       AppConfigService,
-      Inject(APP_SERVER)
+      Inject(APP_SERVER),
     ]
   }
 
@@ -27,7 +27,7 @@ class EnableProxyAppInitializer {
     this.appServer = appServer;
   }
 
-  async init() {
+  init() {
     this.appServer.proxy = this.appConfigService.isProxy;
     if (this.appServer.proxy) {
       console.log('App proxy is enabled.');
@@ -43,36 +43,20 @@ const APP_INITIALIZERS = [
   },
   {
     provide: APP_ROUTERS_INITIALIZER,
-    useClass: class AppRoutersInitializer {
-      static get parameters() {
-        return [
-          Inject(APP_SERVER),
-          Inject(APP_ROUTERS),
-        ]
+    useValue: function appRoutersInitializer(appServer, appRouters) {
+
+      if (!(appServer && isArray(appRouters))) {
+        return;
       }
 
-      constructor(
-        appServer,
-        appRouters,
-      ) {
-        this.appServer = appServer;
-        this.appRouters = appRouters;
-      }
-
-     async init() {
-       console.log(1);
-       if (!(this.appServer && isArray(this.appRouters))) {
-          return;
-        }
-        console.log('Custom routers init');
-
-        this.appRouters.forEach(r => this.appServer.use(r.routes()));
-      }
-    }
+      console.log('Custom routers init');
+      appRouters.forEach(r => appServer.use(r.routes()));
+    },
   },
   {
     provide: APP_MIDDLEWARE_INITIALIZER,
     useClass: class AppMiddlewareInitializer {
+
       static get parameters() {
         return [
           Inject(APP_SERVER),
@@ -88,16 +72,15 @@ const APP_INITIALIZERS = [
         this.appServer = appServer;
       }
 
-     async init() {
-       console.log(2);
-       if (!(this.appServer && isArray(this.appMiddleware))) {
+      init() {
+        if (!(this.appServer && isArray(this.appMiddleware))) {
           return;
         }
         console.log('Custom middleware init');
 
         this.appMiddleware.forEach(m => this.appServer.use(m));
       }
-    }
+    },
   },
 ];
 

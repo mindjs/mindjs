@@ -1,4 +1,10 @@
+const injectDebug = require('debug')('Framework100500:DI:inject');
+
 const { first, flatten, get, isArray, isFunction } = require('lodash');
+
+/*
+* TODO: split into separate scoped helpers and move to common module if necessary
+* */
 
 /**
  * Checks if value is a Promise
@@ -98,7 +104,7 @@ async function injectAsync(injector, token) {
   try {
     result = injector.get(token);
   } catch (e) {
-    console.info('Dependency was not found: %s', token); // TODO: use debug log instead
+    injectDebug('Dependency <%s> was not found in provided injector ', token);
   }
   return result;
 }

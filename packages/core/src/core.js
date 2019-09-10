@@ -89,19 +89,14 @@ module.exports = class Framework100500 {
       ),
     ]);
 
-    const childInjectors = routingInitDI ? [
-      routingInitDI,
-      ...ordinaryModulesInjectors,
-    ] : [
-      ...ordinaryModulesInjectors,
-    ];
-
     return {
       rootInjector,
-      routing: routingInitDI,
       module: appModule,
       injector: moduleInjector,
-      child: childInjectors,
+      routing: routingInitDI,
+      child: [
+        ...ordinaryModulesInjectors,
+      ],
     };
   }
 
@@ -134,6 +129,7 @@ module.exports = class Framework100500 {
         const routingModuleInjector = parentModuleInjector.createChildFromResolved(routingModuleProviders);
 
         return {
+          rootInjector,
           module,
           injector: routingModuleInjector,
           child: [],

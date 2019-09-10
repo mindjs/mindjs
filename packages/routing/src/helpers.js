@@ -1,4 +1,4 @@
-const { every, isFunction, isArray } = require('lodash');
+const { every, get, isFunction, isArray } = require('lodash');
 
 /**
  *
@@ -28,8 +28,34 @@ const isValidMiddlewareList = mwList => {
   ], Boolean);
 };
 
+/**
+ *
+ * @param {ReflectiveInjector} injector
+ * @param {InjectionToken} token
+ * @returns {*}
+ */
+function injectRecursivelyFromInjectorTree(injector, token) {
+  if (!(injector && token)) {
+    return;
+  }
+
+  let result;
+  try {
+    result = injector.get(token);
+  } catch (e) {
+    // ...
+  }
+
+  if (!result && isFunction(get(injector, 'parent.get'))) {
+    return injectRecursivelyFromInjectorTree(injector.parent, token);
+  }
+
+  return result;
+}
+
 module.exports = {
   isValidMiddlewareList,
   normalizeRoutePath,
   isValidHandler,
+  injectRecursivelyFromInjectorTree,
 };

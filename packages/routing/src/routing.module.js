@@ -10,7 +10,12 @@ const {
 const { Injector } = require('@framework100500/core/DI');
 
 const { stubHandler } = require('./constants');
-const { normalizeRoutePath, isValidHandler, isValidMiddlewareList } = require('./helpers');
+const {
+  normalizeRoutePath,
+  isValidHandler,
+  isValidMiddlewareList,
+  injectRecursivelyFromInjectorTree,
+} = require('./helpers');
 
 /*
 
@@ -79,9 +84,23 @@ class RoutingModule {
   }
 
   /**
-   *
-   * @param providers
-   * @param routes
+   * @param {{
+   *   providers: Injectable|Provider[],
+   *   routerDescriptor: {
+   *     prefix: string,
+   *     injectCommonMiddlewareResolvers: Injectable[],
+   *     commonMiddleware: Function[],
+   *     routes: {
+   *       path: string,
+   *       method: HTTP_METHODS.GET|HTTP_METHODS.POST|HTTP_METHODS.PUT|HTTP_METHODS.PATCH|HTTP_METHODS.DELETE|HTTP_METHODS.HEAD|HTTP_METHODS.OPTIONS,
+   *       handler: Function,
+   *       injectHandlerResolver: Injectable,
+   *       injectHandlerResolveParams: Injectable[],
+   *       middleware: Function[],
+   *       injectMiddlewareResolvers: Injectable[],
+   *    }[]
+   *   }
+   * }} routingConfig
    * @returns {{providers: {provide: *, useFactory: (function(): {resolve(): Promise<*>}), multi: boolean}[]}}
    */
   static forRoot({ providers = [], routerDescriptor = {} }) {
@@ -107,7 +126,7 @@ class RoutingModule {
   }
 
   /**
-   * TODO: split into separate methods
+   *
    * @returns {Promise<Router[]>}
    */
   async resolveRouters() {
@@ -247,13 +266,7 @@ class RoutingModule {
       return;
     }
 
-    let result;
-    try {
-      result = this.moduleInjector.get(token);
-    } catch (e) {
-      // ...
-    }
-    return result;
+    return injectRecursivelyFromInjectorTree(this.moduleInjector, token);
   }
 
   /**

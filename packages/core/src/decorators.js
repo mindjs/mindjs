@@ -10,7 +10,7 @@ const { InjectionToken, _Inject } = require('./DI');
  * @returns {*}
  */
 function injectableClassDecorator(targetClass) {
-  if (!(targetClass && isFunction(targetClass))) {
+  if (!isFunction(targetClass) || (targetClass.token && targetClass.useClass)) {
     return targetClass;
   }
 
@@ -46,7 +46,7 @@ function moduleDecorator(targetClass, {
   providers = [],
   imports = [],
 } = {}) {
-  if (!isFunction(targetClass)) {
+  if (!isFunction(targetClass) || (targetClass.token && targetClass.useClass)) {
     return targetClass;
   }
 

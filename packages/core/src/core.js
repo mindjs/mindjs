@@ -192,7 +192,7 @@ module.exports = class Framework100500 {
     }
 
     return [
-      ...resolvedRoutingModules,
+      ...flatten(resolvedRoutingModules),
       ...routingModules,
     ];
   }

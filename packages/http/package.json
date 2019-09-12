@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lifter21/framework100500.git"
+    "url": "https://github.com/framework100500/framework100500.git"
   },
   "publishConfig": {
     "access": "public"

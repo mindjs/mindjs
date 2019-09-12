@@ -63,13 +63,13 @@ A minimal reproduce scenario using a repository or Gist allows us to quickly con
 
 Unfortunately, we are not able to investigate / fix bugs without a minimal reproduction, so if we don't hear back from you we are going to close an issue that don't have enough info to be reproduced.
 
-You can file new issues by filling out our [new issue form](https://github.com/lifter21/Framework100500/issues/new).
+You can file new issues by filling out our [new issue form](https://github.com/framework100500/framework100500/issues/new).
 
 ### <a name="submit-pr"></a> Submitting a Pull Request (PR)
 
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-1. Search [GitHub](https://github.com/lifter21/framework100500/pulls) for an open or closed PR
+1. Search [GitHub](https://github.com/framework100500/framework100500/pulls) for an open or closed PR
    that relates to your submission. You don't want to duplicate effort.
 1. Fork the lifter21/framework100500 repo.
 1. Make your changes in a new git branch:
@@ -214,7 +214,7 @@ to read on GitHub as well as in various git tools.
 
 Footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
 
-Samples: (even more [samples](https://github.com/lifter21/framework100500/commits/master))
+Samples: (even more [samples](https://github.com/framework100500/framework100500/commits/master))
 
 ```
 docs(changelog) update change log to beta.5
@@ -282,8 +282,8 @@ A detailed explanation can be found in this [document][commit-message-format].
 
 [commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
 [corporate-cla]: http://code.google.com/legal/corporate-cla-v1.0.html
-[dev-doc]: https://github.com/lifter21/framework100500/blob/master/docs/DEVELOPER.md
-[github]: https://github.com/lifter21/framework100500
+[dev-doc]: https://github.com/framework100500/framework100500/blob/master/docs/DEVELOPER.md
+[github]: https://github.com/framework100500/framework100500
 [discord]: https://discordapp.com/invite/G7Qnnhy
 [individual-cla]: http://code.google.com/legal/individual-cla-v1.0.html
 [js-style-guide]: https://google.github.io/styleguide/jsguide.html

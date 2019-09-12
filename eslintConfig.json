@@ -1,0 +1,44 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended"
+  ],
+  "rules": {
+    "node/exports-style": ["error", "module.exports"],
+    "node/file-extension-in-import": ["error", "always"],
+    "node/prefer-global/buffer": ["error", "always"],
+    "node/prefer-global/process": ["error", "always"],
+    "node/prefer-global/url-search-params": ["error", "always"],
+    "node/prefer-global/url": ["error", "always"],
+    "node/prefer-promises/dns": "error",
+    "node/prefer-promises/fs": "error",
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "no-const-assign": "error",
+    "no-dupe-class-members": "error",
+    "no-multi-spaces": "error",
+    "no-duplicate-imports": "error",
+    "no-useless-constructor": "error",
+    "no-nested-ternary": "error",
+    "no-magic-numbers": "error",
+    "no-var": "error",
+    "key-spacing": ["error", { "afterColon": true }],
+    "keyword-spacing": ["error", { "before": true }],
+    "lines-between-class-members": ["error", "always"],
+    "max-len": ["error", { "code": 120,
+      "ignoreComments": true,
+      "ignoreUrls": true,
+      "tabWidth": 2,
+      "ignoreStrings": true
+    }],
+    "object-curly-spacing": ["error", "always"],
+    "prefer-const": ["error", {
+      "destructuring": "any"
+    }],
+    "prefer-template": "error",
+    "arrow-spacing": ["error",  { "before": true, "after": true }],
+    "no-trailing-spaces": ["error", { "ignoreComments": true }],
+    "spaced-comment": ["error", "always", { "exceptions": ["*", "-", "+"] }]
+  }
+}

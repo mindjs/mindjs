@@ -284,7 +284,6 @@ A detailed explanation can be found in this [document][commit-message-format].
 [corporate-cla]: http://code.google.com/legal/corporate-cla-v1.0.html
 [dev-doc]: https://github.com/framework100500/framework100500/blob/master/docs/DEVELOPER.md
 [github]: https://github.com/framework100500/framework100500
-[discord]: https://discordapp.com/invite/G7Qnnhy
 [individual-cla]: http://code.google.com/legal/individual-cla-v1.0.html
 [js-style-guide]: https://google.github.io/styleguide/jsguide.html
 [jsfiddle]: http://jsfiddle.net

@@ -1,6 +1,6 @@
 # Framework100500 
 
-## Development guide
+## Platforms
 
 <!---
     TODO...

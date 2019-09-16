@@ -1,6 +1,6 @@
 {
   "name": "@framework100500/routing",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Framework100500 is a simple web API pure Node.js framework @routing",
   "main": "index.js",
   "keywords": [

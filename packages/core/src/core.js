@@ -8,7 +8,6 @@ const {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTERS,
   APP_ROUTERS_INITIALIZER,
 } = require('./DI.tokens');
 const { invokeFn, invokeOnAll, injectAsync, injectOneAsync, isModuleWithProviders, isRoutingModule } = require('./helpers');
@@ -33,7 +32,7 @@ module.exports = class Framework100500 {
    * @param {{module: *, injector?: *, child?: {module: *, injector?: *, child?: *}[]}} moduleDI
    * @returns {Promise<{module: *, injector: *, child: *}|{module: *, injector: *, child: []}>}
    */
-  static async initModuleAndRouting(moduleDI) {
+  static async initModuleAndRoutingDI(moduleDI) {
     // TODO: add dummy checks
     let { injector: parentInjector, rootInjector } = moduleDI;
     const { module: appModule } = moduleDI;
@@ -74,14 +73,14 @@ module.exports = class Framework100500 {
     /*
      * 2. Init injectors of Routing and Ordinary modules
      * */
-    const [routingInitDI, ordinaryModulesInjectors] = await Promise.all([
-      Framework100500.initRoutingModules({
+    const [routingModulesDI, ordinaryModulesInjectors] = await Promise.all([
+      Framework100500.initRoutingModulesDI({
         rootInjector,
         module: appModule,
         injector: moduleInjector,
       }),
       Promise.all(
-        ordinaryModules.map(async (m) => await Framework100500.initModuleAndRouting({
+        ordinaryModules.map(async (m) => await Framework100500.initModuleAndRoutingDI({
           rootInjector,
           module: m,
           injector: moduleInjector,
@@ -93,7 +92,7 @@ module.exports = class Framework100500 {
       rootInjector,
       module: appModule,
       injector: moduleInjector,
-      routing: routingInitDI,
+      routing: routingModulesDI,
       child: [
         ...ordinaryModulesInjectors,
       ],
@@ -105,7 +104,7 @@ module.exports = class Framework100500 {
    * @param {{module: *, injector: *, child?: {module: *, injector: *, child: []}[]}} moduleDI
    * @returns {Promise<{module: *, injector: *, child: {module: *, injector: *, child: []}[]}>|undefined}
    */
-  static async initRoutingModules(moduleDI) {
+  static async initRoutingModulesDI(moduleDI) {
     const { rootInjector, injector: parentModuleInjector, module: parentModule } = moduleDI;
 
     const routingModules = await Framework100500.extractRoutingModules({
@@ -119,7 +118,6 @@ module.exports = class Framework100500 {
       return;
     }
 
-    // TODO: extract a helper
     const routingModulesDI = await Promise.all(
       routingModules.map(async ({ module, providers }) => {
         const routingModuleProviders = ReflectiveInjector.resolve([
@@ -137,35 +135,10 @@ module.exports = class Framework100500 {
       }),
     );
 
-    const resolvedRouters = await Promise.all(
-      routingModulesDI.map(async ({ module, injector }) => {
-        const routingModule = await injectAsync(injector, module);
-        return await invokeFn(routingModule.resolveRouters());
-      }),
-    );
-
-    const routingInitProviders = [{
-      provide: APP_ROUTERS,
-      useValue: flatten(resolvedRouters),
-    }];
-
-    // TODO: think about renaming the APP_ROUTERS_INITIALIZER token
-    const routersInitializer = await injectAsync(rootInjector, APP_ROUTERS_INITIALIZER);
-
-    if (!routersInitializer) {
-      routingInitProviders.push({
-        provide: APP_ROUTERS_INITIALIZER,
-        useValue: appRoutersInitializer,
-      });
-    }
-
-    const resolvedRoutingInitProviders = ReflectiveInjector.resolve(routingInitProviders);
-    const routingInitInjector = rootInjector.createChildFromResolved(resolvedRoutingInitProviders);
-
     return {
       rootInjector,
       module: parentModule,
-      injector: routingInitInjector,
+      injector: parentModuleInjector,
       child: [
         ...routingModulesDI,
       ],
@@ -238,13 +211,13 @@ module.exports = class Framework100500 {
 
   /**
    *
-   * @param rootDI
+   * @param moduleDI
    * @returns {Promise<void>}
    */
-  static async initRouting(rootDI) {
-    const { routing, child } = rootDI;
+  static async initRouting(moduleDI) {
+    const { routing, child } = moduleDI;
     if (routing) {
-      await Framework100500.mountRouters(routing);
+      await Framework100500.resolveAndMountRouters(routing);
     }
 
     if (child.length) {
@@ -256,14 +229,26 @@ module.exports = class Framework100500 {
 
   /**
    * @static
-   * @param routingInitDI
+   * @param routingModuleDI
    */
-  static async mountRouters(routingInitDI) {
-    const { injector } = routingInitDI;
-    const moduleRoutingInitializer = await injectOneAsync(injector, APP_ROUTERS_INITIALIZER);
-    const appServer = await injectOneAsync(injector, APP_SERVER);
-    const moduleRouters = await injectAsync(injector, APP_ROUTERS);
-    await invokeFn(moduleRoutingInitializer, appServer, moduleRouters);
+  static async resolveAndMountRouters(routingModuleDI) {
+    const { rootInjector, child } = routingModuleDI;
+
+    const resolvedRouters = await Promise.all(
+      child.map(async ({ module, injector }) => {
+        const routingModule = await injectAsync(injector, module);
+        return await invokeFn(routingModule.resolveRouters());
+      }),
+    );
+
+    const appServer = await injectOneAsync(rootInjector, APP_SERVER);
+    let routersInitializer = await injectAsync(rootInjector, APP_ROUTERS_INITIALIZER);
+
+    if (!routersInitializer) {
+      routersInitializer = appRoutersInitializer;
+    }
+
+    await invokeFn(routersInitializer, appServer, flatten(resolvedRouters));
   }
 
   /**
@@ -305,7 +290,7 @@ module.exports = class Framework100500 {
    */
   static async bootstrap(rootModule) {
     // TODO: add possibility to visualize DI tree
-    const rootModuleDI = await Framework100500.initModuleAndRouting({ module: rootModule });
+    const rootModuleDI = await Framework100500.initModuleAndRoutingDI({ module: rootModule });
     await Framework100500.invokeInitializers(rootModuleDI);
     await Framework100500.initRouting(rootModuleDI);
     await Framework100500.startServer(rootModuleDI);

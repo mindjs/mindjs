@@ -17,9 +17,9 @@
     "nodemon": "^1.19.1"
   },
   "dependencies": {
-    "@framework100500/common": "1.1.0",
-    "@framework100500/core": "1.1.0",
-    "@framework100500/routing": "1.1.0",
+    "@framework100500/common": "^1.1.0",
+    "@framework100500/core": "^1.2.0",
+    "@framework100500/routing": "^1.1.0",
     "koa": "^2.8.1",
     "koa-body": "^4.1.1",
     "koa-compress": "^3.0.0",

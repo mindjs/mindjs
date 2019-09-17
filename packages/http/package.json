@@ -1,6 +1,6 @@
 {
   "name": "@framework100500/http",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "keywords": [
     "web",
     "http",
@@ -40,7 +40,7 @@
     "request-promise-native": "1.0.7"
   },
   "peerDependencies": {
-    "@framework100500/core": "1.1.0"
+    "@framework100500/core": "^1.2.0"
   },
   "repository": {
     "type": "git",

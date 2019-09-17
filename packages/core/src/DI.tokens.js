@@ -30,7 +30,6 @@ Routing
 */
 const APP_ROUTER_PROVIDER = new InjectionToken('Framework100500AppServerRouterProvider');
 const APP_ROUTING_MODULES_RESOLVER = new InjectionToken('Framework100500AppRoutersResolver');
-const APP_ROUTERS = new InjectionToken('Framework100500AppRouters');
 const APP_ROUTERS_INITIALIZER = new InjectionToken('Framework100500AppRoutersInitializer');
 const APP_ROUTER_DESCRIPTOR_RESOLVER = new InjectionToken('Framework100500AppRouterResolver');
 
@@ -44,6 +43,5 @@ module.exports = {
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_ROUTER_PROVIDER,
   APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTERS,
   APP_ROUTERS_INITIALIZER,
 };

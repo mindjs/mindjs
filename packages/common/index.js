@@ -9,6 +9,11 @@ const HttpStatus = require('http-status-codes');
 const {
   HTTP_METHODS,
   HTTP_PROTOCOLS,
+
+  Module,
+  Inject,
+  Injectable,
+
   CommonModule,
 } = require('./src');
 
@@ -18,6 +23,10 @@ module.exports = {
 
   HTTP_METHODS,
   HTTP_PROTOCOLS,
+
+  Module,
+  Inject,
+  Injectable,
 
   CommonModule,
 };

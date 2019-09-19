@@ -1,9 +1,11 @@
 const {
-  Inject,
   APP_SERVER,
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
 } = require('@framework100500/core');
+const {
+  Inject,
+} = require('@framework100500/common');
 
 const AppConfigService = require('./config.service');
 

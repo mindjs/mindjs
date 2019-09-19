@@ -1,4 +1,4 @@
-const { Module } = require('@framework100500/core');
+const { Module } = require('@framework100500/common');
 const { RoutingModule } = require('@framework100500/routing');
 
 const { HELLO_WORD } = require('./DI.tokens');

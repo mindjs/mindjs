@@ -1,4 +1,4 @@
-const { Injectable } = require('@framework100500/core');
+const { Injectable } = require('@framework100500/common');
 
 const DEFAULT_PORT = 3000;
 

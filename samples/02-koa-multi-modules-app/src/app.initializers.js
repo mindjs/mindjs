@@ -1,12 +1,16 @@
 const { isArray } = require('lodash');
 const {
-  Inject,
   APP_SERVER,
   APP_INITIALIZER,
-  APP_ROUTERS_INITIALIZER,
   APP_MIDDLEWARE_INITIALIZER,
   APP_MIDDLEWARE,
 } = require('@framework100500/core');
+const {
+  Inject,
+} = require('@framework100500/common');
+const {
+  APP_ROUTERS_INITIALIZER,
+} = require('@framework100500/routing');
 
 const AppConfigService = require('./config.service');
 

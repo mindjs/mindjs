@@ -1,6 +1,6 @@
-const { Module, APP_ROUTING_MODULES_RESOLVER } = require('@framework100500/core');
-const { HTTP_METHODS } = require('@framework100500/common');
-const { RoutingModule } = require('@framework100500/routing');
+const { Module } = require('@framework100500/common');
+const { HTTP_METHODS } = require('@framework100500/common/http');
+const { RoutingModule, APP_ROUTING_MODULES_RESOLVER } = require('@framework100500/routing');
 
 class GoodByeModule {}
 module.exports = Module(GoodByeModule, {

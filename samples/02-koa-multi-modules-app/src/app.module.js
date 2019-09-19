@@ -1,13 +1,17 @@
 const {
+  APP_SERVER,
+} = require('@framework100500/core');
+const {
+  APP_ROUTER_PROVIDER,
+  RoutingModule,
+} = require('@framework100500/routing');
+const {
   Module,
   Injectable,
   Inject,
-  APP_SERVER,
-  APP_ROUTER_PROVIDER,
-} = require('@framework100500/core');
-const { RoutingModule } = require('@framework100500/routing');
-const { HTTP_METHODS } = require('@framework100500/common');
-const { InjectionToken } = require('@framework100500/core/DI');
+} = require('@framework100500/common');
+const { HTTP_METHODS } = require('@framework100500/common/http');
+const { InjectionToken } = require('@framework100500/common/DI');
 
 const Koa = require('koa');
 const Router = require('koa-router');

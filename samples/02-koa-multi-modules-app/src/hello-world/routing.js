@@ -1,8 +1,20 @@
-const { HTTP_METHODS } = require('@framework100500/common');
+const { HTTP_METHODS } = require('@framework100500/common/http');
 const { RoutingModule } = require('@framework100500/routing');
 
-const { AddExclamationMarkMiddlewareResolver, LogOutTimeMiddlewareResolver } = require('./middleware-resolvers');
-const { HelloWorldHandlerResolver } = require('./handlers-resolvers');
+const {
+  AddExclamationMarkMiddlewareResolver,
+  LogOutTimeMiddlewareResolver,
+} = require('./middleware-resolvers');
+const {
+  HelloWorldHandlerResolver,
+} = require('./handlers-resolvers');
+
+const addNameToStateMiddleware = async (ctx, next) => {
+  const {query} = ctx.request;
+  const {name = 'world'} = query;
+  ctx.state.name = name;
+  return next();
+};
 
 module.exports = RoutingModule.forRoot({
   providers: [
@@ -19,25 +31,22 @@ module.exports = RoutingModule.forRoot({
       }
     ],
     injectCommonMiddlewareResolvers: [],
-    routes: [{
-      path: 'hello-world',
-      method: HTTP_METHODS.GET,
+    routes: [
+      {
+        path: 'hello-world',
+        method: HTTP_METHODS.GET,
 
-      middleware: [
-        async (ctx, next) => {
-          const { query } = ctx.request;
-          const { name = 'world' } = query;
-          ctx.state.name = name;
-          return next();
-        }
-      ],
-      // AND/OR
-      injectMiddlewareResolvers: [
-        AddExclamationMarkMiddlewareResolver,
-        LogOutTimeMiddlewareResolver,
-      ],
+        middleware: [
+          addNameToStateMiddleware,
+        ],
+        // AND/OR
+        injectMiddlewareResolvers: [
+          AddExclamationMarkMiddlewareResolver,
+          LogOutTimeMiddlewareResolver,
+        ],
 
-      injectHandlerResolver: HelloWorldHandlerResolver,
-    }],
+        injectHandlerResolver: HelloWorldHandlerResolver,
+      },
+    ],
   },
 });

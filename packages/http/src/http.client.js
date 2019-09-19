@@ -1,4 +1,4 @@
-const { Injectable, Inject } = require('@framework100500/core');
+const { Injectable, Inject } = require('@framework100500/common');
 
 const { HTTP_CLIENT, HTTP_REQUEST_INTERCEPTOR } = require('./DI.tokens');
 

@@ -38,7 +38,7 @@ async function invokeFn(fn, ...args) {
  *
  * @param {Object} obj
  * @param {string} methodName
- * @param {*[]} args
+ * @param {*} args
  * @returns {Promise<*>}
  */
 async function invokeOn(obj, methodName, ...args) {

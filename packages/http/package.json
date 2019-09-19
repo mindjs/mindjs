@@ -40,6 +40,7 @@
     "request-promise-native": "1.0.7"
   },
   "peerDependencies": {
+    "@framework100500/common": "^1.1.0",
     "@framework100500/core": "^1.2.0"
   },
   "repository": {

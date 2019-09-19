@@ -1,5 +1,11 @@
 // const injectDebug = require('debug')('Framework100500:DI:inject');
-const { first, isArray } = require('lodash');
+
+const {
+  first,
+  get,
+  isArray,
+  isFunction,
+} = require('lodash');
 
 /**
  *
@@ -34,6 +40,22 @@ function injectOneSync(injector, token) {
 
 /**
  *
+ * @param {ReflectiveInjector} injector
+ * @param {InjectionToken} token
+ * @returns {*}
+ */
+function injectSyncFromTree(injector, token) {
+  const result = injectSync(injector, token);
+
+  if (!result && isFunction(get(injector, 'parent.get'))) {
+    return injectSyncFromTree(injector.parent, token);
+  }
+
+  return result;
+}
+
+/**
+ *
  * @param injector
  * @param token
  * @returns {Promise<*>}
@@ -53,8 +75,9 @@ async function injectOneAsync(injector, token) {
 }
 
 module.exports = {
-  injectSync,
   injectAsync,
+  injectSync,
   injectOneSync,
-  injectOneAsync
+  injectOneAsync,
+  injectSyncFromTree,
 };

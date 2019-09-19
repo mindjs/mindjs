@@ -35,6 +35,23 @@ async function invokeFn(fn, ...args) {
 }
 
 /**
+ *
+ * @param {Object} obj
+ * @param {string} methodName
+ * @param {*[]} args
+ * @returns {Promise<*>}
+ */
+async function invokeOn(obj, methodName, ...args) {
+  if (!(obj || methodName)) {
+    return;
+  }
+
+  return isFunction(obj[methodName])
+    ? obj[methodName](...args)
+    : obj[methodName];
+}
+
+/**
  * Asynchronously Invokes all provided functions (without passing arguments to them)
  *  and returns a flattened array of results of invocations
  * @param {[]} args
@@ -67,13 +84,13 @@ async function invokeOnAll(objects, methodName) {
   return await Promise.all(
     objects
       .filter(Boolean)
-      .filter(obj => isFunction(obj[methodName]))
-      .map(async (obj) => await invokeFn(obj[methodName]())),
+      .map(async (obj) => await invokeOn(obj, methodName)),
   );
 }
 
 module.exports = {
   invokeAll,
   invokeFn,
+  invokeOn,
   invokeOnAll,
 };

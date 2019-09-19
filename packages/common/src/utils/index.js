@@ -4,18 +4,17 @@ const {
   isPromise,
 } = require('./function.utils');
 const {
-  isModuleWithProviders,
-} = require('./module.utils');
-const {
-  injectOneAsync,
-  injectOneSync,
   injectSync,
   injectAsync,
+  injectOneAsync,
+  injectOneSync,
+  injectSyncFromTree,
 } = require('./inject.utils');
 const {
-  invokeOnAll,
   invokeAll,
   invokeFn,
+  invokeOn,
+  invokeOnAll,
 } = require('./invoke.utils');
 
 module.exports = {
@@ -23,14 +22,14 @@ module.exports = {
   isAsyncFunction,
   isPromise,
 
-  isModuleWithProviders,
-
-  injectOneAsync,
-  injectOneSync,
   injectSync,
   injectAsync,
+  injectOneAsync,
+  injectOneSync,
+  injectSyncFromTree,
 
-  invokeOnAll,
   invokeAll,
-  invokeFn
+  invokeFn,
+  invokeOn,
+  invokeOnAll,
 };

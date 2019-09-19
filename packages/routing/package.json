@@ -39,8 +39,7 @@
     "lodash": "4.17.15"
   },
   "peerDependencies": {
-    "@framework100500/common": "^1.1.0",
-    "@framework100500/core": "^1.2.0"
+    "@framework100500/common": "^1.1.0"
   },
   "repository": {
     "type": "git",

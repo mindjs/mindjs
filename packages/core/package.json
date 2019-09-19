@@ -37,9 +37,11 @@
   "dependencies": {
     "cli-color": "^1.4.0",
     "debug": "4.1.1",
-    "injection-js": "2.2.2",
-    "lodash": "4.17.15",
-    "uuid": "3.3.3"
+    "lodash": "4.17.15"
+  },
+  "peerDependencies": {
+    "@framework100500/common": "^1.1.2",
+    "@framework100500/routing": "^1.1.2"
   },
   "publishConfig": {
     "access": "public"

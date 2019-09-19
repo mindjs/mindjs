@@ -1,24 +1,29 @@
 const { isFunction, isArray } = require('lodash');
 
-const { HTTP_METHODS } = require('@framework100500/common');
 const {
   Module,
   Inject,
+} = require('@framework100500/common');
+const { Injector } = require('@framework100500/common/DI');
+const { HTTP_METHODS } = require('@framework100500/common/http');
+const { injectSyncFromTree, invokeOn } = require('@framework100500/common/utils');
+
+const {
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_ROUTER_PROVIDER,
-} = require('@framework100500/core');
-const { Injector } = require('@framework100500/core/DI');
-
-const { stubHandler } = require('./constants');
+} = require('./DI.tokens');
+const {
+  stubHandler,
+} = require('./constants');
 const {
   normalizeRoutePath,
   isValidHandler,
   isValidMiddlewareList,
-  injectRecursivelyFromInjectorTree,
-} = require('./helpers');
+} = require('./utils');
+
 
 /*
-
+   TODO: improve routing initiation based on root/module DI.
    Usage notes:
 
     in your Application module add RoutingModule to imports array
@@ -130,7 +135,7 @@ class RoutingModule {
    * @returns {Promise<Router[]>}
    */
   async resolveRouters() {
-    const routerDescriptorResolvers = this._inject(APP_ROUTER_DESCRIPTOR_RESOLVER);
+    const routerDescriptorResolvers = injectSyncFromTree(this.moduleInjector, APP_ROUTER_DESCRIPTOR_RESOLVER);
 
     if (!routerDescriptorResolvers) {
       this.routers = [];
@@ -141,7 +146,7 @@ class RoutingModule {
       ? await Promise.all(routerDescriptorResolvers
         .filter(Boolean)
         .filter(r => isFunction(r.resolve))
-        .map((r) => this._resolveRouter(r))
+        .map((r) => this._resolveRouter(r)),
       )
       : [await this._resolveRouter(routerDescriptorResolvers)];
 
@@ -158,17 +163,20 @@ class RoutingModule {
     const {
       prefix = '',
       injectCommonMiddlewareResolvers = [],
+      // TODO: provide it dynamically
+      // commonMiddlewareResolvers = [],
       commonMiddleware = [],
       routes = [],
     } = await routerDescriptorResolver.resolve();
 
     const router = new this.routerProvider();
 
-    const resolvedCommonMiddleware = this._injectAllAndResolve(injectCommonMiddlewareResolvers);
+    const resolvedCommonMiddleware = await this._injectAllAndResolve(injectCommonMiddlewareResolvers);
 
+    // TODO get rid of coupling with router...
     router.use(...commonMiddleware, ...resolvedCommonMiddleware);
 
-    const preparedRoutesDescriptors = this._prepareRoutesDescriptors(routes, prefix);
+    const preparedRoutesDescriptors = await this._prepareRoutesDescriptors(routes, prefix);
 
     preparedRoutesDescriptors.map(({ path, method = HTTP_METHODS.GET, middleware = [], handler }) => {
       router[method](path, ...middleware, handler);
@@ -184,8 +192,10 @@ class RoutingModule {
    * @returns {{path: (string|*), handler: (function(*): {message: string, statusCode: number}), method: string, middleware: *[]}[]}
    * @private
    */
-  _prepareRoutesDescriptors(routesDescriptors = [], prefix = '') {
-    return routesDescriptors.map(r => this._prepareRouteDescriptor(r, prefix));
+  async _prepareRoutesDescriptors(routesDescriptors = [], prefix = '') {
+    return Promise.all(
+      routesDescriptors.map(async r => await this._prepareRouteDescriptor(r, prefix)),
+    );
   }
 
   /**
@@ -195,7 +205,7 @@ class RoutingModule {
    * @returns {{path: (string|*), handler: (function(*): {message: string, statusCode: number}), method: string, middleware: *[]}}
    * @private
    */
-  _prepareRouteDescriptor(routeDescriptor, prefix = '') {
+  async _prepareRouteDescriptor(routeDescriptor, prefix = '') {
     if (!(this.moduleInjector && routeDescriptor)) {
       throw new Error('Invalid input.');
     }
@@ -211,6 +221,11 @@ class RoutingModule {
       injectHandlerResolver,
       injectHandlerResolveParams,
 
+      // TODO: provide it dynamically
+      // handlerResolver,
+      // handlerResolverResolveParams,
+      // middlewareResolvers = [],
+
       middleware = [],
       injectMiddlewareResolvers = [],
     } = routeDescriptor;
@@ -218,11 +233,14 @@ class RoutingModule {
     if (isValidHandler(handler)) {
       handlerToUse = handler;
     } else if (injectHandlerResolver) {
-      const injectedAndResolvedHandler = this._injectAndResolve(injectHandlerResolver, injectHandlerResolveParams);
+      const injectedAndResolvedHandler = await this._injectAndResolve(
+        injectHandlerResolver,
+        injectHandlerResolveParams,
+      );
       handlerToUse = isValidHandler(injectedAndResolvedHandler) ? injectedAndResolvedHandler : stubHandler;
     }
 
-    const injectedMiddleware = this._injectAllAndResolve(injectMiddlewareResolvers);
+    const injectedMiddleware = await this._injectAllAndResolve(injectMiddlewareResolvers);
     const routePath = `${ prefix ? normalizeRoutePath(prefix) : prefix }${ normalizeRoutePath(path) }`;
 
     return {
@@ -242,8 +260,9 @@ class RoutingModule {
    * @returns {any[]}
    * @private
    */
-  _injectAllAndResolve(tokensAndResolveParams = []) {
-    return tokensAndResolveParams.map((t) => {
+  async _injectAllAndResolve(tokensAndResolveParams = []) {
+    return Promise.all(
+      tokensAndResolveParams.map(async (t) => {
       if (!t.resolveParams) {
         return this._injectAndResolve(t);
       }
@@ -252,21 +271,9 @@ class RoutingModule {
 
       return token && resolveParams
         ? this._injectAndResolve(token, resolveParams)
-        : this._inject(token);
-    }).filter(Boolean);
-  }
-
-  /**
-   *
-   * @param {InjectionToken} token
-   * @private
-   */
-  _inject(token) {
-    if (!(this.moduleInjector && token)) {
-      return;
-    }
-
-    return injectRecursivelyFromInjectorTree(this.moduleInjector, token);
+        : injectSyncFromTree(this.moduleInjector, token);
+    }).filter(Boolean)
+    );
   }
 
   /**
@@ -276,9 +283,9 @@ class RoutingModule {
    * @returns {undefined}
    * @private
    */
-  _injectAndResolve(token, resolveParams = []) {
-    const injected = this._inject(token);
-    return injected && injected.resolve ? injected.resolve(...resolveParams) : undefined;
+  async _injectAndResolve(token, resolveParams = []) {
+    const injected = injectSyncFromTree(this.moduleInjector, token);
+    return invokeOn(injected, 'resolve', ...resolveParams);
   }
 }
 

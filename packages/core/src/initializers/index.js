@@ -1,11 +1,11 @@
 const { isArray, isFunction } = require('lodash');
 
+const { Inject } = require('@framework100500/common');
+
 const {
   APP_MIDDLEWARE,
   APP_SERVER,
-} = require('./DI.tokens');
-
-const { Inject } = require('./decorators');
+} = require('../DI.tokens');
 
 class MiddlewareInitializer {
 
@@ -29,27 +29,6 @@ class MiddlewareInitializer {
   }
 }
 
-function appRoutersInitializer(appServer, appRouters) {
-  if (!(appServer && isArray(appRouters))) {
-    return;
-  }
-
-  appRouters.map(r => {
-    // Koa.js stuff
-    if (isFunction(r.routes)) {
-      appServer.use(r.routes());
-      return;
-    }
-
-    // Express.js stuff
-    if (isFunction(r)) {
-      appServer.use(r());
-    }
-  });
-
-}
-
 module.exports = {
   MiddlewareInitializer,
-  appRoutersInitializer,
 };

@@ -1,17 +1,39 @@
 const { flatten, isArray, isFunction } = require('lodash');
 
-const { ReflectiveInjector } = require('./DI');
+const {
+  ReflectiveInjector,
+} = require('@framework100500/common/DI');
+const {
+  invokeFn,
+  invokeOnAll,
+  injectAsync,
+  injectOneAsync,
+} = require('@framework100500/common/utils');
+
+const {
+  APP_ROUTING_MODULES_RESOLVER,
+  APP_ROUTERS_INITIALIZER,
+} = require('@framework100500/routing');
+const {
+  appRoutersInitializer,
+} = require('@framework100500/routing/initializers');
+const {
+  isRoutingModule,
+} = require('@framework100500/routing/utils');
+
 const {
   APP_SERVER,
   APP_INITIALIZER,
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTERS_INITIALIZER,
 } = require('./DI.tokens');
-const { invokeFn, invokeOnAll, injectAsync, injectOneAsync, isModuleWithProviders, isRoutingModule } = require('./helpers');
-const { MiddlewareInitializer, appRoutersInitializer } = require('./initializers');
+const {
+  MiddlewareInitializer,
+} = require('./initializers');
+const {
+  isModuleWithProviders,
+} = require('./utils');
 
 module.exports = class Framework100500 {
 
@@ -100,7 +122,7 @@ module.exports = class Framework100500 {
   }
 
   /**
-   *
+   *  TODO: move to routing
    * @param {{module: *, injector: *, child?: {module: *, injector: *, child: []}[]}} moduleDI
    * @returns {Promise<{module: *, injector: *, child: {module: *, injector: *, child: []}[]}>|undefined}
    */
@@ -210,7 +232,7 @@ module.exports = class Framework100500 {
   }
 
   /**
-   *
+   * TODO: move to routing..
    * @param moduleDI
    * @returns {Promise<void>}
    */
@@ -228,6 +250,7 @@ module.exports = class Framework100500 {
   }
 
   /**
+   * TODO: move to routing...
    * @static
    * @param routingModuleDI
    */

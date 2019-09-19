@@ -1,4 +1,4 @@
-const { InjectionToken } = require('./DI');
+const { InjectionToken } = require('@framework100500/common/DI');
 
 /*
   NOTE: For DI on a high level we use the `injection-js` npm package
@@ -21,18 +21,6 @@ const APP_SERVER = new InjectionToken('Framework100500AppServer');
 const APP_SERVER_ERROR_LISTENER = new InjectionToken('Framework100500AppServerErrorListener');
 const APP_SERVER_NET_LISTENER = new InjectionToken('Framework100500AppServerNetListener');
 
-/*
-Routing
-*/
-
-/*
-  This token is intended to be used for providing a Router constructor
-*/
-const APP_ROUTER_PROVIDER = new InjectionToken('Framework100500AppServerRouterProvider');
-const APP_ROUTING_MODULES_RESOLVER = new InjectionToken('Framework100500AppRoutersResolver');
-const APP_ROUTERS_INITIALIZER = new InjectionToken('Framework100500AppRoutersInitializer');
-const APP_ROUTER_DESCRIPTOR_RESOLVER = new InjectionToken('Framework100500AppRouterResolver');
-
 module.exports = {
   APP_INITIALIZER,
   APP_MIDDLEWARE,
@@ -40,8 +28,4 @@ module.exports = {
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  APP_ROUTER_DESCRIPTOR_RESOLVER,
-  APP_ROUTER_PROVIDER,
-  APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTERS_INITIALIZER,
 };

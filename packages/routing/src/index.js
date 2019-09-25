@@ -1,19 +1,20 @@
-const { stubHandler } = require('./constants');
-
 const {
-  isValidMiddlewareList,
-  isValidHandler,
-  normalizeRoutePath,
-} = require('./helpers');
-
+  APP_ROUTER_PROVIDER,
+  APP_ROUTING_MODULES_RESOLVER,
+  APP_ROUTER_DESCRIPTOR_RESOLVER,
+  APP_ROUTER_MIDDLEWARE_INITIALIZER,
+  APP_ROUTE_MOUNTER,
+  APP_ROUTERS_INITIALIZER,
+} = require('./DI.tokens');
 const RoutingModule = require('./routing.module');
 
 module.exports = {
-  stubHandler,
-
-  isValidMiddlewareList,
-  isValidHandler,
-  normalizeRoutePath,
+  APP_ROUTER_PROVIDER,
+  APP_ROUTING_MODULES_RESOLVER,
+  APP_ROUTER_DESCRIPTOR_RESOLVER,
+  APP_ROUTER_MIDDLEWARE_INITIALIZER,
+  APP_ROUTE_MOUNTER,
+  APP_ROUTERS_INITIALIZER,
 
   RoutingModule,
 };

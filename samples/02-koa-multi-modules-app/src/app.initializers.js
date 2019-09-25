@@ -1,12 +1,18 @@
 const { isArray } = require('lodash');
 const {
-  Inject,
   APP_SERVER,
   APP_INITIALIZER,
-  APP_ROUTERS_INITIALIZER,
   APP_MIDDLEWARE_INITIALIZER,
   APP_MIDDLEWARE,
 } = require('@framework100500/core');
+const {
+  Inject,
+} = require('@framework100500/common');
+const {
+  APP_ROUTERS_INITIALIZER,
+  APP_ROUTER_MIDDLEWARE_INITIALIZER,
+  APP_ROUTE_MOUNTER,
+} = require('@framework100500/routing');
 
 const AppConfigService = require('./config.service');
 
@@ -42,14 +48,16 @@ const APP_INITIALIZERS = [
   },
   {
     provide: APP_ROUTERS_INITIALIZER,
-    useValue: function appRoutersInitializer(appServer, appRouters) {
+    useClass: class AppRoutersInitializer {
 
-      if (!(appServer && isArray(appRouters))) {
-        return;
+      init(appServer, appRouters) {
+        if (!(appServer && isArray(appRouters))) {
+          return;
+        }
+
+        console.log('Custom APP_ROUTERS_INITIALIZER');
+        appRouters.forEach(r => appServer.use(r.routes()));
       }
-
-      console.log('Custom routers init');
-      appRouters.forEach(r => appServer.use(r.routes()));
     },
   },
   {
@@ -75,9 +83,34 @@ const APP_INITIALIZERS = [
         if (!(this.appServer && isArray(this.appMiddleware))) {
           return;
         }
-        console.log('Custom middleware init');
+        console.log('Custom APP_MIDDLEWARE_INITIALIZER');
 
         this.appMiddleware.forEach(m => this.appServer.use(m));
+      }
+    },
+  },
+  {
+    provide: APP_ROUTER_MIDDLEWARE_INITIALIZER,
+    useClass: class AppRouterMiddlewareInitializer {
+
+      init(router, middleware) {
+        if (!(router && isArray(middleware))) {
+          return;
+        }
+
+        console.log('Custom APP_ROUTER_MIDDLEWARE_INITIALIZER');
+        middleware.map(mw => router.use(mw))
+      }
+    },
+  },
+  {
+    provide: APP_ROUTE_MOUNTER,
+    useClass: class AppRouteMounter {
+
+      mount(router, { path, method, middleware, handler }) {
+
+        console.log('Custom APP_ROUTE_MOUNTER');
+        router[method](path, ...middleware, handler);
       }
     },
   },

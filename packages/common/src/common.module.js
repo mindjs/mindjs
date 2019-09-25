@@ -1,4 +1,4 @@
-const { Module } = require('@framework100500/core');
+const { Module } = require('./decorators');
 
 // TODO: fill it with the common stuff
 class CommonModule {}

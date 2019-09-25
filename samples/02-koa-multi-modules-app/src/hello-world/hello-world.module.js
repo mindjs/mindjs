@@ -1,5 +1,6 @@
-const { Module } = require('@framework100500/core');
-const { RoutingModule } = require('@framework100500/routing');
+const { Module } = require('@framework100500/common');
+const { HTTP_METHODS } = require('@framework100500/common/http');
+const { RoutingModule, APP_ROUTER_DESCRIPTOR_RESOLVER } = require('@framework100500/routing');
 
 const { HELLO_WORD } = require('./DI.tokens');
 const HelloWorldRoutingModule = require('./routing');
@@ -11,7 +12,34 @@ module.exports = Module(HelloWorldModule, {
     GoodByeModule,
     HelloWorldRoutingModule,
     RoutingModule.forRoot({
-      providers: [],
+      providers: [
+        {
+          provide: APP_ROUTER_DESCRIPTOR_RESOLVER,
+          useFactory: function () {
+            return {
+              resolve() {
+                return {
+                  prefix: 'good',
+                  commonMiddleware: [],
+                  commonMiddlewareResolvers: [],
+                  routes: [{
+                    path: 'bye',
+                    method: HTTP_METHODS.GET,
+
+                    middlewareResolvers: [],
+                    middleware: [],
+
+                    handler: async (ctx) => {
+                      ctx.body = 'Bye, Bye!';
+                    },
+                  }]
+                };
+              }
+            };
+          },
+          multi: true,
+        },
+      ],
       routerDescriptor: {
         prefix: 'user',
         commonMiddleware: [

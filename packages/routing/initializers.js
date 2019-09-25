@@ -1,9 +1,11 @@
 const {
-  appRouterMiddlewareInitializer,
-  appRoutersInitializer,
+  AppRoutersInitializer,
+  AppRouterMiddlewareInitializer,
+  AppRouteMounter,
 } = require('./src/initializers');
 
 module.exports = {
-  appRouterMiddlewareInitializer,
-  appRoutersInitializer,
+  AppRoutersInitializer,
+  AppRouterMiddlewareInitializer,
+  AppRouteMounter,
 };

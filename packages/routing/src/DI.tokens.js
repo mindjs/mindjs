@@ -1,7 +1,11 @@
 const { InjectionToken } = require('@framework100500/common/DI');
 
 /*
-Routing
+  Routing module injection tokens
+
+  TODO:
+   1. add tokens' descriptions
+   2. Think about renaming tokens
 */
 
 /*
@@ -12,6 +16,7 @@ const APP_ROUTING_MODULES_RESOLVER = new InjectionToken('Framework100500AppRoute
 const APP_ROUTERS_INITIALIZER = new InjectionToken('Framework100500AppRoutersInitializer');
 const APP_ROUTER_MIDDLEWARE_INITIALIZER = new InjectionToken('Framework100500AppRouterMiddlewarenitializer');
 const APP_ROUTER_DESCRIPTOR_RESOLVER = new InjectionToken('Framework100500AppRouterResolver');
+const APP_ROUTE_MOUNTER = new InjectionToken('Framework100500AppRouteMounter');
 
 module.exports = {
   APP_ROUTER_PROVIDER,
@@ -19,4 +24,5 @@ module.exports = {
   APP_ROUTER_DESCRIPTOR_RESOLVER,
   APP_ROUTER_MIDDLEWARE_INITIALIZER,
   APP_ROUTERS_INITIALIZER,
+  APP_ROUTE_MOUNTER,
 };

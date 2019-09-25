@@ -12,11 +12,7 @@ const {
 
 const {
   APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTERS_INITIALIZER,
 } = require('@framework100500/routing');
-const {
-  appRoutersInitializer,
-} = require('@framework100500/routing/initializers');
 const {
   isRoutingModule,
 } = require('@framework100500/routing/utils');
@@ -122,7 +118,7 @@ module.exports = class Framework100500 {
   }
 
   /**
-   *  TODO: move to routing
+   *
    * @param {{module: *, injector: *, child?: {module: *, injector: *, child: []}[]}} moduleDI
    * @returns {Promise<{module: *, injector: *, child: {module: *, injector: *, child: []}[]}>|undefined}
    */
@@ -232,7 +228,7 @@ module.exports = class Framework100500 {
   }
 
   /**
-   * TODO: move to routing..
+   *
    * @param moduleDI
    * @returns {Promise<void>}
    */
@@ -250,28 +246,21 @@ module.exports = class Framework100500 {
   }
 
   /**
-   * TODO: move to routing...
+   *
    * @static
    * @param routingModuleDI
    */
   static async resolveAndMountRouters(routingModuleDI) {
     const { rootInjector, child } = routingModuleDI;
 
-    const resolvedRouters = await Promise.all(
+    const appServer = await injectOneAsync(rootInjector, APP_SERVER);
+
+    return await Promise.all(
       child.map(async ({ module, injector }) => {
         const routingModule = await injectAsync(injector, module);
-        return await invokeFn(routingModule.resolveRouters());
+        return await invokeFn(routingModule.resolveAndInitRouters(appServer));
       }),
     );
-
-    const appServer = await injectOneAsync(rootInjector, APP_SERVER);
-    let routersInitializer = await injectAsync(rootInjector, APP_ROUTERS_INITIALIZER);
-
-    if (!routersInitializer) {
-      routersInitializer = appRoutersInitializer;
-    }
-
-    await invokeFn(routersInitializer, appServer, flatten(resolvedRouters));
   }
 
   /**

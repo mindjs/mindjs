@@ -188,11 +188,7 @@ class AppModule {}
 module.exports = Module(AppModule, {
   imports: [
     RoutingModule.forRoot({
-      providers: [
-        HelloWorldHandlerResolver,
-        LogOutTimeMiddlewareResolver,
-        AddExclamationMarkMiddlewareResolver,
-      ],
+      providers: [],
       routerDescriptor: {
         prefix: '/api',
         commonMiddleware: [
@@ -201,7 +197,7 @@ module.exports = Module(AppModule, {
             return next();
           }
         ],
-        injectCommonMiddlewareResolvers: [
+        commonMiddlewareResolvers: [
           LogOutTimeMiddlewareResolver,
         ],
         routes: [{
@@ -217,7 +213,7 @@ module.exports = Module(AppModule, {
             }
           ],
           // AND/OR
-          injectMiddlewareResolvers: [
+          middlewareResolvers: [
             AddExclamationMarkMiddlewareResolver
           ],
 
@@ -225,7 +221,7 @@ module.exports = Module(AppModule, {
           //   ctx.body = `hello, ${ ctx.state.name }`
           // },
           // OR
-          injectHandlerResolver: HelloWorldHandlerResolver,
+          handlerResolver: HelloWorldHandlerResolver,
         }],
       },
     }),

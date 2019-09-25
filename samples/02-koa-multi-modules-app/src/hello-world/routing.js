@@ -18,9 +18,7 @@ const addNameToStateMiddleware = async (ctx, next) => {
 
 module.exports = RoutingModule.forRoot({
   providers: [
-    HelloWorldHandlerResolver,
-    LogOutTimeMiddlewareResolver,
-    AddExclamationMarkMiddlewareResolver,
+
   ],
   routerDescriptor: {
     prefix: '/api',
@@ -30,7 +28,7 @@ module.exports = RoutingModule.forRoot({
         return next();
       }
     ],
-    injectCommonMiddlewareResolvers: [],
+    commonMiddlewareResolvers: [],
     routes: [
       {
         path: 'hello-world',
@@ -40,12 +38,12 @@ module.exports = RoutingModule.forRoot({
           addNameToStateMiddleware,
         ],
         // AND/OR
-        injectMiddlewareResolvers: [
+        middlewareResolvers: [
           AddExclamationMarkMiddlewareResolver,
           LogOutTimeMiddlewareResolver,
         ],
 
-        injectHandlerResolver: HelloWorldHandlerResolver,
+        handlerResolver: HelloWorldHandlerResolver,
       },
     ],
   },

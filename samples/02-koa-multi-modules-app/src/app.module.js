@@ -54,9 +54,7 @@ module.exports = Module(AppModule, {
   imports: [
     HelloWorldModule,
     RoutingModule.forRoot({
-      providers: [
-        GetBranchHandlerResolver,
-      ],
+      providers: [],
       routerDescriptor: {
         prefix: 'root',
         injectCommonMiddlewareResolvers: [],
@@ -65,8 +63,8 @@ module.exports = Module(AppModule, {
           path: 'branch',
           method: HTTP_METHODS.GET,
           middleware: [],
-          injectMiddlewareResolvers: [],
-          injectHandlerResolver: GetBranchHandlerResolver,
+          middlewareResolvers: [],
+          handlerResolver: GetBranchHandlerResolver,
         }]
       }
     }),

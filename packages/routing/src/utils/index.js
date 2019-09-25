@@ -30,32 +30,16 @@ const isValidMiddlewareList = mwList => {
 
 /**
  *
- * @param {ReflectiveInjector} injector
- * @param {InjectionToken} token
- * @returns {*}
+ * @param m
+ * @returns {boolean}
  */
-function injectRecursivelyFromInjectorTree(injector, token) {
-  if (!(injector && token)) {
-    return;
-  }
-
-  let result;
-  try {
-    result = injector.get(token);
-  } catch (e) {
-    // ...
-  }
-
-  if (!result && isFunction(get(injector, 'parent.get'))) {
-    return injectRecursivelyFromInjectorTree(injector.parent, token);
-  }
-
-  return result;
+function isRoutingModule(m) {
+  return get(m, 'module.name', '') === 'RoutingModule';
 }
 
 module.exports = {
   isValidMiddlewareList,
   normalizeRoutePath,
   isValidHandler,
-  injectRecursivelyFromInjectorTree,
+  isRoutingModule
 };

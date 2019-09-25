@@ -1,3 +1,5 @@
+const HttpStatus = require('http-status-codes');
+
 const HTTP_METHODS = {
   GET: 'get',
   POST: 'post',
@@ -16,4 +18,7 @@ const HTTP_PROTOCOLS = {
 module.exports = {
   HTTP_METHODS,
   HTTP_PROTOCOLS,
+
+  // re-export http status codes for common usages
+  HttpStatus,
 };

@@ -1,6 +1,6 @@
 const request = require('request-promise-native');
 
-const { Module } = require('@framework100500/core');
+const { Module } = require('@framework100500/common');
 
 const { HTTP_CLIENT } = require('./DI.tokens');
 const HttpClient = require('./http.client');

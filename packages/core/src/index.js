@@ -1,22 +1,12 @@
 const Framework100500 = require('./core');
 
 const {
-  Inject,
-  Module,
-  Injectable,
-} = require('./decorators');
-
-const {
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  APP_ROUTER_DESCRIPTOR_RESOLVER,
-  APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTERS_INITIALIZER,
-  APP_ROUTER_PROVIDER,
 } = require('./DI.tokens');
 
 module.exports = {
@@ -26,14 +16,6 @@ module.exports = {
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  APP_ROUTER_DESCRIPTOR_RESOLVER,
-  APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTER_PROVIDER,
-  APP_ROUTERS_INITIALIZER,
-
-  Inject,
-  Module,
-  Injectable,
 
   Framework100500,
 };

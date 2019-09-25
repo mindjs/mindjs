@@ -1,21 +1,24 @@
 const {
-  Module,
-  Inject,
-  Injectable,
   APP_SERVER,
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
   APP_MIDDLEWARE,
-  APP_ROUTER_PROVIDER,
+
   APP_INITIALIZER,
 } = require('@framework100500/core');
 
 const {
+  APP_ROUTER_PROVIDER,
   RoutingModule,
 } = require('@framework100500/routing');
 
 const {
   HTTP_METHODS
+} = require('@framework100500/common/http');
+const {
+  Module,
+  Inject,
+  Injectable,
 } = require('@framework100500/common');
 
 const Koa = require('koa');
@@ -31,7 +34,7 @@ const logger = require('koa-logger');
 const AppConfigService = require('./config.service');
 const { EnableProxyAppInitializer } = require('./app.initializers');
 
-const HelloWorldHandlerResolver =  Injectable(class HelloWorldHandlerResolver {
+const HelloWorldHandlerResolver = Injectable(class HelloWorldHandlerResolver {
   resolve() {
     return async (ctx) => {
       ctx.body = `hello, ${ ctx.state.name }`
@@ -185,11 +188,7 @@ class AppModule {}
 module.exports = Module(AppModule, {
   imports: [
     RoutingModule.forRoot({
-      providers: [
-        HelloWorldHandlerResolver,
-        LogOutTimeMiddlewareResolver,
-        AddExclamationMarkMiddlewareResolver,
-      ],
+      providers: [],
       routerDescriptor: {
         prefix: '/api',
         commonMiddleware: [
@@ -198,7 +197,7 @@ module.exports = Module(AppModule, {
             return next();
           }
         ],
-        injectCommonMiddlewareResolvers: [
+        commonMiddlewareResolvers: [
           LogOutTimeMiddlewareResolver,
         ],
         routes: [{
@@ -214,7 +213,7 @@ module.exports = Module(AppModule, {
             }
           ],
           // AND/OR
-          injectMiddlewareResolvers: [
+          middlewareResolvers: [
             AddExclamationMarkMiddlewareResolver
           ],
 
@@ -222,7 +221,7 @@ module.exports = Module(AppModule, {
           //   ctx.body = `hello, ${ ctx.state.name }`
           // },
           // OR
-          injectHandlerResolver: HelloWorldHandlerResolver,
+          handlerResolver: HelloWorldHandlerResolver,
         }],
       },
     }),

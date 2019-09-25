@@ -1,5 +1,5 @@
-const { Injectable, Inject } = require('@framework100500/core');
-const { HttpStatus} = require('@framework100500/common');
+const { Injectable, Inject } = require('@framework100500/common');
+const { HttpStatus} = require('@framework100500/common/http');
 
 const { HELLO_WORD } = require('../DI.tokens');
 
@@ -28,5 +28,5 @@ class HelloWorldHandlerResolver {
 }
 
 module.exports = {
-  HelloWorldHandlerResolver: Injectable(HelloWorldHandlerResolver)
+  HelloWorldHandlerResolver: Injectable(HelloWorldHandlerResolver),
 };

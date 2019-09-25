@@ -1,17 +1,35 @@
 const { flatten, isArray, isFunction } = require('lodash');
 
-const { ReflectiveInjector } = require('./DI');
+const {
+  ReflectiveInjector,
+} = require('@framework100500/common/DI');
+const {
+  invokeFn,
+  invokeOnAll,
+  injectAsync,
+  injectOneAsync,
+} = require('@framework100500/common/utils');
+
+const {
+  APP_ROUTING_MODULES_RESOLVER,
+} = require('@framework100500/routing');
+const {
+  isRoutingModule,
+} = require('@framework100500/routing/utils');
+
 const {
   APP_SERVER,
   APP_INITIALIZER,
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  APP_ROUTING_MODULES_RESOLVER,
-  APP_ROUTERS_INITIALIZER,
 } = require('./DI.tokens');
-const { invokeFn, invokeOnAll, injectAsync, injectOneAsync, isModuleWithProviders, isRoutingModule } = require('./helpers');
-const { MiddlewareInitializer, appRoutersInitializer } = require('./initializers');
+const {
+  MiddlewareInitializer,
+} = require('./initializers');
+const {
+  isModuleWithProviders,
+} = require('./utils');
 
 module.exports = class Framework100500 {
 
@@ -228,27 +246,21 @@ module.exports = class Framework100500 {
   }
 
   /**
+   *
    * @static
    * @param routingModuleDI
    */
   static async resolveAndMountRouters(routingModuleDI) {
     const { rootInjector, child } = routingModuleDI;
 
-    const resolvedRouters = await Promise.all(
+    const appServer = await injectOneAsync(rootInjector, APP_SERVER);
+
+    return await Promise.all(
       child.map(async ({ module, injector }) => {
         const routingModule = await injectAsync(injector, module);
-        return await invokeFn(routingModule.resolveRouters());
+        return await invokeFn(routingModule.resolveAndInitRouters(appServer));
       }),
     );
-
-    const appServer = await injectOneAsync(rootInjector, APP_SERVER);
-    let routersInitializer = await injectAsync(rootInjector, APP_ROUTERS_INITIALIZER);
-
-    if (!routersInitializer) {
-      routersInitializer = appRoutersInitializer;
-    }
-
-    await invokeFn(routersInitializer, appServer, flatten(resolvedRouters));
   }
 
   /**

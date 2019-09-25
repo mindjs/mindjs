@@ -1,1 +1,1 @@
-The `common` package contains providers, helpers and constants.
+The `common` package contains common decorators, constants, utils, and providers.

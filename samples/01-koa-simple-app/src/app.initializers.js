@@ -1,4 +1,6 @@
-const { Inject, APP_SERVER } = require('@framework100500/core');
+const { Inject } = require('@framework100500/common');
+const { APP_SERVER } = require('@framework100500/core');
+
 const AppConfigService = require('./config.service');
 
 class EnableProxyAppInitializer {

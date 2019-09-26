@@ -10,7 +10,8 @@ const HttpClient = require('./http.client');
  */
 class HttpModule {
   static forRoot({ httpClient } = { httpClient: request }) {
-    return Module(HttpModule, {
+    return {
+      module: Module(HttpModule),
       providers: [
         {
           provide: HTTP_CLIENT,
@@ -18,16 +19,8 @@ class HttpModule {
         },
         HttpClient,
       ],
-    });
+    };
   }
 }
 
-module.exports = Module(HttpModule, {
-  providers: [
-    {
-      provide: HTTP_CLIENT,
-      useValue: request,
-    },
-    HttpClient,
-  ]
-});
+module.exports = Module(HttpModule);

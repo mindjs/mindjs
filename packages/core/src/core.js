@@ -42,7 +42,8 @@ module.exports = class Framework100500 {
    * @returns {Promise<void>}
    */
   async bootstrap() {
-    await Framework100500.bootstrap(this.rootModule);
+    this.appModuleDI = await Framework100500.bootstrap(this.rootModule);
+    return this.appModuleDI;
   }
 
   /**
@@ -50,7 +51,7 @@ module.exports = class Framework100500 {
    * @param {{module: *, injector?: *, child?: {module: *, injector?: *, child?: *}[]}} moduleDI
    * @returns {Promise<{module: *, injector: *, child: *}|{module: *, injector: *, child: []}>}
    */
-  static async initModuleAndRoutingDI(moduleDI) {
+  static async initModuleDI(moduleDI) {
     // TODO: add dummy checks
     let { injector: parentInjector, rootInjector } = moduleDI;
     const { module: appModule } = moduleDI;
@@ -98,7 +99,7 @@ module.exports = class Framework100500 {
         injector: moduleInjector,
       }),
       Promise.all(
-        ordinaryModules.map(async (m) => await Framework100500.initModuleAndRoutingDI({
+        ordinaryModules.map(async (m) => await Framework100500.initModuleDI({
           rootInjector,
           module: m,
           injector: moduleInjector,
@@ -302,10 +303,26 @@ module.exports = class Framework100500 {
    */
   static async bootstrap(rootModule) {
     // TODO: add possibility to visualize DI tree
-    const rootModuleDI = await Framework100500.initModuleAndRoutingDI({ module: rootModule });
+    const rootModuleDI = await Framework100500.initModuleDI({ module: rootModule });
+
+    return Framework100500.initAndStart(rootModuleDI);
+  }
+
+  /**
+   * Invokes initializers, routing and then starts a server if NET listeners have been provided
+   * @param rootModuleDI
+   * @returns {Promise<*>}
+   */
+  static async initAndStart(rootModuleDI) {
+    if (!rootModuleDI) {
+      return;
+    }
+
     await Framework100500.invokeInitializers(rootModuleDI);
     await Framework100500.initRouting(rootModuleDI);
     await Framework100500.startServer(rootModuleDI);
+
+    return rootModuleDI;
   }
 
 };

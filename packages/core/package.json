@@ -1,6 +1,6 @@
 {
   "name": "@framework100500/core",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Framework100500 is a simple web API pure Node.js framework @core",
   "main": "index.js",
   "keywords": [

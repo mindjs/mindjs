@@ -4,4 +4,10 @@
  * MIT Licensed
  */
 
-// TODO: implement a Testing module with all DI features
+const {
+  Test100500,
+} = require('./src');
+
+module.exports = {
+  Test100500,
+};

@@ -4,8 +4,5 @@
   ],
   "version":"independent",
   "npmClient": "yarn",
-  "useWorkspaces": true,
-  "ignoreChanges": [
-    "packages/testing/*"
-  ]
+  "useWorkspaces": true
 }

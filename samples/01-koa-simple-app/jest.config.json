@@ -1,0 +1,18 @@
+{
+  "moduleFileExtensions": [
+    "js"
+  ],
+  "rootDir": "src/",
+  "testRegex": ".*\\.(spec|test).js$",
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "**/*.js"
+  ],
+  "coverageReporters": ["lcov", "text"],
+  "coverageDirectory": "../coverage",
+  "coveragePathIgnorePatterns": [
+    ".*\\.(mock|stub).js$",
+    ".*\\.module.js$",
+    ".*\\DI.tokens.js$"
+  ]
+}

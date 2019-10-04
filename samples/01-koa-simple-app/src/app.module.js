@@ -3,14 +3,21 @@ const {
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
   APP_MIDDLEWARE,
+  APP_SERVER_TERMINATE_SIGNAL,
+  APP_MIDDLEWARE_INITIALIZER,
 
   APP_INITIALIZER,
+  CoreModule,
 } = require('@framework100500/core');
 
 const {
   APP_ROUTER_PROVIDER,
   RoutingModule,
 } = require('@framework100500/routing');
+
+const {
+  HttpModule,
+} = require('@framework100500/http');
 
 const {
   HTTP_METHODS
@@ -32,7 +39,7 @@ const helmet = require('koa-helmet');
 const logger = require('koa-logger');
 
 const AppConfigService = require('./config.service');
-const { EnableProxyAppInitializer } = require('./app.initializers');
+const { EnableProxyAppInitializer, MiddlewareInitializer } = require('./app.initializers');
 
 const HelloWorldHandlerResolver = Injectable(class HelloWorldHandlerResolver {
   resolve() {
@@ -129,21 +136,34 @@ const APP_SERVER_LISTENERS = [
         return [
           Inject(APP_SERVER),
           AppConfigService,
+          Inject(APP_SERVER_TERMINATE_SIGNAL),
         ];
       }
 
       constructor(
         appServer,
         appConfigService,
+        terminateSignal,
       ) {
         this.appServer = appServer;
         this.appConfigService = appConfigService;
+        this.terminateSignal = terminateSignal;
       }
 
       listen() {
         const { port } = this.appConfigService;
-        this.appServer.listen(port, () => {
+
+        const listener = this.appServer.listen(port, () => {
           console.log(`App server is up and running on ${ port }`);
+        });
+
+        this.appServer.on(this.terminateSignal, () => {
+          console.log(`App server received a termination signal, ${ this.terminateSignal }`);
+
+          listener.close(() => {
+            console.log(`App server is down.`);
+          });
+          listener.unref();
         });
       }
     },
@@ -182,11 +202,18 @@ const APP_INITIALIZERS = [
     useClass: EnableProxyAppInitializer,
     multi: true,
   },
+  {
+    provide: APP_MIDDLEWARE_INITIALIZER,
+    useClass: MiddlewareInitializer,
+  }
 ];
 
 class AppModule {}
 module.exports = Module(AppModule, {
   imports: [
+    CoreModule.forRoot(),
+    HttpModule.forRoot(),
+
     RoutingModule.forRoot({
       providers: [],
       routerDescriptor: {

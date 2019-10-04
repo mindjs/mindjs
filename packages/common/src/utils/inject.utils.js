@@ -9,11 +9,12 @@ const {
 
 /**
  *
- * @param injector
- * @param token
+ * @param {ReflectiveInjector} injector
+ * @param {InjectionToken} token
+ * @param {*} notFoundValue?
  * @returns {*}
  */
-function injectSync(injector, token) {
+function injectSync(injector, token, notFoundValue = undefined) {
   if (!(injector && token)) {
     return;
   }
@@ -24,34 +25,36 @@ function injectSync(injector, token) {
   } catch (e) {
     // TODO: add debug log?...
   }
-  return result;
-}
-
-/**
- *
- * @param injector
- * @param token
- * @returns {*}
- */
-function injectOneSync(injector, token) {
-  const result = injectSync(injector, token);
-  return isArray(result) ? first(result) : result;
+  return result || notFoundValue;
 }
 
 /**
  *
  * @param {ReflectiveInjector} injector
  * @param {InjectionToken} token
+ * @param {*} notFoundValue?
  * @returns {*}
  */
-function injectSyncFromTree(injector, token) {
+function injectOneSync(injector, token, notFoundValue) {
+  const result = injectSync(injector, token, notFoundValue);
+  return isArray(result) ? first(result) : result;
+}
+
+/**
+ *
+ * @param {ReflectiveInjector|Injector} injector
+ * @param {InjectionToken} token
+ * @param {*} notFoundValue?
+ * @returns {*}
+ */
+function injectSyncFromTree(injector, token, notFoundValue) {
   const result = injectSync(injector, token);
 
   if (!result && isFunction(get(injector, 'parent.get'))) {
-    return injectSyncFromTree(injector.parent, token);
+    return injectSyncFromTree(injector.parent, token, notFoundValue);
   }
 
-  return result;
+  return result || notFoundValue;
 }
 
 /**
@@ -68,10 +71,11 @@ async function injectAsync(injector, token) {
  *
  * @param injector
  * @param token
+ * @param notFoundValue?
  * @returns {Promise<*>}
  */
-async function injectOneAsync(injector, token) {
-  return injectOneSync(injector, token);
+async function injectOneAsync(injector, token, notFoundValue) {
+  return injectOneSync(injector, token, notFoundValue);
 }
 
 module.exports = {

@@ -5,7 +5,6 @@ const {
 } = require('@framework100500/common/DI');
 const {
   invokeFn,
-  invokeOn,
   invokeOnAll,
   injectAsync,
   injectOneAsync,
@@ -24,14 +23,14 @@ const {
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-  APP_SERVER_TERMINATE_SIGNAL,
+  APP_TERMINATION_SIGNAL,
 } = require('./DI.tokens');
 const {
   isModuleWithProviders,
 } = require('../utils');
 const {
-  TERMINATE_SIGNAL,
-} = require('../../module/constants');
+  TERMINATION_SIGNAL,
+} = require('../constants');
 
 module.exports = class Framework100500 {
 
@@ -299,7 +298,7 @@ module.exports = class Framework100500 {
   }
 
   /**
-   * Emits termination signal `SIGTERM` to app server
+   * Emits provided as APP_TERMINATION_SIGNAL termination signal or `SIGTERM` to node's process
    * @param {*} moduleDI
    * @returns {Promise<*>}
    */
@@ -309,10 +308,9 @@ module.exports = class Framework100500 {
       return;
     }
 
-    const server = await injectOneAsync(rootInjector, APP_SERVER);
-    const terminateSignal = await injectOneAsync(rootInjector, APP_SERVER_TERMINATE_SIGNAL);
+    const terminateSignal = await injectOneAsync(rootInjector, APP_TERMINATION_SIGNAL, TERMINATION_SIGNAL.SIGTERM);
 
-    return invokeOn(server, 'emit', terminateSignal || TERMINATE_SIGNAL);
+    return process.emit(terminateSignal);
   }
 
   /**

@@ -1,7 +1,7 @@
 const { Module } = require('@framework100500/common');
 
-const { APP_SERVER_TERMINATE_SIGNAL } = require('../lib/framework');
-const { TERMINATE_SIGNAL } = require('./constants');
+const { APP_TERMINATION_SIGNAL } = require('../lib/framework');
+const { TERMINATION_SIGNAL } = require('../lib/constants');
 
 module.exports = class CoreModule {
   static forRoot() {
@@ -9,8 +9,8 @@ module.exports = class CoreModule {
       module: Module(CoreModule),
       providers: [
         {
-          provide: APP_SERVER_TERMINATE_SIGNAL,
-          useValue: TERMINATE_SIGNAL,
+          provide: APP_TERMINATION_SIGNAL,
+          useValue: TERMINATION_SIGNAL.SIGTERM,
         },
       ],
     };

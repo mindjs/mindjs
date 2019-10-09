@@ -21,11 +21,14 @@ function injectSync(injector, token, notFoundValue = undefined) {
 
   let result;
   try {
-    result = injector.get(token);
+    result = injector.get(token, notFoundValue);
   } catch (e) {
-    // TODO: add debug log?...
+    // TODO: add debug log
+    if (!e.message.includes('No provider for InjectionToken')) {
+      throw e;
+    }
   }
-  return result || notFoundValue;
+  return result;
 }
 
 /**

@@ -1,5 +1,3 @@
-const Framework100500 = require('./core');
-
 const {
   APP_INITIALIZER,
   APP_MIDDLEWARE,
@@ -7,7 +5,11 @@ const {
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-} = require('./DI.tokens');
+  APP_TERMINATION_SIGNAL,
+  Framework100500
+} = require('./lib/framework');
+
+const { CoreModule } = require('./module');
 
 module.exports = {
   APP_INITIALIZER,
@@ -16,6 +18,7 @@ module.exports = {
   APP_SERVER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
-
+  APP_TERMINATION_SIGNAL,
   Framework100500,
+  CoreModule,
 };

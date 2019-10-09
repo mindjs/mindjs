@@ -4,7 +4,6 @@ const { Module } = require('@framework100500/common');
 const { injectAsync } = require('@framework100500/common/utils');
 
 let TestModule;
-let testModuleDI;
 let testAppInstance;
 let TestEnvConfig = {};
 let TestModuleImports = [];
@@ -28,7 +27,7 @@ class Test100500 {
    */
   static async configureTestingModule({ imports = [], providers = [] } = {}, { envVariables } = {}) {
     // reset previous run state
-    Test100500.resetTestingModule();
+    await Test100500.resetTestingModule();
 
     // configure new run state and do nothing until `inject` or `get` method is invoked
     TestModuleImports = [...imports];
@@ -44,32 +43,46 @@ class Test100500 {
    * @returns {Promise<void>}
    */
   static async bootstrap() {
-    if (testAppInstance) {
+    if (testAppInstance.isApp100500Initiated) {
       return;
     }
 
-    if (TestModule && testModuleDI) {
-      testAppInstance = await Framework100500.initAndStart(testModuleDI);  // eslint-disable-line
+    if (TestModule) {
+      await testAppInstance.initAndStart();
     } else {
       TestModule = Module(class TestingModule {}, {
         imports: [...TestModuleImports],
         providers: [...TestModuleProviders],
       });
 
-      testModuleDI = await Framework100500.initModuleDI({ module: TestModule });  // eslint-disable-line
-      testAppInstance = await Framework100500.initAndStart(testModuleDI);  // eslint-disable-line
+      testAppInstance = new Framework100500(TestModule);
+      await testAppInstance.initRootModuleDI();
+      await testAppInstance.initAndStart();
     }
+  }
+
+  /**
+   * Invokes
+   * @returns {Promise<*|void>}
+   */
+  static async terminate() {
+    if (!testAppInstance || !testAppInstance.isApp100500Initiated) {
+      return;
+    }
+
+    return testAppInstance.terminateAppServer();
   }
 
   /**
    * Resets testing module configuration and clears environment variables from `process.env`
    * if such were previously provided
    */
-  static resetTestingModule() {
+  static async resetTestingModule() {
+    await Test100500.terminate();
+
     TestModuleImports = [];
     TestModuleProviders = [];
     TestModule = undefined;
-    testModuleDI = undefined;
     testAppInstance = undefined;
     Test100500.resetEnvVariables();
   }
@@ -169,19 +182,20 @@ class Test100500 {
    */
   static async inject(token) {
     if (testAppInstance) {
-      return injectAsync(testAppInstance.rootInjector, token);
+      return injectAsync(testAppInstance.rootModuleDI.rootInjector, token);
     }
 
-    if (!testModuleDI) {
+    if (!(testAppInstance && testAppInstance.rootModuleDI)) {
       TestModule = Module(class TestingModule {}, {
         imports: [...TestModuleImports],
         providers: [...TestModuleProviders],
       });
 
-      testModuleDI = await Framework100500.initModuleDI({ module: TestModule });  // eslint-disable-line
+      testAppInstance = new Framework100500(TestModule);
+      await testAppInstance.initRootModuleDI();
     }
 
-    return injectAsync(testModuleDI.rootInjector, token);
+    return injectAsync(testAppInstance.rootModuleDI.rootInjector, token);
   }
 
   /**

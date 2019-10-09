@@ -5,10 +5,11 @@
   "description": "Framework100500 is a simple web API pure Node.js framework",
   "main": "packages/index.js",
   "scripts": {
-    "new-version": "lerna version --conventional-commits --yes",
+    "bootstrap": "lerna bootstrap",
     "diff": "lerna diff",
-    "publish:beta": "lerna publish --dist-tag=beta",
+    "new-version": "lerna version --conventional-commits --yes",
     "publish": "lerna publish --conventional-commits --yes",
+    "publish:beta": "npm run publish -- --dist-tag=beta",
     "lint": "eslint -c eslintConfig.json packages --no-eslintrc --ignore-pattern \"*.spec.js\" --ignore-pattern \"*.test.js\" --ignore-pattern \"node_modules\"",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest --config=jest.config.json"

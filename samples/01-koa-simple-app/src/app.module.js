@@ -3,7 +3,7 @@ const {
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
   APP_MIDDLEWARE,
-  APP_SERVER_TERMINATE_SIGNAL,
+  APP_TERMINATION_SIGNAL,
   APP_MIDDLEWARE_INITIALIZER,
 
   APP_INITIALIZER,
@@ -20,7 +20,7 @@ const {
 } = require('@framework100500/http');
 
 const {
-  HTTP_METHODS
+  HTTP_METHODS,
 } = require('@framework100500/common/http');
 const {
   Module,
@@ -71,11 +71,11 @@ const AddExclamationMarkMiddlewareResolver = Injectable(class AddExclamationMark
   }
 });
 
-const LogOutTimeMiddlewareResolver =  Injectable(class LogOutTimeMiddlewareResolver {
+const LogOutTimeMiddlewareResolver = Injectable(class LogOutTimeMiddlewareResolver {
 
   resolve() {
     return async (ctx, next) => {
-     await next();
+      await next();
       console.log('Bye, bye. Now is %s', new Date());
     }
   }
@@ -84,42 +84,42 @@ const LogOutTimeMiddlewareResolver =  Injectable(class LogOutTimeMiddlewareResol
 const MIDDLEWARE = [
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return helmet();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return logger();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return compress();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return bodyParser();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return health();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function(config) {
+    useFactory: function (config) {
       return cors({ ...config.corsOptions });
     },
     deps: [AppConfigService],
@@ -136,34 +136,33 @@ const APP_SERVER_LISTENERS = [
         return [
           Inject(APP_SERVER),
           AppConfigService,
-          Inject(APP_SERVER_TERMINATE_SIGNAL),
+          Inject(APP_TERMINATION_SIGNAL),
         ];
       }
 
       constructor(
         appServer,
         appConfigService,
-        terminateSignal,
+        terminationSignal,
       ) {
         this.appServer = appServer;
         this.appConfigService = appConfigService;
-        this.terminateSignal = terminateSignal;
+        this.terminationSignal = terminationSignal;
       }
 
       listen() {
         const { port } = this.appConfigService;
 
-        const listener = this.appServer.listen(port, () => {
+        const server = this.appServer.listen(port, () => {
           console.log(`App server is up and running on ${ port }`);
         });
 
-        this.appServer.on(this.terminateSignal, () => {
-          console.log(`App server received a termination signal, ${ this.terminateSignal }`);
+        process.on(this.terminationSignal, () => {
+          console.log('App received a `%s` signal. Closing server connections.', this.terminationSignal);
 
-          listener.close(() => {
-            console.log(`App server is down.`);
+          server.close(() => {
+            server.unref();
           });
-          listener.unref();
         });
       }
     },
@@ -188,6 +187,12 @@ const APP_SERVER_LISTENERS = [
         this.appServer.on('error', (e) => {
           console.error(e);
         });
+        process.on('uncaughtException', (e) => {
+          console.error('uncaughtException: %O', e);
+        });
+        process.on('unhandledRejection', (e) => {
+          console.error('unhandledRejection: %O', e);
+        })
       }
     },
   },
@@ -205,10 +210,12 @@ const APP_INITIALIZERS = [
   {
     provide: APP_MIDDLEWARE_INITIALIZER,
     useClass: MiddlewareInitializer,
-  }
+  },
 ];
 
-class AppModule {}
+class AppModule {
+}
+
 module.exports = Module(AppModule, {
   imports: [
     CoreModule.forRoot(),
@@ -222,7 +229,7 @@ module.exports = Module(AppModule, {
           async (ctx, next) => {
             console.log('Hi there. Now is %s', new Date());
             return next();
-          }
+          },
         ],
         commonMiddlewareResolvers: [
           LogOutTimeMiddlewareResolver,
@@ -237,11 +244,11 @@ module.exports = Module(AppModule, {
               const { name = 'world' } = query;
               ctx.state.name = name;
               return next();
-            }
+            },
           ],
           // AND/OR
           middlewareResolvers: [
-            AddExclamationMarkMiddlewareResolver
+            AddExclamationMarkMiddlewareResolver,
           ],
 
           // handler: async (ctx) => {

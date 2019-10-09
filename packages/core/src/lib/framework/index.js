@@ -1,8 +1,4 @@
-/*
- * Framework100500
- * Copyright (c) 2019 Oleksandr Bondarenko
- * MIT Licensed
- */
+const Framework100500 = require('./core');
 
 const {
   APP_INITIALIZER,
@@ -12,9 +8,7 @@ const {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
-  Framework100500,
-  CoreModule,
-} = require('./src');
+} = require('./DI.tokens');
 
 module.exports = {
   APP_INITIALIZER,
@@ -24,6 +18,6 @@ module.exports = {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
-  Framework100500,
-  CoreModule,
+
+  Framework100500
 };

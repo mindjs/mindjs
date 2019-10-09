@@ -42,7 +42,7 @@ async function invokeFn(fn, ...args) {
  * @returns {Promise<*>}
  */
 async function invokeOn(obj, methodName, ...args) {
-  if (!(obj || methodName)) {
+  if (!(obj && methodName)) {
     return;
   }
 

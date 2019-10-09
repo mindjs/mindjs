@@ -1,4 +1,4 @@
-const { flatten, isArray, isFunction } = require('lodash');
+const { flatten, isArray, isFunction, every } = require('lodash');
 
 const {
   ReflectiveInjector,
@@ -23,27 +23,25 @@ const {
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
+  APP_TERMINATION_SIGNAL,
 } = require('./DI.tokens');
 const {
-  MiddlewareInitializer,
-} = require('./initializers');
-const {
   isModuleWithProviders,
-} = require('./utils');
+} = require('../utils');
+const {
+  TERMINATION_SIGNAL,
+} = require('../constants');
 
 module.exports = class Framework100500 {
 
-  constructor(bootstrapModule) {
-    this.rootModule = bootstrapModule;
-  }
+  constructor(bootstrap100500Module) {
+    this._app100500ServerTerminationEmitted = false;
+    this._app100500InitializersInvoked = false;
+    this._app100500RoutingInitiated = false;
+    this._app100500ServerStarted = false;
+    this.isApp100500Initiated = false;
 
-  /**
-   *
-   * @returns {Promise<void>}
-   */
-  async bootstrap() {
-    this.appModuleDI = await Framework100500.bootstrap(this.rootModule);
-    return this.appModuleDI;
+    this.app100500RootModule = bootstrap100500Module;
   }
 
   /**
@@ -120,6 +118,60 @@ module.exports = class Framework100500 {
 
   /**
    *
+   * @param rootDI
+   * @returns {Promise<*>}
+   */
+  static async invokeInitializers(rootDI = {}) {
+    const { rootInjector } = rootDI;
+
+    if (!rootInjector) {
+      throw new Error(('injector was not provided'));
+    }
+
+    const initializeInjector = rootInjector;
+
+    const appMiddlewareInitializer = await injectAsync(rootInjector, APP_MIDDLEWARE_INITIALIZER);
+    const appInitializers = await injectAsync(rootInjector, APP_INITIALIZER);
+    const restInitializers = initializeInjector !== rootInjector
+      ? await injectAsync(initializeInjector, APP_INITIALIZER)
+      : [];
+
+    const allInitializers = [
+      ...(isArray(appInitializers) ? appInitializers : [appInitializers]),
+      ...(isArray(restInitializers) ? restInitializers : [restInitializers]),
+      ...(isArray(appMiddlewareInitializer) ? appMiddlewareInitializer : [appMiddlewareInitializer]),
+    ];
+
+    await invokeOnAll(allInitializers, 'init');
+  }
+
+  /**
+   *
+   * @param moduleDI
+   * @returns {Promise<*[]>}
+   */
+  static async extractRoutingModules(moduleDI) {
+    const { module: appModule, injector: moduleInjector } = moduleDI;
+    const { imports = [] } = appModule;
+    let resolvedRoutingModules = [];
+
+    const routingModules = imports.filter(m => isModuleWithProviders(m) && isRoutingModule(m));
+
+    const routingModulesResolver = await injectAsync(moduleInjector, APP_ROUTING_MODULES_RESOLVER);
+    if (routingModulesResolver) {
+      resolvedRoutingModules = routingModulesResolver && isArray(routingModulesResolver)
+        ? await invokeOnAll(routingModulesResolver, 'resolve')
+        : [await invokeFn(routingModulesResolver.resolve())];
+    }
+
+    return [
+      ...flatten(resolvedRoutingModules),
+      ...routingModules,
+    ];
+  }
+
+  /**
+   *
    * @param {{module: *, injector: *, child?: {module: *, injector: *, child: []}[]}} moduleDI
    * @returns {Promise<{module: *, injector: *, child: {module: *, injector: *, child: []}[]}>|undefined}
    */
@@ -166,66 +218,20 @@ module.exports = class Framework100500 {
 
   /**
    *
-   * @param moduleDI
-   * @returns {Promise<*[]>}
+   * @static
+   * @param routingModuleDI
    */
-  static async extractRoutingModules(moduleDI) {
-    const { module: appModule, injector: moduleInjector } = moduleDI;
-    const { imports = [] } = appModule;
-    let resolvedRoutingModules = [];
+  static async resolveAndMountRouters(routingModuleDI) {
+    const { rootInjector, child } = routingModuleDI;
 
-    const routingModules = imports.filter(m => isModuleWithProviders(m) && isRoutingModule(m));
+    const appServer = await injectOneAsync(rootInjector, APP_SERVER);
 
-    const routingModulesResolver = await injectAsync(moduleInjector, APP_ROUTING_MODULES_RESOLVER);
-    if (routingModulesResolver) {
-      resolvedRoutingModules = routingModulesResolver && isArray(routingModulesResolver)
-        ? await invokeOnAll(routingModulesResolver, 'resolve')
-        : [await invokeFn(routingModulesResolver.resolve())];
-    }
-
-    return [
-      ...flatten(resolvedRoutingModules),
-      ...routingModules,
-    ];
-  }
-
-  /**
-   *
-   * @param rootDI
-   * @returns {Promise<*>}
-   */
-  static async invokeInitializers(rootDI = {}) {
-    const { rootInjector } = rootDI;
-
-    if (!rootInjector) {
-      throw new Error(('injector was not provided'));
-    }
-
-    let initializeInjector = rootInjector;
-
-    const appMiddlewareInitializer = await injectAsync(rootInjector, APP_MIDDLEWARE_INITIALIZER);
-
-    if (!appMiddlewareInitializer) {
-      const resolvedProvidersWithMWInitializer = ReflectiveInjector.resolve([{
-        provide: APP_INITIALIZER,
-        useClass: MiddlewareInitializer,
-        multi: true,
-      }]);
-      initializeInjector = rootInjector.createChildFromResolved(resolvedProvidersWithMWInitializer);
-    }
-
-    const appInitializers = await injectAsync(rootInjector, APP_INITIALIZER);
-    const restInitializers = initializeInjector !== rootInjector
-      ? await injectAsync(initializeInjector, APP_INITIALIZER)
-      : [];
-
-    const allInitializers = [
-      ...(isArray(appInitializers) ? appInitializers : [appInitializers]),
-      ...(isArray(restInitializers) ? restInitializers : [restInitializers]),
-      ...(isArray(appMiddlewareInitializer) ? appMiddlewareInitializer : [appMiddlewareInitializer]),
-    ];
-
-    await invokeOnAll(allInitializers, 'init');
+    return await Promise.all(
+      child.map(async ({ module, injector }) => {
+        const routingModule = await injectAsync(injector, module);
+        return await invokeFn(routingModule.resolveAndInitRouters(appServer));
+      }),
+    );
   }
 
   /**
@@ -247,26 +253,9 @@ module.exports = class Framework100500 {
   }
 
   /**
-   *
-   * @static
-   * @param routingModuleDI
-   */
-  static async resolveAndMountRouters(routingModuleDI) {
-    const { rootInjector, child } = routingModuleDI;
-
-    const appServer = await injectOneAsync(rootInjector, APP_SERVER);
-
-    return await Promise.all(
-      child.map(async ({ module, injector }) => {
-        const routingModule = await injectAsync(injector, module);
-        return await invokeFn(routingModule.resolveAndInitRouters(appServer));
-      }),
-    );
-  }
-
-  /**
-   *
-   * @param moduleDI
+   * Invokes either `startServer` method on Application module or
+   *  `listen` one on APP_SERVER_NET_LISTENER and SERVER_ERROR_LISTENERs if such have been provided
+   * @param {*} moduleDI
    * @returns {Promise<void>}
    */
   static async startServer(moduleDI = {}) {
@@ -299,30 +288,134 @@ module.exports = class Framework100500 {
   /**
    * @static
    * @param rootModule
-   * @returns {Promise<void>}
+   * @returns {Promise<Framework100500>}
    */
   static async bootstrap(rootModule) {
-    // TODO: add possibility to visualize DI tree
-    const rootModuleDI = await Framework100500.initModuleDI({ module: rootModule });
+    const appInstance = new Framework100500(rootModule);
+    await appInstance.bootstrap();
 
-    return Framework100500.initAndStart(rootModuleDI);
+    return appInstance;
+  }
+
+  /**
+   * Emits provided as APP_TERMINATION_SIGNAL termination signal or `SIGTERM` to node's process
+   * @param {*} moduleDI
+   * @returns {Promise<*>}
+   */
+  static async terminateAppServer(moduleDI = {}) {
+    const { rootInjector } = moduleDI;
+    if (!rootInjector) {
+      return;
+    }
+
+    const terminateSignal = await injectOneAsync(rootInjector, APP_TERMINATION_SIGNAL, TERMINATION_SIGNAL.SIGTERM);
+
+    return process.emit(terminateSignal);
+  }
+
+  /**
+   * Initiates `rootModuleDI` for root module
+   * @returns {Promise<void>}
+   */
+  async initRootModuleDI() {
+    // TODO: add possibility to visualize DI tree
+    this.rootModuleDI = await Framework100500.initModuleDI({ module: this.app100500RootModule });
+  }
+
+  /**
+   *
+   * @returns {Promise<void>}
+   */
+  async invokeInitializers() {
+    if (!this.rootModuleDI) {
+      return;
+    }
+    await Framework100500.invokeInitializers(this.rootModuleDI);
+  }
+
+  /**
+   * Initiates routing modules DIs based on root module DI
+   * @returns {Promise<void>}
+   */
+  async initRouting() {
+    if (!this.rootModuleDI) {
+      return;
+    }
+    await Framework100500.initRouting(this.rootModuleDI);
+  }
+
+  /**
+   *
+   * @returns {Promise<void>}
+   */
+  async startServer() {
+    if (!this.rootModuleDI) {
+      return;
+    }
+    await Framework100500.startServer(this.rootModuleDI);
   }
 
   /**
    * Invokes initializers, routing and then starts a server if NET listeners have been provided
-   * @param rootModuleDI
-   * @returns {Promise<*>}
+   * @returns {Promise<void>}
    */
-  static async initAndStart(rootModuleDI) {
-    if (!rootModuleDI) {
+  async initAndStart() {
+    if (!this.rootModuleDI || this.isApp100500Initiated) {
       return;
     }
 
-    await Framework100500.invokeInitializers(rootModuleDI);
-    await Framework100500.initRouting(rootModuleDI);
-    await Framework100500.startServer(rootModuleDI);
+    try {
+      await this.invokeInitializers();
+      this._app100500InitializersInvoked = true;
+    } catch (e) {
+      console.error(e);
+      this._app100500InitializersInvoked = false;
+    }
 
-    return rootModuleDI;
+    try {
+      await this.initRouting();
+      this._app100500RoutingInitiated = true;
+    } catch (e) {
+      console.error(e);
+      this._app100500RoutingInitiated = false;
+    }
+
+    try {
+      await this.startServer();
+      this._app100500ServerStarted = true;
+    } catch (e) {
+      console.error(e);
+      this._app100500ServerStarted = false;
+    }
+
+    this.isApp100500Initiated = every([
+      this._app100500InitializersInvoked,
+      this._app100500RoutingInitiated,
+      this._app100500ServerStarted,
+    ]);
   }
 
+  /**
+   * Initiates root module DI, then invokes initializers, routing modules, and after that starts the server;
+   * @returns {Promise<void>}
+   */
+  async bootstrap() {
+    await this.initRootModuleDI();
+    await this.initAndStart();
+  }
+
+  /**
+   * Emits termination signal `SIGTERM` to app server
+   * @returns {Promise<void>}
+   */
+  async terminateAppServer() {
+    if (!this.isApp100500Initiated) {
+      return;
+    }
+
+    const isEmitted = await Framework100500.terminateAppServer(this.rootModuleDI);
+    this._app100500ServerTerminationEmitted = !!isEmitted;
+
+    return this._app100500ServerTerminationEmitted;
+  }
 };

@@ -3,8 +3,11 @@ const {
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
   APP_MIDDLEWARE,
+  APP_TERMINATION_SIGNAL,
+  APP_MIDDLEWARE_INITIALIZER,
 
   APP_INITIALIZER,
+  CoreModule,
 } = require('@framework100500/core');
 
 const {
@@ -13,7 +16,11 @@ const {
 } = require('@framework100500/routing');
 
 const {
-  HTTP_METHODS
+  HttpModule,
+} = require('@framework100500/http');
+
+const {
+  HTTP_METHODS,
 } = require('@framework100500/common/http');
 const {
   Module,
@@ -32,7 +39,7 @@ const helmet = require('koa-helmet');
 const logger = require('koa-logger');
 
 const AppConfigService = require('./config.service');
-const { EnableProxyAppInitializer } = require('./app.initializers');
+const { EnableProxyAppInitializer, MiddlewareInitializer } = require('./app.initializers');
 
 const HelloWorldHandlerResolver = Injectable(class HelloWorldHandlerResolver {
   resolve() {
@@ -64,11 +71,11 @@ const AddExclamationMarkMiddlewareResolver = Injectable(class AddExclamationMark
   }
 });
 
-const LogOutTimeMiddlewareResolver =  Injectable(class LogOutTimeMiddlewareResolver {
+const LogOutTimeMiddlewareResolver = Injectable(class LogOutTimeMiddlewareResolver {
 
   resolve() {
     return async (ctx, next) => {
-     await next();
+      await next();
       console.log('Bye, bye. Now is %s', new Date());
     }
   }
@@ -77,42 +84,42 @@ const LogOutTimeMiddlewareResolver =  Injectable(class LogOutTimeMiddlewareResol
 const MIDDLEWARE = [
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return helmet();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return logger();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return compress();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return bodyParser();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function() {
+    useFactory: function () {
       return health();
     },
     multi: true,
   },
   {
     provide: APP_MIDDLEWARE,
-    useFactory: function(config) {
+    useFactory: function (config) {
       return cors({ ...config.corsOptions });
     },
     deps: [AppConfigService],
@@ -129,21 +136,33 @@ const APP_SERVER_LISTENERS = [
         return [
           Inject(APP_SERVER),
           AppConfigService,
+          Inject(APP_TERMINATION_SIGNAL),
         ];
       }
 
       constructor(
         appServer,
         appConfigService,
+        terminationSignal,
       ) {
         this.appServer = appServer;
         this.appConfigService = appConfigService;
+        this.terminationSignal = terminationSignal;
       }
 
       listen() {
         const { port } = this.appConfigService;
-        this.appServer.listen(port, () => {
+
+        const server = this.appServer.listen(port, () => {
           console.log(`App server is up and running on ${ port }`);
+        });
+
+        process.on(this.terminationSignal, () => {
+          console.log('App received a `%s` signal. Closing server connections.', this.terminationSignal);
+
+          server.close(() => {
+            server.unref();
+          });
         });
       }
     },
@@ -168,6 +187,12 @@ const APP_SERVER_LISTENERS = [
         this.appServer.on('error', (e) => {
           console.error(e);
         });
+        process.on('uncaughtException', (e) => {
+          console.error('uncaughtException: %O', e);
+        });
+        process.on('unhandledRejection', (e) => {
+          console.error('unhandledRejection: %O', e);
+        })
       }
     },
   },
@@ -182,11 +207,20 @@ const APP_INITIALIZERS = [
     useClass: EnableProxyAppInitializer,
     multi: true,
   },
+  {
+    provide: APP_MIDDLEWARE_INITIALIZER,
+    useClass: MiddlewareInitializer,
+  },
 ];
 
-class AppModule {}
+class AppModule {
+}
+
 module.exports = Module(AppModule, {
   imports: [
+    CoreModule.forRoot(),
+    HttpModule.forRoot(),
+
     RoutingModule.forRoot({
       providers: [],
       routerDescriptor: {
@@ -195,7 +229,7 @@ module.exports = Module(AppModule, {
           async (ctx, next) => {
             console.log('Hi there. Now is %s', new Date());
             return next();
-          }
+          },
         ],
         commonMiddlewareResolvers: [
           LogOutTimeMiddlewareResolver,
@@ -210,11 +244,11 @@ module.exports = Module(AppModule, {
               const { name = 'world' } = query;
               ctx.state.name = name;
               return next();
-            }
+            },
           ],
           // AND/OR
           middlewareResolvers: [
-            AddExclamationMarkMiddlewareResolver
+            AddExclamationMarkMiddlewareResolver,
           ],
 
           // handler: async (ctx) => {

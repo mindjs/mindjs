@@ -5,6 +5,7 @@
  */
 
 const {
+  APP_CONFIG,
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,
@@ -17,6 +18,7 @@ const {
 } = require('./src');
 
 module.exports = {
+  APP_CONFIG,
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,

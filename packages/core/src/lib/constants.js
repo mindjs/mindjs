@@ -5,13 +5,11 @@
    `SIGINT` and `SIGTERM` have default handlers on non-Windows platforms that resets the terminal mode
             before exiting with code 128 + signal number. If one of these signals has a listener installed,
             its default behaviour will be removed (node will no longer exit).
-   `SIGKILL` is used to cause immediate termination. Unlike SIGTERM it can't be handled or ignored by the process.
  */
 
 const TERMINATION_SIGNAL = {
   SIGTERM: 'SIGTERM',
   SIGINT: 'SIGINT',
-  SIGKILL: 'SIGKILL',
 };
 
 module.exports = {

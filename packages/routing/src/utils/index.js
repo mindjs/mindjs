@@ -11,13 +11,6 @@ function normalizeRoutePath(routeName) {
 
 /**
  *
- * @param {Function|*} handler
- * @returns {boolean}
- */
-const isValidHandler = handler => isFunction(handler);
-
-/**
- *
  * @param {Function[]|*} mwList
  * @returns {boolean}
  */
@@ -40,6 +33,5 @@ function isRoutingModule(m) {
 module.exports = {
   isValidMiddlewareList,
   normalizeRoutePath,
-  isValidHandler,
   isRoutingModule
 };

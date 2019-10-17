@@ -73,10 +73,11 @@ async function invokeAll(...args) {
 /**
  * Invokes a given method without passing arguments to them on all provided objects
  * @param {*} objects
- * @param {string}methodName
+ * @param {string} methodName
+ * @param {*[]} commonArgs
  * @returns {Promise<Array|*[]>}
  */
-async function invokeOnAll(objects, methodName) {
+async function invokeOnAll(objects, methodName, ...commonArgs) {
   if (!(methodName && isArray(objects) && objects.length)) {
     return [];
   }
@@ -84,7 +85,7 @@ async function invokeOnAll(objects, methodName) {
   return await Promise.all(
     objects
       .filter(Boolean)
-      .map(async (obj) => await invokeOn(obj, methodName)),
+      .map(async (obj) => await invokeOn(obj, methodName, ...commonArgs)),
   );
 }
 

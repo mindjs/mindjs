@@ -8,6 +8,7 @@ const {
   Module,
   Inject,
   Injectable,
+  Optional,
 
   CommonModule,
 } = require('./src');
@@ -16,6 +17,7 @@ module.exports = {
   Module,
   Inject,
   Injectable,
+  Optional,
 
   CommonModule,
 };

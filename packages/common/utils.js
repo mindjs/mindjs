@@ -1,4 +1,8 @@
 const {
+  isDevEnvironment,
+
+  toArray,
+
   invokeFn,
   invokeAll,
   invokeOn,
@@ -17,6 +21,10 @@ const {
 } = require('./src/utils');
 
 module.exports = {
+  isDevEnvironment,
+
+  toArray,
+
   invokeFn,
   invokeAll,
   invokeOn,

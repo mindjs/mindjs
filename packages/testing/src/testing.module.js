@@ -1,9 +1,10 @@
 const { Framework100500 } = require('@framework100500/core');
 
 const { Module } = require('@framework100500/common');
-const { injectAsync } = require('@framework100500/common/utils');
+const { injectAsync, toArray } = require('@framework100500/common/utils');
 
-let TestModule;
+let TestApplicationModule;
+let testPlatform;
 let testAppInstance;
 let TestEnvConfig = {};
 let TestModuleImports = [];
@@ -18,46 +19,63 @@ class Test100500 {
    *  When `bootstrap` method is invoked moduleDI is created and server is started (provided all NET listeners are provided)
    *  When `inject` or `get` method is used, moduleDI is created only
    * @param {{
-   *   imports: Module|{ module: Module, providers: Injectable|Provider[] }|RoutingModule[],
-   *   providers: Injectable|Provider[]
+   *   module: Module,
+   *   imports: Module|{ module: Module, imports: Module[], providers: Injectable|Provider[] }|RoutingModule[],
+   *   providers: Injectable|Provider[],
+   *   platform: Framework100500Platform
+   *
    * }|Module} moduleDef
    * @param {{
-   *   envVariables: {}
-   * }} testingOptions
+   *   envVariables: {},
+   * }} testingConfig
    */
-  static async configureTestingModule({ imports = [], providers = [] } = {}, { envVariables } = {}) {
+  static async configureTestingModule( moduleDef = {}, testingConfig = {}) {
+    const { module = {}, imports = [], providers = [], platform } = moduleDef;
+    const { imports: moduleImports = [], providers: moduleProviders = [] } = module;
+    const { envVariables } = testingConfig;
     // reset previous run state
     await Test100500.resetTestingModule();
 
     // configure new run state and do nothing until `inject` or `get` method is invoked
-    TestModuleImports = [...imports];
-    TestModuleProviders = [...providers];
+    testPlatform = platform;
+    TestModuleImports = [...moduleImports];
+    TestModuleProviders = [...moduleProviders];
 
     if (envVariables) {
       Test100500.setEnvVariables(envVariables);
+    }
+
+    if (imports.length) {
+      Test100500.addImports(imports);
+    }
+    if (providers.length) {
+      Test100500.addProviders(providers);
     }
   }
 
   /**
    * Creates module DI and starts a server with routing and all initializers invoked
-   * @returns {Promise<void>}
+   * @returns {Promise<*>}
    */
   static async bootstrap() {
     if (testAppInstance.isApp100500Initiated) {
       return;
     }
 
-    if (TestModule) {
-      await testAppInstance.initAndStart();
-    } else {
-      TestModule = Module(class TestingModule {}, {
-        imports: [...TestModuleImports],
-        providers: [...TestModuleProviders],
-      });
+    if (testAppInstance) {
+      return testAppInstance.initAndStart();
+    }
 
-      testAppInstance = new Framework100500(TestModule);
-      await testAppInstance.initRootModuleDI();
-      await testAppInstance.initAndStart();
+    TestApplicationModule = Module(class TestingModule {}, {
+      imports: [...TestModuleImports],
+      providers: [...TestModuleProviders],
+    });
+
+    if (testPlatform) {
+      testAppInstance = await testPlatform.bootstrapModule(TestApplicationModule);  // eslint-disable-line
+    } else {
+      testAppInstance = new Framework100500(TestApplicationModule,);
+      await testAppInstance.bootstrap();
     }
   }
 
@@ -82,7 +100,7 @@ class Test100500 {
 
     TestModuleImports = [];
     TestModuleProviders = [];
-    TestModule = undefined;
+    TestApplicationModule = undefined;
     testAppInstance = undefined;
     Test100500.resetEnvVariables();
   }
@@ -175,6 +193,48 @@ class Test100500 {
   }
 
   /**
+   *
+   * @param importValue
+   */
+  static addImport(importValue) {
+    if (importValue) {
+      TestModuleImports = [
+        ...TestModuleImports,
+        importValue,
+      ];
+    }
+  }
+
+  /**
+   *
+   * @param importValues
+   */
+  static addImports(importValues) {
+    toArray(importValues).map(i => Test100500.addImport(i));
+  }
+
+  /**
+   *
+   * @param provider
+   */
+  static addProvider(provider) {
+    if (provider) {
+      TestModuleProviders = [
+        ...TestModuleProviders,
+        provider,
+      ];
+    }
+  }
+
+  /**
+   *
+   * @param providers
+   */
+  static addProviders(providers) {
+    toArray(providers).map(p => Test100500.addProvider(p));
+  }
+
+  /**
    * This method initiates creating module DI if testing module/environment has not been bootstrapped and injects proper provider from it.
    * Otherwise it uses testAppInstance's rootInjector to inject desired provider by token.
    * @param {Injectable|InjectionToken} token
@@ -186,13 +246,17 @@ class Test100500 {
     }
 
     if (!(testAppInstance && testAppInstance.rootModuleDI)) {
-      TestModule = Module(class TestingModule {}, {
+      TestApplicationModule = Module(class TestingModule {}, {
         imports: [...TestModuleImports],
         providers: [...TestModuleProviders],
       });
 
-      testAppInstance = new Framework100500(TestModule);
-      await testAppInstance.initRootModuleDI();
+      if (testPlatform) {
+        testAppInstance = await testPlatform.initApplicationModule(TestApplicationModule); // eslint-disable-line
+      } else {
+        testAppInstance = new Framework100500(TestApplicationModule);
+        await testAppInstance.initRootModuleDI();
+      }
     }
 
     return injectAsync(testAppInstance.rootModuleDI.rootInjector, token);

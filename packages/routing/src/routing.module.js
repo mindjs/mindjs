@@ -1,12 +1,15 @@
-const { isFunction, isObject, isArray, flatten } = require('lodash');
-
-const {
-  Module,
-  Inject,
-} = require('@framework100500/common');
+const { Module, Inject, Optional } = require('@framework100500/common');
 const { Injector, ReflectiveInjector } = require('@framework100500/common/DI');
 const { HTTP_METHODS } = require('@framework100500/common/http');
-const { injectSyncFromTree, invokeOn, invokeFn, injectSync } = require('@framework100500/common/utils');
+const {
+  toArray,
+  invokeFn,
+  invokeOn,
+  injectSync,
+  injectSyncFromTree,
+} = require('@framework100500/common/utils');
+
+const { isFunction, isObject, flatten } = require('lodash');
 
 const {
   APP_ROUTER_DESCRIPTOR_RESOLVER,
@@ -15,17 +18,9 @@ const {
   APP_ROUTERS_INITIALIZER,
   APP_ROUTE_MOUNTER,
 } = require('./DI.tokens');
-const {
-  stubHandler,
-} = require('./constants');
-const {
-  AppRouterMiddlewareInitializer,
-  AppRoutersInitializer,
-  AppRouteMounter,
-} = require('./initializers');
+
 const {
   normalizeRoutePath,
-  isValidHandler,
   isValidMiddlewareList,
 } = require('./utils');
 
@@ -111,7 +106,7 @@ class RoutingModule {
   static get parameters() {
     return [
       Inject(Injector),
-      Inject(APP_ROUTER_PROVIDER),
+      Optional(APP_ROUTER_PROVIDER),
     ];
   }
 
@@ -128,17 +123,17 @@ class RoutingModule {
    *   providers: Injectable[]|Provider[],
    *   routerDescriptor: {
    *     prefix: string,
+   *     commonMiddleware: Function[], this middleware is taken into account and executes first
    *     commonMiddlewareResolvers: (Injectable|{ resolver: Injectable, resolveParams: *[] })[],
-   *     commonMiddleware: Function[],
    *     routes: {
    *       path: string,
    *       method: HTTP_METHODS.GET|HTTP_METHODS.POST|HTTP_METHODS.PUT|HTTP_METHODS.PATCH|HTTP_METHODS.DELETE|HTTP_METHODS.HEAD|HTTP_METHODS.OPTIONS,
    *
-   *       handler: Function,
+   *       handler: Function, if handler function is provided, then handlerResolver is ignored
    *       handlerResolver: Injectable,
-   *       handlerResolverResolveParams: *[],
+   *       handlerResolverResolveParams: *[], params to pass to handlerResolver.resolve()
    *
-   *       middleware: Function[],
+   *       middleware: Function[], similarly to commonMiddleware it is taken into account and executes first
    *       middlewareResolvers: (Injectable|{ resolver: Injectable, resolveParams: *[] })[],
    *    }[]
    *   }
@@ -173,6 +168,12 @@ class RoutingModule {
    * @returns {Promise<[]|*>}
    */
   async resolveAndInitRouters(appServer) {
+    if (!appServer) {
+      return;
+    }
+
+    this.appServer = appServer;
+
     const routerDescriptorResolvers = injectSync(this.moduleInjector, APP_ROUTER_DESCRIPTOR_RESOLVER);
 
     if (!routerDescriptorResolvers) {
@@ -180,16 +181,15 @@ class RoutingModule {
       return;
     }
 
-    this.routers = isArray(routerDescriptorResolvers)
-      ? await Promise.all(
-        routerDescriptorResolvers
-          .filter(Boolean)
-          .filter(r => isFunction(r.resolve))
-          .map((r) => this._resolveRouter(r))
-      )
-      : [await this._resolveRouter(routerDescriptorResolvers)];
+    const routers = await Promise.all(
+      toArray(routerDescriptorResolvers)
+        .filter(Boolean)
+        .filter(r => isFunction(r.resolve))
+        .map((r) => this._resolveRouter(r))
+    );
 
-    await this.initRouters(appServer, flatten(this.routers));
+    this.routers = flatten(routers);
+    await this.initRouters();
   }
 
   /**
@@ -198,15 +198,17 @@ class RoutingModule {
    * @param routers
    * @returns {Promise<*>}
    */
-  async initRouters(appServer, routers) {
-    let routersInitializer = injectSyncFromTree(this.moduleInjector, APP_ROUTERS_INITIALIZER);
+  async initRouters() {
+    const routersInitializer = injectSyncFromTree(this.moduleInjector, APP_ROUTERS_INITIALIZER);
+
     if (!routersInitializer) {
-      routersInitializer = new AppRoutersInitializer();
+      console.warn('APP_ROUTERS_INITIALIZER was not found.');
+      return;
     }
 
     return isObject(routersInitializer) && isFunction(routersInitializer.init)
-      ? invokeOn(routersInitializer, 'init', appServer, routers)
-      : invokeFn(routersInitializer, appServer, routers);
+      ? invokeOn(routersInitializer, 'init', this.appServer, this.routers)
+      : invokeFn(routersInitializer, this.appServer, this.routers);
   }
 
   /**
@@ -216,7 +218,19 @@ class RoutingModule {
    * @private
    */
   async _resolveRouter(routerDescriptorResolver) {
+    if (!this.routerProvider) {
+      console.warn('APP_ROUTER_PROVIDER was not found.');
+      return;
+    }
+
     const router = new this.routerProvider();
+    /*
+     * TODO:
+     *  1. Add dataResolver support
+     *  2. Add canActivate guards for each layer (parent and child (routes))
+     *  3. add possibility to render templates
+     *  4. add possibility to use array of paths in case if two or more API endpoints should expose the same behaviour (e.g. compatibility mode)
+     */
     const {
       prefix = '',
       commonMiddleware = [],
@@ -242,9 +256,10 @@ class RoutingModule {
    * @private
    */
   async _initMiddlewareOnRouter(router, middleware) {
-    let routerMiddlewareInitializer = injectSyncFromTree(this.moduleInjector, APP_ROUTER_MIDDLEWARE_INITIALIZER);
+    const routerMiddlewareInitializer = injectSyncFromTree(this.moduleInjector, APP_ROUTER_MIDDLEWARE_INITIALIZER);
     if (!routerMiddlewareInitializer) {
-      routerMiddlewareInitializer = new AppRouterMiddlewareInitializer(); // use default one
+      console.warn('APP_ROUTER_MIDDLEWARE_INITIALIZER was not found.');
+      return;
     }
 
     isObject(routerMiddlewareInitializer) && isFunction(routerMiddlewareInitializer.init)
@@ -259,9 +274,11 @@ class RoutingModule {
    * @returns {Promise<*>}
    */
   async mountRoutes(router, routesDescriptors) {
-    let appRouteMounter = injectSyncFromTree(this.moduleInjector, APP_ROUTE_MOUNTER);
+    const appRouteMounter = injectSyncFromTree(this.moduleInjector, APP_ROUTE_MOUNTER);
+
     if (!appRouteMounter) {
-      appRouteMounter = new AppRouteMounter(); // use default one
+      console.warn('APP_ROUTE_MOUNTER was not found.');
+      return;
     }
 
     await Promise.all(
@@ -312,14 +329,21 @@ class RoutingModule {
       middlewareResolvers = [],
     } = routeDescriptor;
 
-    if (isValidHandler(handler)) {
+    if (isFunction(handler)) {
       handlerToUse = handler;
     } else if (handlerResolver) {
       const injectedAndResolvedHandler = await this._provideAndResolve(
         handlerResolver,
         handlerResolverResolveParams,
       );
-      handlerToUse = isValidHandler(injectedAndResolvedHandler) ? injectedAndResolvedHandler : stubHandler;
+      if (isFunction(injectedAndResolvedHandler)) {
+        handlerToUse = injectedAndResolvedHandler;
+      }
+    }
+
+    if (!handlerToUse) {
+      // TODO: add debug log...
+      return;
     }
 
     const injectedMiddleware = await this._provideAllAndResolve(middlewareResolvers);

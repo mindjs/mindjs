@@ -1,6 +1,8 @@
 const Framework100500 = require('./core');
+const Framework100500Platform = require('./platform-base');
 
 const {
+  APP_CONFIG,
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,
@@ -11,6 +13,7 @@ const {
 } = require('./DI.tokens');
 
 module.exports = {
+  APP_CONFIG,
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,
@@ -19,5 +22,6 @@ module.exports = {
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
 
-  Framework100500
+  Framework100500Platform,
+  Framework100500,
 };

@@ -38,7 +38,7 @@ function injectSync(injector, token, notFoundValue = undefined) {
  * @param {*} notFoundValue?
  * @returns {*}
  */
-function injectOneSync(injector, token, notFoundValue) {
+function injectOneSync(injector, token, notFoundValue = undefined) {
   const result = injectSync(injector, token, notFoundValue);
   return isArray(result) ? first(result) : result;
 }
@@ -50,7 +50,7 @@ function injectOneSync(injector, token, notFoundValue) {
  * @param {*} notFoundValue?
  * @returns {*}
  */
-function injectSyncFromTree(injector, token, notFoundValue) {
+function injectSyncFromTree(injector, token, notFoundValue = undefined) {
   const result = injectSync(injector, token);
 
   if (!result && isFunction(get(injector, 'parent.get'))) {
@@ -66,8 +66,8 @@ function injectSyncFromTree(injector, token, notFoundValue) {
  * @param token
  * @returns {Promise<*>}
  */
-async function injectAsync(injector, token) {
-  return injectSync(injector, token);
+async function injectAsync(injector, token, notFoundValue = undefined) {
+  return injectSync(injector, token, notFoundValue);
 }
 
 /**
@@ -77,7 +77,7 @@ async function injectAsync(injector, token) {
  * @param notFoundValue?
  * @returns {Promise<*>}
  */
-async function injectOneAsync(injector, token, notFoundValue) {
+async function injectOneAsync(injector, token, notFoundValue = undefined) {
   return injectOneSync(injector, token, notFoundValue);
 }
 

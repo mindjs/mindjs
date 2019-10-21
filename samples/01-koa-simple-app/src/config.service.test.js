@@ -1,6 +1,6 @@
 const { Test100500 } = require('@framework100500/testing');
 const { parseEnv } = require('@framework100500/testing/utils');
-const { HttpClient } = require('@framework100500/http');
+const { HttpClient, HttpModule } = require('@framework100500/http');
 
 const ConfigService = require('./config.service');
 const AppModule = require('./app.module');
@@ -8,15 +8,20 @@ const AppModule = require('./app.module');
 describe('AppConfigService', () => {
   let service;
   let httpClient;
+
   const IS_PROXY = false;
-  const PORT = 777;
+  const PORT = 4444;
+  const host = `http://127.0.0.1:${ PORT }`;
 
   beforeEach(async () => {
-    await Test100500.configureTestingModule(AppModule, {
+    await Test100500.configureTestingModule({
+      module: AppModule,
+      imports: [HttpModule.forRoot()]
+    }, {
       envVariables: {
         IS_PROXY,
         PORT,
-      }
+      },
     });
 
     service = await Test100500.get(ConfigService);
@@ -44,7 +49,7 @@ describe('AppConfigService', () => {
     });
 
     it('should run the app', async () => {
-      const resp = await httpClient.get('http://127.0.0.1:777/ping', { json: true });
+      const resp = await httpClient.get(`${ host }/ping`, { json: true });
 
       expect(resp).toBeDefined();
     });
@@ -52,14 +57,14 @@ describe('AppConfigService', () => {
     describe('`hello-world` API endpoint', () => {
 
       it('should handle GET request', async () => {
-        const resp = await httpClient.get('http://127.0.0.1:777/api/hello-world', { json: true });
+        const resp = await httpClient.get(`${ host }/api/hello-world`, { json: true });
 
         expect(resp).toBeDefined();
         expect(resp).toContain('hello');
       });
 
       it('should handle request query params', async () => {
-        const resp = await httpClient.get('http://127.0.0.1:777/api/hello-world?name=me', { json: true });
+        const resp = await httpClient.get(`${ host }/api/hello-world?name=me`, { json: true });
 
         expect(resp).toBeDefined();
         expect(resp).toContain('me');

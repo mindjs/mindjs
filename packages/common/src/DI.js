@@ -1,4 +1,5 @@
 const {
+  Optional: _Optional,
   Inject: _Inject,
   InjectionToken,
   Injector,
@@ -11,6 +12,7 @@ const {
 
 module.exports = {
   // re-export `injection-js`'s entities
+  _Optional,
   _Inject,
   InjectionToken,
   Injector,

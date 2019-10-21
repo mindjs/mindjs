@@ -1,4 +1,4 @@
-const { Injectable, Inject } = require('@framework100500/common');
+const { Injectable, Inject, Optional } = require('@framework100500/common');
 
 const { HTTP_CLIENT, HTTP_REQUEST_INTERCEPTOR } = require('./DI.tokens');
 
@@ -11,7 +11,7 @@ class HttpClient {
   static get parameters() {
     return [
       Inject(HTTP_CLIENT),
-      Inject(HTTP_REQUEST_INTERCEPTOR),
+      Optional(HTTP_REQUEST_INTERCEPTOR),
     ];
   }
 

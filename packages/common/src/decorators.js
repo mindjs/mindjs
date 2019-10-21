@@ -2,7 +2,7 @@ const uuidv4 = require('uuid/v4');
 
 const { isFunction } = require('lodash');
 
-const { InjectionToken, _Inject } = require('./DI');
+const { InjectionToken, _Inject, _Optional } = require('./DI');
 
 /**
  *
@@ -78,8 +78,22 @@ function injectDecorator(token) {
   return new _Inject(token);
 }
 
+/**
+ * This decorator tells DI to pass a null as a value for provider if it is not found in DI tree
+ * @param {string} token
+ * @returns {[Optional, Inject|Injectable]}
+ */
+function optionalDecorator(token) {
+  const optional = new _Optional();
+
+  return token instanceof InjectionToken
+    ? [optional, injectDecorator(token)]
+    : [optional, token];
+}
+
 module.exports = {
   Inject: injectDecorator,
+  Optional: optionalDecorator,
   Module: moduleDecorator,
   Injectable: injectableClassDecorator,
 };

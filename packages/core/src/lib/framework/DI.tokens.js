@@ -15,6 +15,7 @@ const APP_MIDDLEWARE = new InjectionToken('Framework100500AppMiddleware');
 const APP_MIDDLEWARE_INITIALIZER = new InjectionToken('Framework100500AppMiddlewareInitializer');
 const APP_SERVER = new InjectionToken('Framework100500AppServer');
 const APP_TERMINATION_SIGNAL = new InjectionToken('Framework100500AppTerminationSignal');
+const APP_CONFIG = new InjectionToken('Framework100500ApplicationConfig');
 
 /*
   Listeners
@@ -23,6 +24,7 @@ const APP_SERVER_ERROR_LISTENER = new InjectionToken('Framework100500AppServerEr
 const APP_SERVER_NET_LISTENER = new InjectionToken('Framework100500AppServerNetListener');
 
 module.exports = {
+  APP_CONFIG,
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,

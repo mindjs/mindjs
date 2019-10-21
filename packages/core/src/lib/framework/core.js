@@ -5,7 +5,6 @@ const {
 } = require('@framework100500/common/DI');
 const {
   toArray,
-  invokeFn,
   invokeOnAll,
   invokeOn,
   injectSync,
@@ -141,6 +140,10 @@ module.exports = class Framework100500 {
     }
 
     const appServer = injectOneSync(rootInjector, APP_SERVER);
+    if (!appServer) {
+      throw new Error('APP_SERVER provider was not found.');
+    }
+
     const appMiddlewareInitializer = injectOneSync(rootInjector, APP_MIDDLEWARE_INITIALIZER);
 
     const platformInitializers = toArray(get(platform, 'initializers', []));
@@ -207,7 +210,12 @@ module.exports = class Framework100500 {
     });
 
     if (!routingModules.length) {
-      return;
+      return {
+        rootInjector,
+        module: parentModule,
+        injector: parentModuleInjector,
+        child: [],
+      };
     }
 
     const routingModulesDI = await Promise.all(
@@ -247,10 +255,14 @@ module.exports = class Framework100500 {
 
     const appServer = injectOneSync(rootInjector, APP_SERVER);
 
+    if (!appServer) {
+      throw new Error('APP_SERVER provider was not found.');
+    }
+
     return Promise.all(
       child.map(({ module, injector }) => {
         const routingModule = injectOneSync(injector, module);
-        return invokeFn(routingModule.resolveAndInitRouters(appServer));
+        return invokeOn(routingModule, 'resolveAndInitRouters', appServer);
       }),
     );
   }
@@ -287,24 +299,32 @@ module.exports = class Framework100500 {
     }
 
     const rootModuleInstance = injectOneSync(rootInjector, rootModule);
-    const errorListeners = toArray(injectSync(rootInjector, APP_SERVER_ERROR_LISTENER));
 
-    const serverListener = injectOneSync(rootInjector, APP_SERVER_NET_LISTENER);
     const appServer = injectOneSync(rootInjector, APP_SERVER);
+    if (!appServer) {
+      throw new Error('APP_SERVER provider was not found.');
+    }
+
+    const errorListeners = toArray(injectSync(rootInjector, APP_SERVER_ERROR_LISTENER));
+    const serverListener = injectOneSync(rootInjector, APP_SERVER_NET_LISTENER);
+    if (!serverListener) {
+      throw new Error('APP_SERVER_NET_LISTENER provider was not found.');
+    }
+
     /*
     * Start server using a custom startServer method on bootstrap module or with provided server listeners
     * */
     if (isFunction(rootModuleInstance.startServer)) {
-      await invokeFn(rootModuleInstance.startServer(appServer));
+      await invokeOn(rootModuleInstance, 'startServer', appServer);
       return;
     }
 
     const listeners = [
       serverListener,
       ...errorListeners,
-    ];
+    ].filter(Boolean);
 
-    await invokeOnAll(listeners, 'listen', appServer);
+    await invokeOnAll(listeners, 'listen', appServer);'';
   }
 
   /**
@@ -338,35 +358,39 @@ module.exports = class Framework100500 {
 
   /**
    * Initiates `rootModuleDI` for root module
-   * @returns {Promise<void>}
+   * @returns {Promise<Framework100500|*>}
    */
   async initRootModuleDI() {
     // TODO: add possibility to visualize DI tree
     this.rootModuleDI = await Framework100500.initModuleDI(
       { module: this.app100500RootModule },
-      this.app100500Platform);
+      this.app100500Platform,
+    );
+    return this;
   }
 
   /**
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<Framework100500|*>}
    */
   async invokeInitializers() {
     if (!this.rootModuleDI) {
       return;
     }
     await Framework100500.invokeInitializers(this.rootModuleDI, this.app100500Platform);
+    return this;
   }
 
   /**
    * Initiates routing modules DIs based on root module DI
-   * @returns {Promise<void>}
+   * @returns {Promise<Framework100500|*>}
    */
   async initRouting() {
     if (!this.rootModuleDI) {
-      return;
+      return this;
     }
     await Framework100500.initRouting(this.rootModuleDI);
+    return this;
   }
 
   /**
@@ -375,18 +399,19 @@ module.exports = class Framework100500 {
    */
   async startServer() {
     if (!this.rootModuleDI) {
-      return;
+      return this;
     }
     await Framework100500.startServer(this.rootModuleDI);
+    return this;
   }
 
   /**
    * Invokes initializers, routing and then starts a server if NET listeners have been provided
-   * @returns {Promise<void>}
+   * @returns {Promise<Framework100500|*>}
    */
   async initAndStart() {
     if (!this.rootModuleDI || this.isApp100500Initiated) {
-      return;
+      return this;
     }
 
     try {
@@ -418,20 +443,22 @@ module.exports = class Framework100500 {
       this._app100500RoutingInitiated,
       this._app100500ServerStarted,
     ]);
+
+    return this;
   }
 
   /**
    * Initiates root module DI, then invokes initializers, routing modules, and after that starts the server;
-   * @returns {Promise<void>}
+   * @returns {Promise<Framework100500|*>}
    */
   async bootstrap() {
     await this.initRootModuleDI();
-    await this.initAndStart();
+    return this.initAndStart();
   }
 
   /**
    * Emits termination signal `SIGTERM` to app server
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>}
    */
   async terminateAppServer() {
     if (!this.isApp100500Initiated) {

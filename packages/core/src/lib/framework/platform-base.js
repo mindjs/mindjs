@@ -19,10 +19,20 @@ const {
 
 /**
  * TODO: add description and usage notes
- * @type {Framework100500PlatformBase}
+ * @type {Framework100500Platform}
  */
-module.exports = class Framework100500PlatformBase {
+module.exports = class Framework100500Platform {
 
+  /**
+   * @param {{
+   *  platformProvidersOverride: Provider|Injectable[], list of providers that should be overridden. Any of platform provider can be overridden by providing it in application module
+   *  platformExtraProviders: Provider|Injectable[], additional providers that should be provided on a platform level. E.g. APP_CONFIG or platform specific configuration providers
+   * }} platformProvidersConfig
+   * @param {{
+   *   useDefaultMiddleware: boolean, enable or disable using platform default middleware
+   *   useDefaultInitializers: boolean, enable or disable using platform default initializers
+   * }} defaultsConfig
+   */
   constructor(
     {
       platformProvidersOverride = [],
@@ -286,20 +296,58 @@ module.exports = class Framework100500PlatformBase {
 
   /**
    * Bootstraps application module within a platform
-   * @param appModule
-   * @returns {Promise<void>}
+   * @param {Module} appModule
+   * @returns {Promise<Framework100500|*>}
    */
   async bootstrapModule(appModule) {
+    if (!this.applicationModule) {
+      await this.initApplicationModule(appModule);
+    }
+
+    return this.bootstrapApplicationModule();
+  }
+
+  /**
+   *
+   * @returns {Promise<Framework100500|*>}
+   */
+  async initApplicationModule(appModule) {
+    if (this.applicationModule) {
+      return;
+    }
+    this.applicationModule = appModule;
+    await this._initPlatformModuleDI();
+
+    this.application100500 = new Framework100500(this.applicationModule, this);
+    return this.application100500.initRootModuleDI();
+  }
+
+  /**
+   *
+   * @returns {Promise<*|Framework100500>}
+   */
+  async bootstrapApplicationModule() {
+    if (!this.application100500) {
+      return;
+    }
+
+    return this.application100500.bootstrap();
+  }
+
+  /**
+   *
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _initPlatformModuleDI() {
     this.platformModuleDI = await Framework100500.initModuleDI({
-      module: Module(class PlatformModule {}, {
+      module: Module(class PlatformModule {
+      }, {
         providers: [
           ...this.getPlatformProviders(),
         ],
       }),
     });
-
-    const platform = this;
-
-    await Framework100500.bootstrap(appModule, platform);
   }
+
 };

@@ -1,4 +1,4 @@
-const { Module, Inject } = require('@framework100500/common');
+const { Module, Inject, Optional } = require('@framework100500/common');
 const { Injector, ReflectiveInjector } = require('@framework100500/common/DI');
 const { HTTP_METHODS } = require('@framework100500/common/http');
 const {
@@ -106,7 +106,7 @@ class RoutingModule {
   static get parameters() {
     return [
       Inject(Injector),
-      Inject(APP_ROUTER_PROVIDER),
+      Optional(APP_ROUTER_PROVIDER),
     ];
   }
 
@@ -123,17 +123,17 @@ class RoutingModule {
    *   providers: Injectable[]|Provider[],
    *   routerDescriptor: {
    *     prefix: string,
+   *     commonMiddleware: Function[], this middleware is taken into account and executes first
    *     commonMiddlewareResolvers: (Injectable|{ resolver: Injectable, resolveParams: *[] })[],
-   *     commonMiddleware: Function[],
    *     routes: {
    *       path: string,
    *       method: HTTP_METHODS.GET|HTTP_METHODS.POST|HTTP_METHODS.PUT|HTTP_METHODS.PATCH|HTTP_METHODS.DELETE|HTTP_METHODS.HEAD|HTTP_METHODS.OPTIONS,
    *
-   *       handler: Function,
+   *       handler: Function, if handler function is provided, then handlerResolver is ignored
    *       handlerResolver: Injectable,
-   *       handlerResolverResolveParams: *[],
+   *       handlerResolverResolveParams: *[], params to pass to handlerResolver.resolve()
    *
-   *       middleware: Function[],
+   *       middleware: Function[], similarly to commonMiddleware it is taken into account and executes first
    *       middlewareResolvers: (Injectable|{ resolver: Injectable, resolveParams: *[] })[],
    *    }[]
    *   }
@@ -202,7 +202,7 @@ class RoutingModule {
     const routersInitializer = injectSyncFromTree(this.moduleInjector, APP_ROUTERS_INITIALIZER);
 
     if (!routersInitializer) {
-      // TODO: add debug log
+      console.warn('APP_ROUTERS_INITIALIZER was not found.');
       return;
     }
 
@@ -218,7 +218,19 @@ class RoutingModule {
    * @private
    */
   async _resolveRouter(routerDescriptorResolver) {
+    if (!this.routerProvider) {
+      console.warn('APP_ROUTER_PROVIDER was not found.');
+      return;
+    }
+
     const router = new this.routerProvider();
+    /*
+     * TODO:
+     *  1. Add dataResolver support
+     *  2. Add canActivate guards for each layer (parent and child (routes))
+     *  3. add possibility to render templates
+     *  4. add possibility to use array of paths in case if two or more API endpoints should expose the same behaviour (e.g. compatibility mode)
+     */
     const {
       prefix = '',
       commonMiddleware = [],
@@ -246,7 +258,7 @@ class RoutingModule {
   async _initMiddlewareOnRouter(router, middleware) {
     const routerMiddlewareInitializer = injectSyncFromTree(this.moduleInjector, APP_ROUTER_MIDDLEWARE_INITIALIZER);
     if (!routerMiddlewareInitializer) {
-      // TODO: add debug log...
+      console.warn('APP_ROUTER_MIDDLEWARE_INITIALIZER was not found.');
       return;
     }
 
@@ -265,7 +277,7 @@ class RoutingModule {
     const appRouteMounter = injectSyncFromTree(this.moduleInjector, APP_ROUTE_MOUNTER);
 
     if (!appRouteMounter) {
-      // TODO: add debug log...
+      console.warn('APP_ROUTE_MOUNTER was not found.');
       return;
     }
 

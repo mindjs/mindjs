@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/framework100500/framework100500/compare/@framework100500/core@1.4.0...@framework100500/core@1.4.1) (2019-10-09)
+
+**Note:** Version bump only for package @framework100500/core
+
+
+
+
+
+# [1.4.0](https://github.com/framework100500/framework100500/compare/@framework100500/core@1.3.3...@framework100500/core@1.4.0) (2019-10-09)
+
+
+### Features
+
+* **core:** application init, start, and termination ([d8bd18b](https://github.com/framework100500/framework100500/commit/d8bd18b))
+
+
+
+
+
 ## [1.3.1](https://github.com/framework100500/framework100500/compare/@framework100500/core@1.3.0...@framework100500/core@1.3.1) (2019-09-25)
 
 **Note:** Version bump only for package @framework100500/core

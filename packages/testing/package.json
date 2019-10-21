@@ -39,8 +39,8 @@
   },
   "peerDependencies": {
     "@framework100500/common": "^1.3.0",
-    "@framework100500/core": "^1.4.1",
-    "@framework100500/routing": "^1.2.3"
+    "@framework100500/core": "^1.4.0",
+    "@framework100500/routing": "^1.2.2"
   },
   "repository": {
     "type": "git",

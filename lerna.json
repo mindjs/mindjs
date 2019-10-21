@@ -1,12 +1,11 @@
 {
   "packages": [
-    "packages/*",
-    "samples/*"
+    "packages/*"
   ],
   "version":"independent",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "ignoreChanges": [
-    "samples/*"
+
   ]
 }

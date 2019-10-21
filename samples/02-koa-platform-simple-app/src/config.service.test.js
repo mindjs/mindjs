@@ -1,6 +1,7 @@
 const { Test100500 } = require('@framework100500/testing');
 const { parseEnv } = require('@framework100500/testing/utils');
 const { HttpClient, HttpModule } = require('@framework100500/http');
+const { platform100500Koa } = require('@framework100500/platform-koa');
 
 const ConfigService = require('./config.service');
 const AppModule = require('./app.module');
@@ -10,13 +11,15 @@ describe('AppConfigService', () => {
   let httpClient;
 
   const IS_PROXY = false;
-  const PORT = 4444;
+  const PORT = 4300;
   const host = `http://127.0.0.1:${ PORT }`;
 
   beforeEach(async () => {
     await Test100500.configureTestingModule({
       module: AppModule,
-      imports: [HttpModule.forRoot()]
+      imports: [HttpModule.forRoot()],
+      // providers: [],
+      platform: platform100500Koa(),
     }, {
       envVariables: {
         IS_PROXY,

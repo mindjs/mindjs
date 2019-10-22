@@ -1,0 +1,54 @@
+{
+  "name": "@framework100500/platform-fastify",
+  "version": "1.0.0",
+  "keywords": [
+    "web",
+    "http",
+    "https",
+    "routing",
+    "restify",
+    "restify.js",
+    "express.js",
+    "express",
+    "koa.js",
+    "koa",
+    "node.js",
+    "API",
+    "framework",
+    "dependency injection",
+    "DI",
+    "injection-js",
+    "jest.js",
+    "nest.js",
+    "angular.js",
+    "angular",
+    "IOC",
+    "inversion of control",
+    "REST"
+  ],
+  "description": "Framework100500 is a simple web API pure Node.js framework @platform-koa",
+  "main": "../../../index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=10.15.0"
+  },
+  "dependencies": {
+    "debug": "4.1.1"
+  },
+  "peerDependencies": {
+    "@framework100500/common": "^1.2.1",
+    "@framework100500/core": "^1.3.3",
+    "@framework100500/routing": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/framework100500/framework100500.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Oleksandr Bondarenko",
+  "license": "MIT"
+}

@@ -1,6 +1,6 @@
 {
   "name": "@framework100500/common",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Framework100500 is a simple web API pure Node.js framework @common",
   "main": "index.js",
   "keywords": [
@@ -40,9 +40,9 @@
   "dependencies": {
     "http-status-codes": "1.3.2",
     "injection-js": "^2.2.2",
-    "tslib": "^1.9.3",
     "lodash": "^4.17.15",
     "rxjs": "^6.5.3",
+    "tslib": "^1.9.3",
     "uuid": "^3.3.3"
   },
   "repository": {

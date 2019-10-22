@@ -1,6 +1,6 @@
 {
   "name": "@framework100500/platform-koa",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "keywords": [
     "web",
     "http",
@@ -35,16 +35,16 @@
     "node": ">=10.15.0"
   },
   "dependencies": {
+    "@koa/cors": "^3.0.0",
     "debug": "4.1.1",
     "koa": "^2.10.0",
-    "koa-router": "^7.4.0",
-    "koa-helmet": "^5.2.0",
-    "@koa/cors": "^3.0.0",
-    "koa-logger": "^3.2.1",
-    "koa-compress": "^3.0.0",
     "koa-body": "^4.1.1",
-    "koa2-ping": "^0.3.0",
+    "koa-compress": "^3.0.0",
+    "koa-helmet": "^5.2.0",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
+    "koa2-ping": "^0.3.0",
     "lodash": "^4.17.15"
   },
   "peerDependencies": {

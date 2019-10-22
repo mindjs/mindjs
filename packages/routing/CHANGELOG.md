@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.4](https://github.com/framework100500/framework100500/compare/@framework100500/routing@1.2.3...@framework100500/routing@1.2.4) (2019-10-22)
+
+**Note:** Version bump only for package @framework100500/routing
+
+
+
+
+
 ## [1.2.3](https://github.com/framework100500/framework100500/compare/@framework100500/routing@1.2.2...@framework100500/routing@1.2.3) (2019-10-09)
 
 **Note:** Version bump only for package @framework100500/routing

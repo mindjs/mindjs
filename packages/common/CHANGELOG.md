@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/framework100500/framework100500/compare/@framework100500/common@1.3.0...@framework100500/common@1.3.1) (2019-10-22)
+
+**Note:** Version bump only for package @framework100500/common
+
+
+
+
+
 # [1.3.0](https://github.com/framework100500/framework100500/compare/@framework100500/common@1.2.1...@framework100500/common@1.3.0) (2019-10-09)
 
 

@@ -1,5 +1,5 @@
 /*
- * Framework100500
+ * Mind.js
  * Copyright (c) 2019 Oleksandr Bondarenko
  * MIT Licensed
  */
@@ -14,7 +14,7 @@ const {
   KOA_LOGGER_CONFIG,
   KOA_SERVE_STATIC_CONFIG,
 
-  platform100500Koa,
+  mindPlatformKoa,
 } = require('./src');
 
 module.exports = {
@@ -27,5 +27,5 @@ module.exports = {
   KOA_LOGGER_CONFIG,
   KOA_SERVE_STATIC_CONFIG,
 
-  platform100500Koa,
+  mindPlatformKoa,
 };

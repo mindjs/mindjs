@@ -5,15 +5,15 @@ const {
   APP_MIDDLEWARE_INITIALIZER,
   APP_INITIALIZER,
   CoreModule,
-} = require('@framework100500/core');
+} = require('@mindjs/core');
 const {
   APP_ROUTER_PROVIDER,
   APP_ROUTE_MOUNTER,
   APP_ROUTERS_INITIALIZER,
   APP_ROUTER_MIDDLEWARE_INITIALIZER,
-} = require('@framework100500/routing');
-const { Module } = require('@framework100500/common');
-// const { HttpModule } = require('@framework100500/http');
+} = require('@mindjs/routing');
+const { Module } = require('@mindjs/common');
+// const { HttpModule } = require('@mindjs/http');
 
 const Koa = require('koa');
 const Router = require('koa-router');

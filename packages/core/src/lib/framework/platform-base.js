@@ -1,9 +1,9 @@
-const { Module } = require('@framework100500/common');
-const { injectSync, injectOneSync, toArray } = require('@framework100500/common/utils');
+const { Module } = require('@mindjs/common');
+const { injectSync, injectOneSync, toArray } = require('@mindjs/common/utils');
 
 const { get, isEmpty } = require('lodash');
 
-const Framework100500 = require('./core');
+const Mind = require('./core');
 const {
   APP_SERVER,
   APP_SERVER_NET_LISTENER,
@@ -19,9 +19,9 @@ const {
 
 /**
  * TODO: add description and usage notes
- * @type {Framework100500Platform}
+ * @type {MindPlatform}
  */
-module.exports = class Framework100500Platform {
+module.exports = class MindPlatform {
 
   /**
    * @param {{
@@ -297,10 +297,10 @@ module.exports = class Framework100500Platform {
   /**
    * Bootstraps application module within a platform
    * @param {Module} appModule
-   * @returns {Promise<Framework100500|*>}
+   * @returns {Promise<Mind|*>}
    */
   async bootstrapModule(appModule) {
-    if (!this.applicationModule) {
+    if (!this.applicationMindModule) {
       await this.initApplicationModule(appModule);
     }
 
@@ -309,29 +309,29 @@ module.exports = class Framework100500Platform {
 
   /**
    *
-   * @returns {Promise<Framework100500|*>}
+   * @returns {Promise<Mind|*>}
    */
   async initApplicationModule(appModule) {
-    if (this.applicationModule) {
+    if (this.applicationMindModule) {
       return;
     }
-    this.applicationModule = appModule;
+    this.applicationMindModule = appModule;
     await this._initPlatformModuleDI();
 
-    this.application100500 = new Framework100500(this.applicationModule, this);
-    return this.application100500.initRootModuleDI();
+    this.applicationMind = new Mind(this.applicationMindModule, this);
+    return this.applicationMind.initRootModuleDI();
   }
 
   /**
    *
-   * @returns {Promise<*|Framework100500>}
+   * @returns {Promise<*|Mind>}
    */
   async bootstrapApplicationModule() {
-    if (!this.application100500) {
+    if (!this.applicationMind) {
       return;
     }
 
-    return this.application100500.bootstrap();
+    return this.applicationMind.bootstrap();
   }
 
   /**
@@ -340,7 +340,7 @@ module.exports = class Framework100500Platform {
    * @private
    */
   async _initPlatformModuleDI() {
-    this.platformModuleDI = await Framework100500.initModuleDI({
+    this.platformModuleDI = await Mind.initModuleDI({
       module: Module(class PlatformModule {
       }, {
         providers: [

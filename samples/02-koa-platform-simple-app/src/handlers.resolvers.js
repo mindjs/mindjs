@@ -1,4 +1,4 @@
-const { Injectable } = require('@framework100500/common');
+const { Injectable } = require('@mindjs/common');
 
 class HelloWorldHandlerResolver {
   resolve(...params) {

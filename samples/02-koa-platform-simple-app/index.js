@@ -1,6 +1,6 @@
-const { APP_CONFIG } = require('@framework100500/core');
+const { APP_CONFIG } = require('@mindjs/core');
 const {
-  platform100500Koa,
+  mindPlatformKoa,
   KOA_CORS_CONFIG,
   // KOA_SERVE_STATIC_CONFIG,
   // KOA_LOGGER_CONFIG,
@@ -8,11 +8,11 @@ const {
   // KOA_COMPRESS_CONFIG,
   // KOA_BODY_PARSER_CONFIG,
   // KOA_HELMET_CONFIG
-} = require('@framework100500/platform-koa');
+} = require('@mindjs/platform-koa');
 
 const { AppModule } = require('./src');
 
-platform100500Koa({
+mindPlatformKoa({
   platformExtraProviders: [
     // Platform configuration providers
     {

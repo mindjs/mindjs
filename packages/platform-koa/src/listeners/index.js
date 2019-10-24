@@ -1,6 +1,6 @@
-const { Optional } = require('@framework100500/common');
-const { APP_TERMINATION_SIGNAL, APP_CONFIG } = require('@framework100500/core');
-const { TERMINATION_SIGNAL } = require('@framework100500/core/constants');
+const { Optional } = require('@mindjs/common');
+const { APP_TERMINATION_SIGNAL, APP_CONFIG } = require('@mindjs/core');
+const { TERMINATION_SIGNAL } = require('@mindjs/core/constants');
 
 const { uniq } = require('lodash');
 

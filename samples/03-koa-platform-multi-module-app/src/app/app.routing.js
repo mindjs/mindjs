@@ -1,5 +1,5 @@
-const { RoutingModule } = require('@framework100500/routing');
-const { HTTP_METHODS } = require('@framework100500/common/http');
+const { RoutingModule } = require('@mindjs/routing');
+const { HTTP_METHODS } = require('@mindjs/common/http');
 
 module.exports = RoutingModule.forRoot({
   providers: [],

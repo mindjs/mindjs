@@ -1,10 +1,10 @@
 const {
   RoutingModule,
-} = require('@framework100500/routing');
+} = require('@mindjs/routing');
 
 const {
   HTTP_METHODS,
-} = require('@framework100500/common/http');
+} = require('@mindjs/common/http');
 
 const { HelloWorldHandlerResolver } = require('./handlers.resolvers');
 const { AddExclamationMarkMiddlewareResolver, LogOutTimeMiddlewareResolver } = require('./middleware.resolvers');

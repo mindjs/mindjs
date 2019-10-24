@@ -1,12 +1,12 @@
-const { InjectionToken } = require('@framework100500/common/DI');
+const { InjectionToken } = require('@mindjs/common/DI');
 
-const KOA_CORS_CONFIG = new InjectionToken('Framework100500KoaCORSConfig');
-const KOA_HELMET_CONFIG = new InjectionToken('Framework100500KoaHelmetConfig');
-const KOA_SERVE_STATIC_CONFIG = new InjectionToken('Framework100500KoaServeStaticConfig');
-const KOA_BODY_PARSER_CONFIG = new InjectionToken('Framework100500KoaBodyParserConfigPathConfig');
-const KOA_LOGGER_CONFIG = new InjectionToken('Framework100500KoaLoggerConfigPathConfig');
-const KOA_COMPRESS_CONFIG = new InjectionToken('Framework100500KoaCompressConfigPathConfig');
-const KOA_HEALTH_CONFIG = new InjectionToken('Framework100500KoaHealthConfigPathConfig');
+const KOA_CORS_CONFIG = new InjectionToken('KoaPlatformMindCORSConfig');
+const KOA_HELMET_CONFIG = new InjectionToken('KoaPlatformMindHelmetConfig');
+const KOA_SERVE_STATIC_CONFIG = new InjectionToken('KoaPlatformMindServeStaticConfig');
+const KOA_BODY_PARSER_CONFIG = new InjectionToken('KoaPlatformMindBodyParserConfig');
+const KOA_LOGGER_CONFIG = new InjectionToken('KoaPlatformMindLoggerConfig');
+const KOA_COMPRESS_CONFIG = new InjectionToken('KoaPlatformMindCompressConfig');
+const KOA_HEALTH_CONFIG = new InjectionToken('KoaPlatformMindHealthConfig');
 
 module.exports = {
   KOA_CORS_CONFIG,

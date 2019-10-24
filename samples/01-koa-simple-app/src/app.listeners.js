@@ -1,9 +1,9 @@
 const {
   APP_TERMINATION_SIGNAL,
-} = require('@framework100500/core');
+} = require('@mindjs/core');
 const {
   Inject,
-} = require('@framework100500/common');
+} = require('@mindjs/common');
 
 const AppConfigService = require('./config.service');
 

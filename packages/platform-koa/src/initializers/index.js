@@ -1,5 +1,5 @@
-const { invokeOn, toArray } = require('@framework100500/common/utils');
-const { HTTP_METHODS } = require('@framework100500/common/http');
+const { invokeOn, toArray } = require('@mindjs/common/utils');
+const { HTTP_METHODS } = require('@mindjs/common/http');
 
 const { isObject } = require('lodash');
 

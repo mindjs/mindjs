@@ -1,5 +1,5 @@
-const { Inject } = require('@framework100500/common');
-const { APP_MIDDLEWARE, APP_CONFIG } = require('@framework100500/core');
+const { Inject } = require('@mindjs/common');
+const { APP_MIDDLEWARE, APP_CONFIG } = require('@mindjs/core');
 
 const { default: enforceHttps } = require('koa-sslify');
 

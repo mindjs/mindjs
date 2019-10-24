@@ -14,7 +14,7 @@ function injectableClassDecorator(targetClass) {
     return targetClass;
   }
 
-  const fwPrefix = 'Framework100500-';
+  const fwPrefix = 'Mind-';
   const tokenName = targetClass.name ? `${ fwPrefix }${ targetClass.name }` : `${ fwPrefix }-class-${ uuidv4() }`;
   const injectionToken = new InjectionToken(tokenName);
 

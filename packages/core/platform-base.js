@@ -1,7 +1,7 @@
 const {
-  Framework100500Platform,
+  MindPlatform,
 } = require('./src/lib/framework');
 
 module.exports = {
-  Framework100500Platform,
+  MindPlatform,
 };

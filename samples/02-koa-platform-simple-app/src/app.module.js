@@ -2,13 +2,13 @@ const {
   // APP_SERVER,
   // APP_SERVER_NET_LISTENER,
   CoreModule,
-} = require('@framework100500/core');
+} = require('@mindjs/core');
 const {
   // APP_ROUTE_MOUNTER,
   // APP_ROUTER_PROVIDER,
-} = require('@framework100500/routing');
-const { Module } = require('@framework100500/common');
-// const { HttpModule } = require('@framework100500/http');
+} = require('@mindjs/routing');
+const { Module } = require('@mindjs/common');
+// const { HttpModule } = require('@mindjs/http');
 
 // const Koa = require('koa');
 // const Router = require('koa-router');

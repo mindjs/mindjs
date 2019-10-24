@@ -18,7 +18,7 @@ Unopinionated, minimalistic pure `Node.js` API framework superpowered with _Depe
 
 For more information look in the following sections:
 * [Getting Started](./wiki/GETTING_STARTED.md)
-* [Mind,js Components](./wiki/FRAMEWORK100500_COMPONENTS.md)
+* [Mind.js Anatomy](wiki/MINDJS_ANATOMY.md)
 * [Platforms](./wiki/PLATFORMS.md)
 * [Routing](./wiki/ROUTING.md)
 * [Http](./wiki/HTTP.md)

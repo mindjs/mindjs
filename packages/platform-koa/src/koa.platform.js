@@ -1,6 +1,6 @@
 const {
-  Framework100500Platform,
-} = require('@framework100500/core/platform-base');
+  MindPlatform,
+} = require('@mindjs/core/platform-base');
 const {
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
@@ -8,13 +8,13 @@ const {
   APP_SERVER_NET_LISTENER,
   APP_MIDDLEWARE,
   APP_INITIALIZER,
-} = require('@framework100500/core');
+} = require('@mindjs/core');
 const {
   APP_ROUTERS_INITIALIZER,
   APP_ROUTE_MOUNTER,
   APP_ROUTER_MIDDLEWARE_INITIALIZER,
   APP_ROUTER_PROVIDER,
-} = require('@framework100500/routing');
+} = require('@mindjs/routing');
 
 const {
   koaServerProvider,
@@ -30,7 +30,7 @@ const {
   koaAppDefaultProviders,
 } = require('./providers');
 
-class Platform100500Koa extends Framework100500Platform {
+class PlatformMindKoa extends MindPlatform {
 
   /**
    *
@@ -92,12 +92,12 @@ class Platform100500Koa extends Framework100500Platform {
  *   useDefaultMiddleware: boolean, enable or disable using platform default middleware
  *   useDefaultInitializers: boolean, enable or disable using platform default initializers
  * }} defaultsConfig
- * @returns {Platform100500Koa}
+ * @returns {PlatformMindKoa}
  */
-function platform100500Koa(platformProvidersConfig = {}, defaultsConfig = {}) {
-  return new Platform100500Koa(platformProvidersConfig, defaultsConfig);
+function mindPlatformKoa(platformProvidersConfig = {}, defaultsConfig = {}) {
+  return new PlatformMindKoa(platformProvidersConfig, defaultsConfig);
 }
 
 module.exports = {
-  platform100500Koa
+  mindPlatformKoa,
 };

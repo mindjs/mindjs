@@ -1,4 +1,4 @@
-const { Module } = require('@framework100500/common');
+const { Module } = require('@mindjs/common');
 
 const { APP_TERMINATION_SIGNAL } = require('../lib/framework');
 const { TERMINATION_SIGNAL } = require('../lib/constants');

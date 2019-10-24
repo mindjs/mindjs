@@ -1,13 +1,13 @@
 /*
- * Framework100500
+ * Mind.js
  * Copyright (c) 2019 Oleksandr Bondarenko
  * MIT Licensed
  */
 
 const {
-  Test100500,
+  TestMind,
 } = require('./src');
 
 module.exports = {
-  Test100500,
+  TestMind,
 };

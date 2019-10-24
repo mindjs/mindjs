@@ -1,6 +1,6 @@
-const { APP_SERVER_NET_LISTENER, CoreModule } = require('@framework100500/core');
-const { Module } = require('@framework100500/common');
-const { HttpModule } = require('@framework100500/http');
+const { APP_SERVER_NET_LISTENER, CoreModule } = require('@mindjs/core');
+const { Module } = require('@mindjs/common');
+const { HttpModule } = require('@mindjs/http');
 
 const { AppServerListener } = require('./app.listeners');
 

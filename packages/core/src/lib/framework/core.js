@@ -2,21 +2,21 @@ const { flatten, isFunction, every, get } = require('lodash');
 
 const {
   ReflectiveInjector,
-} = require('@framework100500/common/DI');
+} = require('@mindjs/common/DI');
 const {
   toArray,
   invokeOnAll,
   invokeOn,
   injectSync,
   injectOneSync,
-} = require('@framework100500/common/utils');
+} = require('@mindjs/common/utils');
 
 const {
   APP_ROUTING_MODULES_RESOLVER,
-} = require('@framework100500/routing');
+} = require('@mindjs/routing');
 const {
   isRoutingModule,
-} = require('@framework100500/routing/utils');
+} = require('@mindjs/routing/utils');
 
 const {
   APP_MIDDLEWARE,
@@ -34,23 +34,23 @@ const {
   TERMINATION_SIGNAL,
 } = require('../constants');
 
-module.exports = class Framework100500 {
+module.exports = class Mind {
 
-  constructor(bootstrap100500Module, app100500Platform) {
-    this._app100500ServerTerminationEmitted = false;
-    this._app100500InitializersInvoked = false;
-    this._app100500RoutingInitiated = false;
-    this._app100500ServerStarted = false;
-    this.isApp100500Initiated = false;
+  constructor(bootstrapModuleMind, platformMind) {
+    this.appRootModuleMind = bootstrapModuleMind;
+    this.platformMind = platformMind;
 
-    this.app100500Platform = app100500Platform;
-    this.app100500RootModule = bootstrap100500Module;
+    this.appServerMindTerminationEmitted = false;
+    this.appServerMindInitializersInvoked = false;
+    this.appRoutingMindInitiated = false;
+    this.appServerMindStarted = false;
+    this.isAppMindInitiated = false;
   }
 
   /**
    *
    * @param {{module: *, injector?: *, child?: {module: *, injector?: *, child?: *}[]}} moduleDI
-   * @param {*} platform
+   * @param {MindPlatform} platform
    * @returns {Promise<{module: *, injector: *, child: *}|{module: *, injector: *, child: []}|*>}
    */
   static async initModuleDI(moduleDI, platform = undefined) {
@@ -101,13 +101,13 @@ module.exports = class Framework100500 {
      * 2. Init injectors of Routing and Ordinary modules
      * */
     const [routingModulesDI, ordinaryModulesInjectors] = await Promise.all([
-      Framework100500.initRoutingModulesDI({
+      Mind.initRoutingModulesDI({
         rootInjector,
         module: appModule,
         injector: moduleInjector,
       }),
       Promise.all(
-        ordinaryModules.map((m) => Framework100500.initModuleDI({
+        ordinaryModules.map((m) => Mind.initModuleDI({
           rootInjector,
           module: m,
           injector: moduleInjector,
@@ -202,7 +202,7 @@ module.exports = class Framework100500 {
   static async initRoutingModulesDI(moduleDI) {
     const { rootInjector, injector: parentModuleInjector, module: parentModule } = moduleDI;
 
-    const routingModules = await Framework100500.extractRoutingModules({
+    const routingModules = await Mind.extractRoutingModules({
       rootInjector,
       module: parentModule,
       injector: parentModuleInjector,
@@ -275,12 +275,12 @@ module.exports = class Framework100500 {
   static async initRouting(moduleDI) {
     const { routing, child } = moduleDI;
     if (routing) {
-      await Framework100500.resolveAndMountRouters(routing);
+      await Mind.resolveAndMountRouters(routing);
     }
 
     if (child.length) {
       await Promise.all(
-        child.map(async mDI => await Framework100500.initRouting(mDI))
+        child.map(async mDI => await Mind.initRouting(mDI))
       );
     }
   }
@@ -331,10 +331,10 @@ module.exports = class Framework100500 {
    * @static
    * @param {Module} rootModule
    * @param {*} platform
-   * @returns {Promise<Framework100500>}
+   * @returns {Promise<Mind>}
    */
   static async bootstrap(rootModule, platform) {
-    const appInstance = new Framework100500(rootModule, platform);
+    const appInstance = new Mind(rootModule, platform);
     await appInstance.bootstrap();
 
     return appInstance;
@@ -358,38 +358,38 @@ module.exports = class Framework100500 {
 
   /**
    * Initiates `rootModuleDI` for root module
-   * @returns {Promise<Framework100500|*>}
+   * @returns {Promise<Mind|*>}
    */
   async initRootModuleDI() {
     // TODO: add possibility to visualize DI tree
-    this.rootModuleDI = await Framework100500.initModuleDI(
-      { module: this.app100500RootModule },
-      this.app100500Platform,
+    this.rootModuleDI = await Mind.initModuleDI(
+      { module: this.appRootModuleMind },
+      this.platformMind,
     );
     return this;
   }
 
   /**
    *
-   * @returns {Promise<Framework100500|*>}
+   * @returns {Promise<Mind|*>}
    */
   async invokeInitializers() {
     if (!this.rootModuleDI) {
       return;
     }
-    await Framework100500.invokeInitializers(this.rootModuleDI, this.app100500Platform);
+    await Mind.invokeInitializers(this.rootModuleDI, this.platformMind);
     return this;
   }
 
   /**
    * Initiates routing modules DIs based on root module DI
-   * @returns {Promise<Framework100500|*>}
+   * @returns {Promise<Mind|*>}
    */
   async initRouting() {
     if (!this.rootModuleDI) {
       return this;
     }
-    await Framework100500.initRouting(this.rootModuleDI);
+    await Mind.initRouting(this.rootModuleDI);
     return this;
   }
 
@@ -401,47 +401,47 @@ module.exports = class Framework100500 {
     if (!this.rootModuleDI) {
       return this;
     }
-    await Framework100500.startServer(this.rootModuleDI);
+    await Mind.startServer(this.rootModuleDI);
     return this;
   }
 
   /**
    * Invokes initializers, routing and then starts a server if NET listeners have been provided
-   * @returns {Promise<Framework100500|*>}
+   * @returns {Promise<Mind|*>}
    */
   async initAndStart() {
-    if (!this.rootModuleDI || this.isApp100500Initiated) {
+    if (!this.rootModuleDI || this.isAppMindInitiated) {
       return this;
     }
 
     try {
       await this.invokeInitializers();
-      this._app100500InitializersInvoked = true;
+      this.appServerMindInitializersInvoked = true;
     } catch (e) {
       console.error(e);
-      this._app100500InitializersInvoked = false;
+      this.appServerMindInitializersInvoked = false;
     }
 
     try {
       await this.initRouting();
-      this._app100500RoutingInitiated = true;
+      this.appRoutingMindInitiated = true;
     } catch (e) {
       console.error(e);
-      this._app100500RoutingInitiated = false;
+      this.appRoutingMindInitiated = false;
     }
 
     try {
       await this.startServer();
-      this._app100500ServerStarted = true;
+      this.appServerMindStarted = true;
     } catch (e) {
       console.error(e);
-      this._app100500ServerStarted = false;
+      this.appServerMindStarted = false;
     }
 
-    this.isApp100500Initiated = every([
-      this._app100500InitializersInvoked,
-      this._app100500RoutingInitiated,
-      this._app100500ServerStarted,
+    this.isAppMindInitiated = every([
+      this.appServerMindInitializersInvoked,
+      this.appRoutingMindInitiated,
+      this.appServerMindStarted,
     ]);
 
     return this;
@@ -449,7 +449,7 @@ module.exports = class Framework100500 {
 
   /**
    * Initiates root module DI, then invokes initializers, routing modules, and after that starts the server;
-   * @returns {Promise<Framework100500|*>}
+   * @returns {Promise<Mind|*>}
    */
   async bootstrap() {
     await this.initRootModuleDI();
@@ -461,13 +461,13 @@ module.exports = class Framework100500 {
    * @returns {Promise<boolean>}
    */
   async terminateAppServer() {
-    if (!this.isApp100500Initiated) {
+    if (!this.isAppMindInitiated) {
       return;
     }
 
-    const isEmitted = await Framework100500.terminateAppServer(this.rootModuleDI);
-    this._app100500ServerTerminationEmitted = !!isEmitted;
+    const isEmitted = await Mind.terminateAppServer(this.rootModuleDI);
+    this.appServerMindTerminationEmitted = !!isEmitted;
 
-    return this._app100500ServerTerminationEmitted;
+    return this.appServerMindTerminationEmitted;
   }
 };

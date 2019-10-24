@@ -1,9 +1,9 @@
-# Framework100500
+# Mind.js
 
 Unopinionated, minimalistic pure `Node.js` API framework superpowered with _Dependency Injection_ (Inversion Of Control) features.
 
 
-**Framework100500** is formerly inspired by _Angular_ and _Nest.js_. It is developed on top of the `injection-js` package extracted from Angular 4.x.
+**Mind.js** is formerly inspired by _Angular_ and _Nest.js_. It is developed on top of the `injection-js` package extracted from Angular 4.x.
 
 
 **Key features:**
@@ -18,7 +18,7 @@ Unopinionated, minimalistic pure `Node.js` API framework superpowered with _Depe
 
 For more information look in the following sections:
 * [Getting Started](./wiki/GETTING_STARTED.md)
-* [Framework100500 Components](./wiki/FRAMEWORK100500_COMPONENTS.md)
+* [Mind,js Components](./wiki/FRAMEWORK100500_COMPONENTS.md)
 * [Platforms](./wiki/PLATFORMS.md)
 * [Routing](./wiki/ROUTING.md)
 * [Http](./wiki/HTTP.md)

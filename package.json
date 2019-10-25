@@ -78,8 +78,7 @@
     "@mindjs/core": "^1.0.0",
     "@mindjs/common": "^1.0.0",
     "@mindjs/routing": "^1.0.0",
-    "@mindjs/testing": "^1.0.0",
-    "debug": "4.1.1"
+    "@mindjs/testing": "^1.0.0"
   },
   "workspaces": [
     "packages/*"

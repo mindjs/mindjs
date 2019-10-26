@@ -1,0 +1,18 @@
+{
+  "name": "00-getting-started-mind",
+  "version": "1.0.0",
+  "description": "Mind.js Getting started sample app",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oleksandr Bondarenko",
+  "license": "MIT",
+  "dependencies": {
+    "@mindjs/common": "^1.0.0",
+    "@mindjs/core": "^1.0.0",
+    "@mindjs/routing": "^1.0.0",
+    "@mindjs/platfrom-koa": "^1.0.0"
+  }
+}

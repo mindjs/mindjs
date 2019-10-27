@@ -22,8 +22,6 @@ Stack Overflow is a much better place to ask questions since:
 
 To save your and our time, we will systematically close all issues that are requests for general support and redirect people to Stack Overflow.
 
-If you would like to chat about the question in real-time, you can reach out via [our discord channel][discord].
-
 ## <a name="issue"></a> Found a Bug?
 
 If you find a bug in the source code, you can help us by
@@ -142,9 +140,11 @@ from the main (upstream) repository:
   git pull --ff upstream master
   ```
 
+<!---
+
 ## <a name="development"></a> Development Setup
 
-You will need Node.js version 8.9.0+.
+You will need Node.js version 10+.
 
 1. After cloning the repo, run:
 
@@ -180,6 +180,8 @@ $ npm run lint
 $ npm run build:prod
 ```
 
+--->
+
 ## <a name="rules"></a> Coding Rules
 
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
@@ -192,7 +194,7 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 We have very precise rules over how our git commit messages can be formatted. This leads to **more
 readable messages** that are easy to follow when looking through the **project history**. But also,
-we use the git commit messages to **generate the Midn.js change log**.
+we use the git commit messages to **generate the Mind.js change log**.
 
 ### Commit Message Format
 
@@ -250,6 +252,9 @@ The following is the list of supported scopes:
 - **sample**
 - **testing**
 - **http**
+- **platform-*** 
+
+(* - mind-platform)
 
 There are currently a few exceptions to the "use package name" rule:
 
@@ -280,11 +285,8 @@ reference GitHub issues that this commit **Closes**.
 
 A detailed explanation can be found in this [document][commit-message-format].
 
-[commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
-[corporate-cla]: http://code.google.com/legal/corporate-cla-v1.0.html
-[dev-doc]: https://github.com/mindjs/mindjs/blob/master/docs/DEVELOPER.md
 [github]: https://github.com/mindjs/mindjs
-[individual-cla]: http://code.google.com/legal/individual-cla-v1.0.html
+[commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
 [js-style-guide]: https://google.github.io/styleguide/jsguide.html
 [jsfiddle]: http://jsfiddle.net
 [plunker]: http://plnkr.co/edit

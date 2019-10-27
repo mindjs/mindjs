@@ -2,7 +2,7 @@
 
 ## Application setup
 
-+ Download and install [Node.js 10.x or higher](https://nodejs.org). We recommend using the Node.js **v.12.x** for best performance.
++ Download and install [Node.js 10.x or higher](https://nodejs.org). We highly recommend using the Node.js **v.12.x** for best performance.
   (_Note: use [nvm](https://github.com/nvm-sh/nvm) if you need to use different versions of Node.js_)
 
 + Create a project directory:
@@ -11,16 +11,16 @@ mkdir mind-project && cd mind-project
 ```
   
 + Initialize a `package.json`:
-```bash
+```shell
 npm init
 ```
 
-+ Add mind dependencies to your project:
-```bash
++ Add `Mind.js` dependencies to your project:
+```shell
 npm i @mindjs/common @mindjs/core @mindjs/routing @mindjs/platform-koa
 ```
 
-```bash
+```shell
 touch main.js
 mkdir app
 mkdir app/src
@@ -48,10 +48,10 @@ module.exports = Module(class MindAppModule{}, {
             method: HTTP_METHODS.GET,
             handler: async (ctx) => {
               ctx.body = {
-                msg: 'Hello, Mind',
-              }
-            }
-          }
+                msg: 'Hello, Mind.js',
+              };
+            },
+          },
         ],
       },   
     }),
@@ -69,7 +69,7 @@ const MindAppModule = require('./app/src/app.module');
 mindPlatformKoa().bootstrapModule(MindAppModule);
 ```
 + Run your mind app:
-```bash
+```shell
 node main.js
 ```
 

@@ -13,6 +13,6 @@
     "@mindjs/common": "^1.0.0",
     "@mindjs/core": "^1.0.0",
     "@mindjs/routing": "^1.0.0",
-    "@mindjs/platfrom-koa": "^1.0.0"
+    "@mindjs/platform-koa": "^1.0.0"
   }
 }

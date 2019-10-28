@@ -1,4 +1,4 @@
-const { invokeOn, toArray } = require('@framework100500/common/utils');
+const { invokeOn, toArray } = require('@mindjs/common/utils');
 
 const { isFunction } = require('lodash');
 

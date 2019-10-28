@@ -1,5 +1,5 @@
-const Framework100500 = require('./core');
-const Framework100500Platform = require('./platform-base');
+const Mind = require('./core');
+const MindPlatform = require('./platform-base');
 
 const {
   APP_CONFIG,
@@ -22,6 +22,6 @@ module.exports = {
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
 
-  Framework100500Platform,
-  Framework100500,
+  MindPlatform,
+  Mind,
 };

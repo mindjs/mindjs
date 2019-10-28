@@ -1,4 +1,4 @@
-const { HttpStatus } = require('@framework100500/common/http');
+const { HttpStatus } = require('@mindjs/common/http');
 
 const stubResponse = { statusCode: HttpStatus.OK, message: HttpStatus.getStatusText(HttpStatus.OK) };
 

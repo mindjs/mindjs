@@ -1,6 +1,6 @@
 const {
   APP_MIDDLEWARE,
-} = require('@framework100500/core');
+} = require('@mindjs/core');
 
 const bodyParser = require('koa-body');
 const compress = require('koa-compress');

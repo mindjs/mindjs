@@ -1,5 +1,5 @@
-const { APP_TERMINATION_SIGNAL, APP_CONFIG } = require('@framework100500/core');
-const { Inject } = require('@framework100500/common');
+const { APP_TERMINATION_SIGNAL, APP_CONFIG } = require('@mindjs/core');
+const { Inject } = require('@mindjs/common');
 
 const { readFileSync } = require('fs');
 const https = require('https');

@@ -1,7 +1,7 @@
 {
-  "name": "framework100500-sample-koa-sample-app",
+  "name": "mindjs-sample-koa-sample-app",
   "version": "1.0.0",
-  "description": "Sample app of framework100500 usage with koa.js server",
+  "description": "Sample app of Mind.js usage with koa.js server",
   "main": "index.js",
   "scripts": {
     "start:env": "npm run start:env:pm2-runtime",
@@ -19,11 +19,11 @@
     "jest": "^24.9.0"
   },
   "dependencies": {
-    "@framework100500/common": "^1.3.0",
-    "@framework100500/core": "^1.4.0",
-    "@framework100500/routing": "^1.2.2",
-    "@framework100500/testing": "^1.3.0",
-    "@framework100500/http": "^1.1.7",
+    "@mindjs/common": "^1.0.0",
+    "@mindjs/core": "^1.0.0",
+    "@mindjs/routing": "^1.0.0",
+    "@mindjs/testing": "^1.0.0",
+    "@mindjs/http": "^1.0.0",
     "koa": "^2.8.1",
     "koa-body": "^4.1.1",
     "koa-compress": "^3.0.0",

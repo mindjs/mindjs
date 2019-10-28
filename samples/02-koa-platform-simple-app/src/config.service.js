@@ -1,5 +1,5 @@
-const { Injectable } = require('@framework100500/common');
-const { isDevEnvironment } = require('@framework100500/common/utils');
+const { Injectable } = require('@mindjs/common');
+const { isDevEnvironment } = require('@mindjs/common/utils');
 
 const DEFAULT_PORT = 3000;
 

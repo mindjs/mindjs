@@ -1,7 +1,7 @@
-const { Test100500 } = require('@framework100500/testing');
-const { parseEnv } = require('@framework100500/testing/utils');
-const { HttpClient, HttpModule } = require('@framework100500/http');
-const { platform100500Koa } = require('@framework100500/platform-koa');
+const { TestMind } = require('@mindjs/testing');
+const { parseEnv } = require('@mindjs/testing/utils');
+const { HttpClient, HttpModule } = require('@mindjs/http');
+const { mindPlatformKoa } = require('@mindjs/platform-koa');
 
 const ConfigService = require('./config.service');
 const AppModule = require('./app.module');
@@ -15,11 +15,11 @@ describe('AppConfigService', () => {
   const host = `http://127.0.0.1:${ PORT }`;
 
   beforeEach(async () => {
-    await Test100500.configureTestingModule({
+    await TestMind.configureTestingModule({
       module: AppModule,
       imports: [HttpModule.forRoot()],
       // providers: [],
-      platform: platform100500Koa(),
+      platform: mindPlatformKoa(),
     }, {
       envVariables: {
         IS_PROXY,
@@ -27,8 +27,8 @@ describe('AppConfigService', () => {
       },
     });
 
-    service = await Test100500.get(ConfigService);
-    httpClient = await Test100500.get(HttpClient);
+    service = await TestMind.get(ConfigService);
+    httpClient = await TestMind.get(HttpClient);
   });
 
   it('should exist', () => {
@@ -36,7 +36,7 @@ describe('AppConfigService', () => {
   });
 
   it('should return default values', function () {
-    Test100500.resetEnvVariables();
+    TestMind.resetEnvVariables();
     expect(service.isProxy).toBe(true);
     expect(service.port).toBe(3000);
   });
@@ -48,7 +48,7 @@ describe('AppConfigService', () => {
 
   describe('app run', () => {
     beforeEach(async () => {
-      await Test100500.bootstrap();
+      await TestMind.bootstrap();
     });
 
     it('should run the app', async () => {

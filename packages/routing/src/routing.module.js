@@ -1,13 +1,13 @@
-const { Module, Inject, Optional } = require('@framework100500/common');
-const { Injector, ReflectiveInjector } = require('@framework100500/common/DI');
-const { HTTP_METHODS } = require('@framework100500/common/http');
+const { Module, Inject, Optional } = require('@mindjs/common');
+const { Injector, ReflectiveInjector } = require('@mindjs/common/DI');
+const { HTTP_METHODS } = require('@mindjs/common/http');
 const {
   toArray,
   invokeFn,
   invokeOn,
   injectSync,
   injectSyncFromTree,
-} = require('@framework100500/common/utils');
+} = require('@mindjs/common/utils');
 
 const { isFunction, isObject, flatten } = require('lodash');
 

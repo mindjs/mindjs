@@ -1,5 +1,5 @@
-const { Optional } = require('@framework100500/common');
-const { isDevEnvironment } = require('@framework100500/common/utils');
+const { Optional } = require('@mindjs/common');
+const { isDevEnvironment } = require('@mindjs/common/utils');
 const {
   APP_MIDDLEWARE_INITIALIZER,
   APP_SERVER,
@@ -7,13 +7,13 @@ const {
   APP_SERVER_NET_LISTENER,
   APP_MIDDLEWARE,
   APP_CONFIG,
-} = require('@framework100500/core');
+} = require('@mindjs/core');
 const {
   APP_ROUTERS_INITIALIZER,
   APP_ROUTE_MOUNTER,
   APP_ROUTER_MIDDLEWARE_INITIALIZER,
   APP_ROUTER_PROVIDER,
-} = require('@framework100500/routing');
+} = require('@mindjs/routing');
 
 const Koa = require('koa');
 const Router = require('koa-router');

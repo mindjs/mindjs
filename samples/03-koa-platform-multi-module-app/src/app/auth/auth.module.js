@@ -1,4 +1,4 @@
-const { Module } = require('@framework100500/common');
+const { Module } = require('@mindjs/common');
 
 module.exports = Module(class AuthModule {}, {
   imports: [],

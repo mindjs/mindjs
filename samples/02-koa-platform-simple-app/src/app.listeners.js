@@ -1,5 +1,5 @@
-const { APP_TERMINATION_SIGNAL } = require('@framework100500/core');
-const { Inject } = require('@framework100500/common');
+const { APP_TERMINATION_SIGNAL } = require('@mindjs/core');
+const { Inject } = require('@mindjs/common');
 
 const AppConfigService = require('./config.service');
 

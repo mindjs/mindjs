@@ -9,7 +9,7 @@ const {
 } = require('./DI.tokens');
 
 const {
-  platform100500Koa,
+  mindPlatformKoa,
 } = require('./koa.platform');
 
 module.exports = {
@@ -21,5 +21,5 @@ module.exports = {
   KOA_LOGGER_CONFIG,
   KOA_SERVE_STATIC_CONFIG,
 
-  platform100500Koa,
+  mindPlatformKoa,
 };

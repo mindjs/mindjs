@@ -1,4 +1,4 @@
-// const injectDebug = require('debug')('Framework100500:DI:inject');
+// const injectDebug = require('debug')('Mind:DI:inject');
 
 const {
   first,

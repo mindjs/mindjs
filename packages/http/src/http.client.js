@@ -1,4 +1,4 @@
-const { Injectable, Inject, Optional } = require('@framework100500/common');
+const { Injectable, Inject, Optional } = require('@mindjs/common');
 
 const { HTTP_CLIENT, HTTP_REQUEST_INTERCEPTOR } = require('./DI.tokens');
 

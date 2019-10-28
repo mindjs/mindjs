@@ -1,3 +1,3 @@
-# Framework100500 
+# Mind.js 
 
 ## Debugging

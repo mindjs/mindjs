@@ -1,42 +1,54 @@
 {
-  "name": "@framework100500/platform-koa",
-  "version": "1.1.0",
-  "keywords": [
-    "web",
-    "http",
-    "https",
-    "routing",
-    "restify",
-    "restify.js",
-    "express.js",
-    "express",
-    "koa.js",
-    "koa",
-    "node.js",
-    "API",
-    "framework",
-    "dependency injection",
-    "DI",
-    "injection-js",
-    "jest.js",
-    "nest.js",
-    "angular.js",
-    "angular",
-    "IOC",
-    "inversion of control",
-    "REST"
-  ],
-  "description": "Framework100500 is a simple web API pure Node.js framework @platform-koa",
+  "name": "@mindjs/platform-koa",
+  "version": "1.0.0",
+  "description": "Mind.js is a simple pure Node.js Rest API framework superpowered with DI (@platform-koa)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mindjs/mindjs.git"
+  },
+  "keywords": [
+    "angular",
+    "angular.js",
+    "API",
+    "API framework",
+    "dependency injection",
+    "dependency inversion",
+    "DI",
+    "express",
+    "express.js",
+    "fastify",
+    "fastify.js",
+    "framework",
+    "http",
+    "https",
+    "injection-js",
+    "inversion of control",
+    "IOC",
+    "koa",
+    "koa.js",
+    "mind.js",
+    "mindjs",
+    "nest",
+    "nest.js",
+    "node",
+    "node.js",
+    "REST",
+    "REST API",
+    "REST API framework",
+    "restify",
+    "restify.js",
+    "routing",
+    "web server"
+  ],
   "engines": {
     "node": ">=10.15.0"
   },
   "dependencies": {
     "@koa/cors": "^3.0.0",
-    "debug": "4.1.1",
     "koa": "^2.10.0",
     "koa-body": "^4.1.1",
     "koa-compress": "^3.0.0",
@@ -48,13 +60,9 @@
     "lodash": "^4.17.15"
   },
   "peerDependencies": {
-    "@framework100500/common": "^1.3.0",
-    "@framework100500/core": "^1.4.1",
-    "@framework100500/routing": "^1.2.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/framework100500/framework100500.git"
+    "@mindjs/common": "^1.0.0",
+    "@mindjs/core": "^1.0.0",
+    "@mindjs/routing": "^1.0.0"
   },
   "publishConfig": {
     "access": "public"

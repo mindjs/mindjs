@@ -7,7 +7,7 @@ const {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
-  Framework100500,
+  Mind,
 } = require('./lib/framework');
 
 const { CoreModule } = require('./module');
@@ -21,6 +21,6 @@ module.exports = {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
-  Framework100500,
+  Mind,
   CoreModule,
 };

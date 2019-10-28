@@ -29,7 +29,7 @@ Although on the server-side there are many awesome libraries, helpers, and tools
 * **No magic inside**. You have complete control and understanding of what you and your application do. You are able to customize
 * **Easy to customize** and build reusable mind.js components.
 * **Easy to debug** with standard Node.js inspection tools.
-* It is compatible with the most popular web frameworks such as `Express.js`, `Koa.js`, `Restify.js`, and others.
+* It is compatible with the most popular Web/API frameworks such as `Express.js`, `Koa.js`, `Restify.js`, and others.
 * Mind.js goes with `platform` support. You can use existing one as a super set of providers, which can be replaced with your custom ones. 
 Furthermore, it is possible to setup you own platform.
 * The`HttpModule` provides an ability to make external API calls, intercept them, and configure it depending on your needs (WIP).
@@ -37,7 +37,7 @@ Furthermore, it is possible to setup you own platform.
 
 ## Getting started
 
-* Check out the [Getting Started](./wiki/GETTING_STARTED.md) to start building your first Mind.js app. :rocket:
+* Check out the [Getting Started guide](./wiki/GETTING_STARTED.md) to start building your first Mind.js app. :rocket:
 
 For more information look at the following sections:
 

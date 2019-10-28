@@ -1,1 +1,1 @@
-# Mindjs/Testing
+# Mind.js/Testing

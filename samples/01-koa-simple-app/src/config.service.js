@@ -1,4 +1,4 @@
-const { Injectable } = require('@framework100500/common');
+const { Injectable } = require('@mindjs/common');
 
 const DEFAULT_PORT = 3000;
 

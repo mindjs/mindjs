@@ -1,5 +1,5 @@
-const Test100500 = require('./testing.module');
+const TestMind = require('./testing.module');
 
 module.exports = {
-  Test100500,
+  TestMind,
 };

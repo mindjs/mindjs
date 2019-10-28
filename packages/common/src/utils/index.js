@@ -1,4 +1,10 @@
 const {
+  toArray,
+} = require('./array.utils');
+const {
+  isDevEnvironment,
+} = require('./env.utils');
+const {
   isArrowFunction,
   isAsyncFunction,
   isPromise,
@@ -18,6 +24,10 @@ const {
 } = require('./invoke.utils');
 
 module.exports = {
+  isDevEnvironment,
+
+  toArray,
+
   isArrowFunction,
   isAsyncFunction,
   isPromise,

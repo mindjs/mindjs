@@ -1,63 +1,81 @@
-const { Framework100500 } = require('@framework100500/core');
+const { Mind } = require('@mindjs/core');
 
-const { Module } = require('@framework100500/common');
-const { injectAsync } = require('@framework100500/common/utils');
+const { Module } = require('@mindjs/common');
+const { injectAsync, toArray } = require('@mindjs/common/utils');
 
-let TestModule;
+let TestApplicationModule;
+let testPlatform;
 let testAppInstance;
 let TestEnvConfig = {};
 let TestModuleImports = [];
 let TestModuleProviders = [];
 
-class Test100500 {
+class TestMind {
 
   /**
    *  Configures testing module for further usage in test cases.
    *  This method resets previous run state and sets up a new state but does not bootstrap provided module.
-   *  To bootstrap an application(provided module) the `bootstrap` method of Test100500 should be used.
+   *  To bootstrap an application(provided module) the `bootstrap` method of TestMind should be used.
    *  When `bootstrap` method is invoked moduleDI is created and server is started (provided all NET listeners are provided)
    *  When `inject` or `get` method is used, moduleDI is created only
    * @param {{
-   *   imports: Module|{ module: Module, providers: Injectable|Provider[] }|RoutingModule[],
-   *   providers: Injectable|Provider[]
+   *   module: Module,
+   *   imports: Module|{ module: Module, imports: Module[], providers: Injectable|Provider[] }|RoutingModule[],
+   *   providers: Injectable|Provider[],
+   *   platform: MindPlatform
+   *
    * }|Module} moduleDef
    * @param {{
-   *   envVariables: {}
-   * }} testingOptions
+   *   envVariables: {},
+   * }} testingConfig
    */
-  static async configureTestingModule({ imports = [], providers = [] } = {}, { envVariables } = {}) {
+  static async configureTestingModule( moduleDef = {}, testingConfig = {}) {
+    const { module = {}, imports = [], providers = [], platform } = moduleDef;
+    const { imports: moduleImports = [], providers: moduleProviders = [] } = module;
+    const { envVariables } = testingConfig;
     // reset previous run state
-    await Test100500.resetTestingModule();
+    await TestMind.resetTestingModule();
 
     // configure new run state and do nothing until `inject` or `get` method is invoked
-    TestModuleImports = [...imports];
-    TestModuleProviders = [...providers];
+    testPlatform = platform;
+    TestModuleImports = [...moduleImports];
+    TestModuleProviders = [...moduleProviders];
 
     if (envVariables) {
-      Test100500.setEnvVariables(envVariables);
+      TestMind.setEnvVariables(envVariables);
+    }
+
+    if (imports.length) {
+      TestMind.addImports(imports);
+    }
+    if (providers.length) {
+      TestMind.addProviders(providers);
     }
   }
 
   /**
    * Creates module DI and starts a server with routing and all initializers invoked
-   * @returns {Promise<void>}
+   * @returns {Promise<*>}
    */
   static async bootstrap() {
-    if (testAppInstance.isApp100500Initiated) {
+    if (testAppInstance.isAppMindInitiated) {
       return;
     }
 
-    if (TestModule) {
-      await testAppInstance.initAndStart();
-    } else {
-      TestModule = Module(class TestingModule {}, {
-        imports: [...TestModuleImports],
-        providers: [...TestModuleProviders],
-      });
+    if (testAppInstance) {
+      return testAppInstance.initAndStart();
+    }
 
-      testAppInstance = new Framework100500(TestModule);
-      await testAppInstance.initRootModuleDI();
-      await testAppInstance.initAndStart();
+    TestApplicationModule = Module(class TestingModule {}, {
+      imports: [...TestModuleImports],
+      providers: [...TestModuleProviders],
+    });
+
+    if (testPlatform) {
+      testAppInstance = await testPlatform.bootstrapModule(TestApplicationModule);  // eslint-disable-line
+    } else {
+      testAppInstance = new Mind(TestApplicationModule,);
+      await testAppInstance.bootstrap();
     }
   }
 
@@ -66,7 +84,7 @@ class Test100500 {
    * @returns {Promise<*|void>}
    */
   static async terminate() {
-    if (!testAppInstance || !testAppInstance.isApp100500Initiated) {
+    if (!testAppInstance || !testAppInstance.isAppMindInitiated) {
       return;
     }
 
@@ -78,13 +96,13 @@ class Test100500 {
    * if such were previously provided
    */
   static async resetTestingModule() {
-    await Test100500.terminate();
+    await TestMind.terminate();
 
     TestModuleImports = [];
     TestModuleProviders = [];
-    TestModule = undefined;
+    TestApplicationModule = undefined;
     testAppInstance = undefined;
-    Test100500.resetEnvVariables();
+    TestMind.resetEnvVariables();
   }
 
   /**
@@ -93,8 +111,8 @@ class Test100500 {
    *    in test cases the `parseEnv` utility should be used
    *    E.g:
    *
-   *      const { Test100500 } = require('@framework100500/testing');
-   *      const { parseEnv } = require('@framework100500/testing/utils');
+   *      const { TestMind } = require('@mindjs/testing');
+   *      const { parseEnv } = require('@mindjs/testing/utils');
    *      const ConfigService = require('./config.service');
    *
    *      describe('AppConfigService', () => {
@@ -103,7 +121,7 @@ class Test100500 {
    *        const PORT = 777;
    *
    *       beforeEach(async () => {
-   *         Test100500.configureTestingModule({
+   *         TestMind.configureTestingModule({
    *           providers: [ConfigService],
    *         }, {
    *           envVariables: {
@@ -112,7 +130,7 @@ class Test100500 {
    *           }
    *         });
    *
-   *         service = await Test100500.get(ConfigService);
+   *         service = await TestMind.get(ConfigService);
    *       });
    *
    *       it('should return correct `process.env` variable value', function () {
@@ -135,8 +153,8 @@ class Test100500 {
   }
 
   /**
-   * Resets environment variables that were previously set though `testingOptions` in `Test100500.configureTestingModule`
-   * or `Test100500.setEnvVariables` method
+   * Resets environment variables that were previously set though `testingOptions` in `TestMind.configureTestingModule`
+   * or `TestMind.setEnvVariables` method
    */
   static resetEnvVariables() {
     for (const k in TestEnvConfig) {
@@ -175,6 +193,48 @@ class Test100500 {
   }
 
   /**
+   *
+   * @param importValue
+   */
+  static addImport(importValue) {
+    if (importValue) {
+      TestModuleImports = [
+        ...TestModuleImports,
+        importValue,
+      ];
+    }
+  }
+
+  /**
+   *
+   * @param importValues
+   */
+  static addImports(importValues) {
+    toArray(importValues).map(i => TestMind.addImport(i));
+  }
+
+  /**
+   *
+   * @param provider
+   */
+  static addProvider(provider) {
+    if (provider) {
+      TestModuleProviders = [
+        ...TestModuleProviders,
+        provider,
+      ];
+    }
+  }
+
+  /**
+   *
+   * @param providers
+   */
+  static addProviders(providers) {
+    toArray(providers).map(p => TestMind.addProvider(p));
+  }
+
+  /**
    * This method initiates creating module DI if testing module/environment has not been bootstrapped and injects proper provider from it.
    * Otherwise it uses testAppInstance's rootInjector to inject desired provider by token.
    * @param {Injectable|InjectionToken} token
@@ -186,13 +246,17 @@ class Test100500 {
     }
 
     if (!(testAppInstance && testAppInstance.rootModuleDI)) {
-      TestModule = Module(class TestingModule {}, {
+      TestApplicationModule = Module(class TestingModule {}, {
         imports: [...TestModuleImports],
         providers: [...TestModuleProviders],
       });
 
-      testAppInstance = new Framework100500(TestModule);
-      await testAppInstance.initRootModuleDI();
+      if (testPlatform) {
+        testAppInstance = await testPlatform.initApplicationModule(TestApplicationModule); // eslint-disable-line
+      } else {
+        testAppInstance = new Mind(TestApplicationModule);
+        await testAppInstance.initRootModuleDI();
+      }
     }
 
     return injectAsync(testAppInstance.rootModuleDI.rootInjector, token);
@@ -204,9 +268,9 @@ class Test100500 {
    * @returns {Promise<*>}
    */
   static async get(token) {
-    return Test100500.inject(token);
+    return TestMind.inject(token);
   }
 
 }
 
-module.exports = Test100500;
+module.exports = TestMind;

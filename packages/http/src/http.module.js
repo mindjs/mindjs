@@ -1,6 +1,6 @@
 const request = require('request-promise-native');
 
-const { Module } = require('@framework100500/common');
+const { Module } = require('@mindjs/common');
 
 const { HTTP_CLIENT, HTTP_REQUEST_INTERCEPTOR } = require('./DI.tokens');
 const HttpClient = require('./http.client');

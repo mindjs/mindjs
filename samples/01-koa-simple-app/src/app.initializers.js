@@ -1,57 +1,66 @@
-const { Inject } = require('@framework100500/common');
-const { APP_SERVER, APP_MIDDLEWARE } = require('@framework100500/core');
-
-const { isArray, isFunction } = require('lodash');
-
 const AppConfigService = require('./config.service');
+
+class AppRoutersInitializer {
+  init(appServer, appRouters) {
+    // console.log('AppRoutersInitializer');
+    appRouters
+      .filter(Boolean)
+      .map(router => appServer.use(router.routes()));
+  }
+}
+
+class AppMiddlewareInitializer {
+  init(appServer, appMiddleware) {
+    // console.log('AppMiddlewareInitializer');
+    appMiddleware
+      .filter(Boolean)
+      .map(m => appServer.use(m));
+  }
+}
+
+class AppRouterMiddlewareInitializer {
+  init(appRouter, appMiddleware) {
+    // console.log('AppRouterMiddlewareInitializer');
+    appMiddleware
+      .filter(Boolean)
+      .map(m => appRouter.use(m));
+  }
+}
+
+class AppRouteMounter {
+  mount(appRouter, { path, method, middleware, handler }) {
+    // console.log('AppRouteMounter');
+    appRouter[method](path, ...middleware, handler);
+
+    return appRouter;
+  }
+}
 
 class EnableProxyAppInitializer {
   static get parameters() {
     return [
       AppConfigService,
-      Inject(APP_SERVER)
     ]
   }
 
   constructor(
     appConfigService,
-    appServer,
   ) {
     this.appConfigService = appConfigService;
-    this.appServer = appServer;
   }
 
-  async init() {
-    this.appServer.proxy = this.appConfigService.isProxy;
-    if (this.appServer.proxy) {
+  init(appServer) {
+    appServer.proxy = this.appConfigService.isProxy;
+    if (appServer.proxy) {
       console.log('App proxy is enabled.');
     }
   }
 }
 
-class MiddlewareInitializer {
-
-  static get parameters() {
-    return [
-      Inject(APP_SERVER),
-      Inject(APP_MIDDLEWARE)
-    ];
-  }
-
-  constructor(appServer, appMiddleware) {
-    this.appServer = appServer;
-    this.appMiddleware = appMiddleware;
-  }
-
-  async init() {
-    if (!(this.appServer && isArray(this.appMiddleware))) {
-      return;
-    }
-    this.appMiddleware.map(m => isFunction(this.appServer.use) && this.appServer.use(m));
-  }
-}
-
 module.exports = {
+  AppMiddlewareInitializer,
+  AppRoutersInitializer,
+  AppRouterMiddlewareInitializer,
+  AppRouteMounter,
   EnableProxyAppInitializer,
-  MiddlewareInitializer,
 };

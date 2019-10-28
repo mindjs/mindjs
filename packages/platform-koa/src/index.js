@@ -1,0 +1,25 @@
+const {
+  KOA_HELMET_CONFIG,
+  KOA_BODY_PARSER_CONFIG,
+  KOA_COMPRESS_CONFIG,
+  KOA_CORS_CONFIG,
+  KOA_HEALTH_CONFIG,
+  KOA_LOGGER_CONFIG,
+  KOA_SERVE_STATIC_CONFIG,
+} = require('./DI.tokens');
+
+const {
+  mindPlatformKoa,
+} = require('./koa.platform');
+
+module.exports = {
+  KOA_HELMET_CONFIG,
+  KOA_BODY_PARSER_CONFIG,
+  KOA_COMPRESS_CONFIG,
+  KOA_CORS_CONFIG,
+  KOA_HEALTH_CONFIG,
+  KOA_LOGGER_CONFIG,
+  KOA_SERVE_STATIC_CONFIG,
+
+  mindPlatformKoa,
+};

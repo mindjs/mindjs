@@ -2,206 +2,64 @@ const {
   APP_SERVER,
   APP_SERVER_NET_LISTENER,
   APP_SERVER_ERROR_LISTENER,
-  APP_MIDDLEWARE,
-  APP_TERMINATION_SIGNAL,
   APP_MIDDLEWARE_INITIALIZER,
-
   APP_INITIALIZER,
   CoreModule,
-} = require('@framework100500/core');
-
+} = require('@mindjs/core');
 const {
   APP_ROUTER_PROVIDER,
-  RoutingModule,
-} = require('@framework100500/routing');
-
-const {
-  HttpModule,
-} = require('@framework100500/http');
-
-const {
-  HTTP_METHODS,
-} = require('@framework100500/common/http');
-const {
-  Module,
-  Inject,
-  Injectable,
-} = require('@framework100500/common');
+  APP_ROUTE_MOUNTER,
+  APP_ROUTERS_INITIALIZER,
+  APP_ROUTER_MIDDLEWARE_INITIALIZER,
+} = require('@mindjs/routing');
+const { Module } = require('@mindjs/common');
+// const { HttpModule } = require('@mindjs/http');
 
 const Koa = require('koa');
 const Router = require('koa-router');
 
-const bodyParser = require('koa-body');
-const compress = require('koa-compress');
-const cors = require('@koa/cors');
-const health = require('koa2-ping');
-const helmet = require('koa-helmet');
-const logger = require('koa-logger');
-
+const AppRouting = require('./app.routing');
 const AppConfigService = require('./config.service');
-const { EnableProxyAppInitializer, MiddlewareInitializer } = require('./app.initializers');
+const { AppServerListener, AppServerErrorListener } = require('./app.listeners');
+const {
+  EnableProxyAppInitializer,
+  AppMiddlewareInitializer,
+  AppRoutersInitializer,
+  AppRouterMiddlewareInitializer,
+  AppRouteMounter,
+} = require('./app.initializers');
 
-const HelloWorldHandlerResolver = Injectable(class HelloWorldHandlerResolver {
-  resolve() {
-    return async (ctx) => {
-      ctx.body = `hello, ${ ctx.state.name }`
-    }
-  }
-});
+const APP_MIDDLEWARE_PROVIDERS = require('./app.middleware');
 
-const AddExclamationMarkMiddlewareResolver = Injectable(class AddExclamationMarkMiddlewareResolver {
-
-  static get parameters() {
-    return [
-      AppConfigService,
-    ]
-  }
-
-  constructor(
-    appConfigService,
-  ) {
-    this.appConfigService = appConfigService;
-  }
-
-  resolve() {
-    return async (ctx, next) => {
-      ctx.state.name = `${ ctx.state.name }${ this.appConfigService.exclamationMark }`;
-      return next();
-    }
-  }
-});
-
-const LogOutTimeMiddlewareResolver = Injectable(class LogOutTimeMiddlewareResolver {
-
-  resolve() {
-    return async (ctx, next) => {
-      await next();
-      console.log('Bye, bye. Now is %s', new Date());
-    }
-  }
-});
-
-const MIDDLEWARE = [
-  {
-    provide: APP_MIDDLEWARE,
-    useFactory: function () {
-      return helmet();
-    },
-    multi: true,
-  },
-  {
-    provide: APP_MIDDLEWARE,
-    useFactory: function () {
-      return logger();
-    },
-    multi: true,
-  },
-  {
-    provide: APP_MIDDLEWARE,
-    useFactory: function () {
-      return compress();
-    },
-    multi: true,
-  },
-  {
-    provide: APP_MIDDLEWARE,
-    useFactory: function () {
-      return bodyParser();
-    },
-    multi: true,
-  },
-  {
-    provide: APP_MIDDLEWARE,
-    useFactory: function () {
-      return health();
-    },
-    multi: true,
-  },
-  {
-    provide: APP_MIDDLEWARE,
-    useFactory: function (config) {
-      return cors({ ...config.corsOptions });
-    },
-    deps: [AppConfigService],
-    multi: true,
-  },
-];
-
-const APP_SERVER_LISTENERS = [
+const APP_SERVER_LISTENERS_PROVIDERS = [
   {
     provide: APP_SERVER_NET_LISTENER,
-    useClass: class AppServerListener {
-
-      static get parameters() {
-        return [
-          Inject(APP_SERVER),
-          AppConfigService,
-          Inject(APP_TERMINATION_SIGNAL),
-        ];
-      }
-
-      constructor(
-        appServer,
-        appConfigService,
-        terminationSignal,
-      ) {
-        this.appServer = appServer;
-        this.appConfigService = appConfigService;
-        this.terminationSignal = terminationSignal;
-      }
-
-      listen() {
-        const { port } = this.appConfigService;
-
-        const server = this.appServer.listen(port, () => {
-          console.log(`App server is up and running on ${ port }`);
-        });
-
-        process.on(this.terminationSignal, () => {
-          console.log('App received a `%s` signal. Closing server connections.', this.terminationSignal);
-
-          server.close(() => {
-            server.unref();
-          });
-        });
-      }
-    },
+    useClass: AppServerListener ,
   },
   {
     provide: APP_SERVER_ERROR_LISTENER,
-    useClass: class AppServerErrorListener {
+    useClass: AppServerErrorListener,
+  },
+];
 
-      static get parameters() {
-        return [
-          Inject(APP_SERVER),
-        ];
-      }
+const APP_SERVICES_PROVIDERS = [
+  AppConfigService,
+];
 
-      constructor(
-        appServer,
-      ) {
-        this.appServer = appServer;
-      }
-
-      listen() {
-        this.appServer.on('error', (e) => {
-          console.error(e);
-        });
-        process.on('uncaughtException', (e) => {
-          console.error('uncaughtException: %O', e);
-        });
-        process.on('unhandledRejection', (e) => {
-          console.error('unhandledRejection: %O', e);
-        })
-      }
+const APP_PROVIDERS = [
+  {
+    provide: APP_SERVER,
+    useValue: new Koa(),
+  },
+  {
+    provide: APP_ROUTER_PROVIDER,
+    useFactory: function () {
+      return Router;
     },
   },
 ];
 
-const APP_SERVICES = [
-  AppConfigService,
-];
-const APP_INITIALIZERS = [
+const APP_INITIALIZERS_PROVIDERS = [
   {
     provide: APP_INITIALIZER,
     useClass: EnableProxyAppInitializer,
@@ -209,72 +67,33 @@ const APP_INITIALIZERS = [
   },
   {
     provide: APP_MIDDLEWARE_INITIALIZER,
-    useClass: MiddlewareInitializer,
+    useClass: AppMiddlewareInitializer,
+  },
+  {
+    provide: APP_ROUTER_MIDDLEWARE_INITIALIZER,
+    useClass: AppRouterMiddlewareInitializer,
+  },
+  {
+    provide: APP_ROUTERS_INITIALIZER,
+    useClass: AppRoutersInitializer,
+  },
+  {
+    provide: APP_ROUTE_MOUNTER,
+    useClass: AppRouteMounter,
   },
 ];
 
-class AppModule {
-}
-
-module.exports = Module(AppModule, {
+module.exports = Module(class AppModule {}, {
   imports: [
     CoreModule.forRoot(),
-    HttpModule.forRoot(),
-
-    RoutingModule.forRoot({
-      providers: [],
-      routerDescriptor: {
-        prefix: '/api',
-        commonMiddleware: [
-          async (ctx, next) => {
-            console.log('Hi there. Now is %s', new Date());
-            return next();
-          },
-        ],
-        commonMiddlewareResolvers: [
-          LogOutTimeMiddlewareResolver,
-        ],
-        routes: [{
-          path: 'hello-world',
-          method: HTTP_METHODS.GET,
-
-          middleware: [
-            async (ctx, next) => {
-              const { query } = ctx.request;
-              const { name = 'world' } = query;
-              ctx.state.name = name;
-              return next();
-            },
-          ],
-          // AND/OR
-          middlewareResolvers: [
-            AddExclamationMarkMiddlewareResolver,
-          ],
-
-          // handler: async (ctx) => {
-          //   ctx.body = `hello, ${ ctx.state.name }`
-          // },
-          // OR
-          handlerResolver: HelloWorldHandlerResolver,
-        }],
-      },
-    }),
+    // HttpModule.forRoot(),
+    AppRouting,
   ],
   providers: [
-    {
-      provide: APP_SERVER,
-      useValue: new Koa(),
-    },
-    {
-      provide: APP_ROUTER_PROVIDER,
-      useFactory: function () {
-        return Router;
-      },
-    },
-
-    ...APP_SERVER_LISTENERS,
-    ...APP_INITIALIZERS,
-    ...APP_SERVICES,
-    ...MIDDLEWARE,
+    ...APP_PROVIDERS,
+    ...APP_SERVER_LISTENERS_PROVIDERS,
+    ...APP_INITIALIZERS_PROVIDERS,
+    ...APP_SERVICES_PROVIDERS,
+    ...APP_MIDDLEWARE_PROVIDERS,
   ],
 });

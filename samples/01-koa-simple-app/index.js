@@ -1,8 +1,8 @@
-const { Framework100500 } = require('@framework100500/core');
+const { Mind } = require('@mindjs/core');
 const { AppModule } = require('./src');
 
 /*
-  const app = new Framework100500(AppModule);
+  const app = new Mind(AppModule);
   app.bootstrap();
 */
-Framework100500.bootstrap(AppModule);
+Mind.bootstrap(AppModule);

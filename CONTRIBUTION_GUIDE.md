@@ -1,6 +1,6 @@
-# Contributing to Framework100500
+# Contributing to Mind.js
 
-We would love for you to contribute to Framework100500 and help make it even better than it is
+We would love for you to contribute to Mind.js and help make it even better than it is
 today! As a contributor, here are the guidelines we would like you to follow:
 
 - [Question or Problem?](#question)
@@ -13,7 +13,7 @@ today! As a contributor, here are the guidelines we would like you to follow:
 
 ## <a name="question"></a> Got a Question or Problem?
 
-**Do not open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests.** You've got much better chances of getting your question answered on [Stack Overflow](https://stackoverflow.com/questions/tagged/framework100500) where the questions should be tagged with tag `framework100500`.
+**Do not open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests.** You've got much better chances of getting your question answered on [Stack Overflow](https://stackoverflow.com/questions/tagged/mindjs) where the questions should be tagged with tag `mindjs`.
 
 Stack Overflow is a much better place to ask questions since:
 
@@ -21,8 +21,6 @@ Stack Overflow is a much better place to ask questions since:
 - Stack Overflow's voting system assures that the best answers are prominently visible.
 
 To save your and our time, we will systematically close all issues that are requests for general support and redirect people to Stack Overflow.
-
-If you would like to chat about the question in real-time, you can reach out via [our discord channel][discord].
 
 ## <a name="issue"></a> Found a Bug?
 
@@ -50,7 +48,7 @@ Before you submit an issue, please search the issue tracker, maybe an issue for 
 
 We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. In order to reproduce bugs we will systematically ask you to provide a minimal reproduction scenario using a repository or [Gist](https://gist.github.com/). Having a live, reproducible scenario gives us wealth of important information without going back & forth to you with additional questions like:
 
-- version of Framework100500 used
+- version of Mind.js used
 - 3rd-party libraries and their versions
 - and most importantly - a use-case that fails
 
@@ -63,15 +61,15 @@ A minimal reproduce scenario using a repository or Gist allows us to quickly con
 
 Unfortunately, we are not able to investigate / fix bugs without a minimal reproduction, so if we don't hear back from you we are going to close an issue that don't have enough info to be reproduced.
 
-You can file new issues by filling out our [new issue form](https://github.com/framework100500/framework100500/issues/new).
+You can file new issues by filling out our [new issue form](https://github.com/mindjs/mindjs/issues/new).
 
 ### <a name="submit-pr"></a> Submitting a Pull Request (PR)
 
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-1. Search [GitHub](https://github.com/framework100500/framework100500/pulls) for an open or closed PR
+1. Search [GitHub](https://github.com/mindjs/mindjs/pulls) for an open or closed PR
    that relates to your submission. You don't want to duplicate effort.
-1. Fork the lifter21/framework100500 repo.
+1. Fork the `mindjs/mindjs` repo.
 1. Make your changes in a new git branch:
 
    ```shell
@@ -80,7 +78,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 
 1. Create your patch, **including appropriate test cases**.
 1. Follow our [Coding Rules](#rules).
-1. Run the full Framework100500 test suite (see [common scripts](#common-scripts)),
+1. Run the full Mind.js test suite (see [common scripts](#common-scripts)),
    and ensure that all tests pass.
 1. Commit your changes using a descriptive commit message that follows our
    [commit message conventions](#commit). Adherence to these conventions
@@ -98,12 +96,12 @@ Before you submit your Pull Request (PR) consider the following guidelines:
    git push origin my-fix-branch
    ```
 
-1. In GitHub, send a pull request to `framework100500:master`.
+1. In GitHub, send a pull request to `mindjs:master`.
 
 - If we suggest changes then:
 
   - Make the required updates.
-  - Re-run the Framework100500 test suites to ensure tests are still passing.
+  - Re-run the Mind.js test suites to ensure tests are still passing.
   - Rebase your branch and force push to your GitHub repository (this will update your Pull Request):
 
     ```shell
@@ -142,9 +140,11 @@ from the main (upstream) repository:
   git pull --ff upstream master
   ```
 
+<!---
+
 ## <a name="development"></a> Development Setup
 
-You will need Node.js version 8.9.0+.
+You will need Node.js version 10+.
 
 1. After cloning the repo, run:
 
@@ -180,6 +180,8 @@ $ npm run lint
 $ npm run build:prod
 ```
 
+--->
+
 ## <a name="rules"></a> Coding Rules
 
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
@@ -192,7 +194,7 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 We have very precise rules over how our git commit messages can be formatted. This leads to **more
 readable messages** that are easy to follow when looking through the **project history**. But also,
-we use the git commit messages to **generate the Framework100500 change log**.
+we use the git commit messages to **generate the Mind.js change log**.
 
 ### Commit Message Format
 
@@ -214,7 +216,7 @@ to read on GitHub as well as in various git tools.
 
 Footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
 
-Samples: (even more [samples](https://github.com/framework100500/framework100500/commits/master))
+Samples: (even more [samples](https://github.com/mindjs/mindjs/commits/master))
 
 ```
 docs(changelog) update change log to beta.5
@@ -250,6 +252,9 @@ The following is the list of supported scopes:
 - **sample**
 - **testing**
 - **http**
+- **platform-*** 
+
+(* - mind-platform)
 
 There are currently a few exceptions to the "use package name" rule:
 
@@ -280,11 +285,8 @@ reference GitHub issues that this commit **Closes**.
 
 A detailed explanation can be found in this [document][commit-message-format].
 
+[github]: https://github.com/mindjs/mindjs
 [commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
-[corporate-cla]: http://code.google.com/legal/corporate-cla-v1.0.html
-[dev-doc]: https://github.com/framework100500/framework100500/blob/master/docs/DEVELOPER.md
-[github]: https://github.com/framework100500/framework100500
-[individual-cla]: http://code.google.com/legal/individual-cla-v1.0.html
 [js-style-guide]: https://google.github.io/styleguide/jsguide.html
 [jsfiddle]: http://jsfiddle.net
 [plunker]: http://plnkr.co/edit

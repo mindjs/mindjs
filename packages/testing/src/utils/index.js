@@ -18,5 +18,5 @@ function parseEnv(envValue) {
 }
 
 module.exports = {
-  parseEnv
+  parseEnv,
 };

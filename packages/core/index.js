@@ -1,10 +1,11 @@
 /*
- * Framework100500
+ * Mind.js
  * Copyright (c) 2019 Oleksandr Bondarenko
  * MIT Licensed
  */
 
 const {
+  APP_CONFIG,
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,
@@ -12,11 +13,12 @@ const {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
-  Framework100500,
+  Mind,
   CoreModule,
 } = require('./src');
 
 module.exports = {
+  APP_CONFIG,
   APP_INITIALIZER,
   APP_MIDDLEWARE,
   APP_MIDDLEWARE_INITIALIZER,
@@ -24,6 +26,6 @@ module.exports = {
   APP_SERVER_ERROR_LISTENER,
   APP_SERVER_NET_LISTENER,
   APP_TERMINATION_SIGNAL,
-  Framework100500,
+  Mind,
   CoreModule,
 };

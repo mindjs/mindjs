@@ -1,7 +1,7 @@
-const { InjectionToken } = require('@framework100500/common/DI');
+const { InjectionToken } = require('@mindjs/common/DI');
 
-const HTTP_CLIENT = new InjectionToken('HttpClient');
-const HTTP_REQUEST_INTERCEPTOR = new InjectionToken('HttpRequestInterceptor');
+const HTTP_CLIENT = new InjectionToken('HttpMindClient');
+const HTTP_REQUEST_INTERCEPTOR = new InjectionToken('HttpRequestMindInterceptor');
 
 module.exports = {
   HTTP_CLIENT,

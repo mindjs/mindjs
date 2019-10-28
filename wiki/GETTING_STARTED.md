@@ -75,3 +75,6 @@ node main.js
 
 Now your mind application is accessible on `http://localhost:4400` with two API endpoints: `/ping` (which comes with Koa platform) and `/api/hello-mind` which you have just created.
 
+See other [Mind.js samples][samples] in GitHub [repository][samples]
+
+[samples]: https://github.com/mindjs/mindjs/tree/master/samples

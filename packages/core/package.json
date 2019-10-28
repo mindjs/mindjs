@@ -1,7 +1,7 @@
 {
   "name": "@mindjs/core",
   "version": "1.0.0",
-  "description": "Mind.js is a simple pure Node.js Rest API framework superpowered with DI",
+  "description": "Mind.js is a simple pure Node.js Rest API framework superpowered with DI (@core)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

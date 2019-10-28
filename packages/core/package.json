@@ -48,8 +48,6 @@
     "node": ">=10.15.0"
   },
   "dependencies": {
-    "cli-color": "^1.4.0",
-    "debug": "4.1.1",
     "lodash": "4.17.15"
   },
   "peerDependencies": {

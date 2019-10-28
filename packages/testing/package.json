@@ -50,14 +50,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "cli-color": "^1.4.0",
-    "debug": "4.1.1"
-  },
   "peerDependencies": {
     "@mindjs/common": "^1.0.0",
-    "@mindjs/core": "^1.0.0",
-    "@mindjs/routing": "^1.0.0"
+    "@mindjs/core": "^1.0.0"
   },
   "author": "Oleksandr Bondarenko",
   "license": "MIT"

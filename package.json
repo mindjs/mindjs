@@ -71,7 +71,8 @@
     "eslint-plugin-node": "^9.2.0",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
-    "lerna": "^3.16.4"
+    "lerna": "^3.16.4",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "@mindjs/http": "^1.0.0",

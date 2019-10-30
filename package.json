@@ -16,7 +16,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint"
+      "pre-commit": "npm run lint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "repository": {
@@ -67,6 +68,8 @@
   },
   "homepage": "https://github.com/mindjs/mindjs#README",
   "devDependencies": {
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
     "eslint": "^6.3.0",
     "eslint-plugin-node": "^9.2.0",
     "husky": "^3.0.5",

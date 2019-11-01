@@ -56,9 +56,45 @@ For more information look at the following sections:
 Mind.js is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here]().
 --->
 
+## Roadmap
+
+#### General stuff:
+
+  * Add unit/e2e tests
+  * Add/Update JS docs
+  * Add Typescript types definitions
+
+#### Mind.js packages:
+
+* Common:
+  * Add `logger`/`debug-log` utility and service within `CommonModule`
+  * Move commonly used `lodash` utilities
+
+* Core:
+  * 
+  
+* Http:
+  * 
+
+* Routing:
+  *
+  
+* Testing:
+  *
+
+#### Platforms:
+  *
+  
+#### Samples:
+  *
+  
+#### Modules/Packages:
+  *
+
 ## Stay in touch
 
 * Author - [Oleksandr Bondarenko](mailto:bondarenko.alexander.13@gmail.com)
+* Slack  - [Mind.js](https://mindjs.slack.com)
 
 ## License
 

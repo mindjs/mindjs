@@ -1,6 +1,6 @@
 {
   "name": "@mindjs/testing",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Mind.js is a simple pure Node.js Rest API framework superpowered with DI (@testing)",
   "main": "index.js",
   "scripts": {

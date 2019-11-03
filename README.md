@@ -56,9 +56,14 @@ For more information look at the following sections:
 Mind.js is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here]().
 --->
 
+## Roadmap
+
+Mind.js [ROADMAP](ROADMAP.md)
+
 ## Stay in touch
 
 * Author - [Oleksandr Bondarenko](mailto:bondarenko.alexander.13@gmail.com)
+* Slack  - [Mind.js](https://mindjs.slack.com)
 
 ## License
 

@@ -390,9 +390,16 @@ class RoutingModule {
    * @private
    */
   async _provideAndResolve(resolver, resolveParams = []) {
-    const r = ReflectiveInjector.resolve([resolver]);
-    const injected = injectSync(this.moduleInjector.createChildFromResolved(r), resolver);
-    return invokeOn(injected, 'resolve', ...resolveParams);
+    // try to inject a resolver from module providers first
+    let resolverProvider = injectSync(this.moduleInjector, resolver, null);
+
+    if (!resolverProvider) {
+      // resolve, provide, and inject then
+      const preparedResolverProvider = ReflectiveInjector.resolve([resolver]);
+      resolverProvider = injectSync(this.moduleInjector.createChildFromResolved(preparedResolverProvider), resolver);
+    }
+
+    return invokeOn(resolverProvider, 'resolve', ...resolveParams);
   }
 }
 

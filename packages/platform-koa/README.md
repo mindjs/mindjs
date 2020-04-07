@@ -14,6 +14,9 @@
   <a href="https://www.npmjs.com/~mindjs" target="_blank"><img src="https://img.shields.io/npm/v/@mindjs/core.svg" alt="NPM Version" /></a>
   <a href="https://www.npmjs.com/~mindjs" target="_blank"><img src="https://img.shields.io/npm/l/@mindjs/core.svg" alt="Package License" /></a>
   <a href="https://www.npmjs.com/~mindjs" target="_blank"><img src="https://img.shields.io/npm/dm/@mindjs/core.svg" alt="NPM Downloads" /></a>
+  <a href="https://snyk.io/test/github/mindjs/mindjs?targetFile=package.json"><img src="https://snyk.io/test/github/mindjs/mindjs/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/mindjs/mindjs?targetFile=package.json" style="max-width:100%;"></a>
+  <a href="https://codeclimate.com/github/mindjs/mindjs/maintainability"><img src="https://api.codeclimate.com/v1/badges/2b0a96c3615fb526ba48/maintainability" /></a>
+  <a href="https://deepscan.io/dashboard#view=project&tid=7544&pid=9642&bid=127845"><img src="https://deepscan.io/api/teams/7544/projects/9642/branches/127845/badge/grade.svg" alt="DeepScan grade"></a>
 </p>
 
 ## Philosophy

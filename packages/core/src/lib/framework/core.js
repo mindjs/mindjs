@@ -324,7 +324,7 @@ module.exports = class Mind {
       ...errorListeners,
     ].filter(Boolean);
 
-    await invokeOnAll(listeners, 'listen', appServer);'';
+    await invokeOnAll(listeners, 'listen', appServer);
   }
 
   /**

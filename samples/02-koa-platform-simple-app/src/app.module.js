@@ -16,7 +16,10 @@ const { Module } = require('@mindjs/common');
 const AppRouting = require('./app.routing');
 const AppConfigService = require('./config.service');
 // const { AppServerListener } = require('./app.listeners');
-const { EnableProxyAppInitializer, AppRouteMounter } = require('./app.initializers');
+const {
+  EnableProxyAppInitializer,
+  // AppRouteMounter,
+} = require('./app.initializers');
 
 const APP_MIDDLEWARE_PROVIDERS = require('./app.middleware');
 

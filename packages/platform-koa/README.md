@@ -14,15 +14,18 @@ https://github.com/mindjs/mindjs/tree/master/<!--- TODO: create and add a logo
   <a href="https://www.npmjs.com/~mindjs" target="_blank"><img src="https://img.shields.io/npm/v/@mindjs/core.svg" alt="NPM Version" /></a>
   <a href="https://www.npmjs.com/~mindjs" target="_blank"><img src="https://img.shields.io/npm/l/@mindjs/core.svg" alt="Package License" /></a>
   <a href="https://www.npmjs.com/~mindjs" target="_blank"><img src="https://img.shields.io/npm/dm/@mindjs/core.svg" alt="NPM Downloads" /></a>
+  <a href="https://snyk.io/test/github/mindjs/mindjs?targetFile=package.json"><img src="https://snyk.io/test/github/mindjs/mindjs/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/mindjs/mindjs?targetFile=package.json" style="max-width:100%;"></a>
+  <a href="https://codeclimate.com/github/mindjs/mindjs/maintainability"><img src="https://api.codeclimate.com/v1/badges/2b0a96c3615fb526ba48/maintainability" /></a>
+  <a href="https://deepscan.io/dashboard#view=project&tid=7544&pid=9642&bid=127845"><img src="https://deepscan.io/api/teams/7544/projects/9642/branches/127845/badge/grade.svg" alt="DeepScan grade"></a>
 </p>
 
 ## Philosophy
-<p>Thanks to Node.js and its tools, front end applications have a significant   impact related to rising such superb projects like <a href="https://angular.io/" target="_blank">Angular</a>, <a href="https://github.com/facebook/react" target="_blank">React</a> and <a href="https://github.com/vuejs/vue" target="_blank">Vue</a> which improve developer productivity and enable the construction of fast, testable and extensible frontend applications. 
+<p>Thanks to Node.js and its tools, front end applications have a significant   impact related to rising such superb projects like <a href="https://angular.io/" target="_blank">Angular</a>, <a href="https://github.com/facebook/react" target="_blank">React</a> and <a href="https://github.com/vuejs/vue" target="_blank">Vue</a> which improve developer productivity and enable the construction of fast, testable and extensible frontend applications.
 Although on the server-side there are many awesome libraries, helpers, and tools for Node, only some of them effectively solve the architecture design problems. However, most of them either complex or requires knowledge of such tools as typescript or rxjs, which makes challenging to start using them. </p>
 <p><solid>Mind.js</solid> aims to provide a simple and customizable application architecture out of the box, which allows for effortless creation of highly testable, scalable, loosely coupled and easily maintainable applications. It does not require any additional tools so that you can focus on business problems, not on technology ones. </p>
 
 **Key features:**
-* **Pure Node.js**. You don't need to transpile your code and perform extra steps in your CI/CD pipeline. 
+* **Pure Node.js**. You don't need to transpile your code and perform extra steps in your CI/CD pipeline.
 * **Modular**. You can easily split your codebase into small featured modules or even microservices.
 * **Dynamic Routing**. You can build your dynamic routes before application has been run but after services are initialized.
 * **Dependency injection**. Manage your dependencies in easy and convenient way.
@@ -30,7 +33,7 @@ Although on the server-side there are many awesome libraries, helpers, and tools
 * **Easy to customize** and build reusable mind.js components.
 * **Easy to debug** with standard Node.js inspection tools.
 * It is compatible with the most popular Web/API frameworks such as `Express.js`, `Koa.js`, `Restify.js`, and others.
-* Mind.js goes with `platform` support. You can use existing one as a super set of providers, which can be replaced with your custom ones. 
+* Mind.js goes with `platform` support. You can use existing one as a super set of providers, which can be replaced with your custom ones.
 Furthermore, it is possible to setup you own platform.
 * The`HttpModule` provides an ability to make external API calls, intercept them, and configure it depending on your needs (WIP).
 * The `TestingModule` allows you to test your code in an easy and convenient way.

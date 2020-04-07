@@ -29,7 +29,7 @@ class TestMind {
    *   envVariables: {},
    * }} testingConfig
    */
-  static async configureTestingModule( moduleDef = {}, testingConfig = {}) {
+  static async configureTestingModule(moduleDef = {}, testingConfig = {}) {
     const { module = {}, imports = [], providers = [], platform } = moduleDef;
     const { imports: moduleImports = [], providers: moduleProviders = [] } = module;
     const { envVariables } = testingConfig;
@@ -241,11 +241,7 @@ class TestMind {
    * @returns {Promise<*>}
    */
   static async inject(token) {
-    if (testAppInstance) {
-      return injectAsync(testAppInstance.rootModuleDI.rootInjector, token);
-    }
-
-    if (!(testAppInstance && testAppInstance.rootModuleDI)) {
+    if (!testAppInstance || !testAppInstance.rootModuleDI) {
       TestApplicationModule = Module(class TestingModule {}, {
         imports: [...TestModuleImports],
         providers: [...TestModuleProviders],

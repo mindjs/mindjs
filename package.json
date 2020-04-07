@@ -8,7 +8,7 @@
     "bootstrap": "lerna bootstrap",
     "diff": "lerna diff",
     "new-version": "lerna version --conventional-commits --yes",
-    "publish": "lerna publish --conventional-commits --yes",
+    "publish": "lerna publish --conventional-commits --yes -m \"chore(release): publish\"",
     "publish:beta": "npm run publish -- --dist-tag=beta",
     "lint": "eslint -c eslintConfig.json packages --no-eslintrc --ignore-pattern \"*.spec.js\" --ignore-pattern \"*.test.js\" --ignore-pattern \"node_modules\"",
     "lint:fix": "npm run lint -- --fix",

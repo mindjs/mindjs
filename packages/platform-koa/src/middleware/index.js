@@ -3,7 +3,7 @@ const { get } = require('lodash');
 const bodyParser = require('koa-body');
 const compress = require('koa-compress');
 const cors = require('@koa/cors');
-const health = require('koa2-ping');
+const { healthcheck } = require('@appliedblockchain/koa-healthcheck');
 const helmet = require('koa-helmet');
 const logger = require('koa-logger');
 const serveStatic = require('koa-static');
@@ -16,7 +16,7 @@ const { stubMiddleware } = require('../constants');
 
 /**
  *
- * @param {Object} helmetConfig - see: https://github.com/venables/koa-helmet#usage
+ * @param {Object} helmetConfig - @see: https://github.com/venables/koa-helmet#usage
  * @returns {Function} helmet middleware
  */
 function koaHelmetMWFactory(helmetConfig) {
@@ -27,7 +27,7 @@ function koaHelmetMWFactory(helmetConfig) {
  *
  * @param {{
  *   transporter: Function,
- * }} loggerConfig - see: https://github.com/koajs/logger#use-custom-transporter
+ * }} loggerConfig - @see: https://github.com/koajs/logger#use-custom-transporter
  * @returns {Function} logger middleware
  */
 function koaLoggerMWFactory(loggerConfig) {
@@ -37,7 +37,7 @@ function koaLoggerMWFactory(loggerConfig) {
 
 /**
  *
- * @param {Object} compressConfig - see: https://github.com/koajs/compress#options
+ * @param {Object} compressConfig - @see: https://github.com/koajs/compress#options
  * @returns {Function} compress middleware
  */
 function koaCompressMWFactory(compressConfig) {
@@ -46,7 +46,7 @@ function koaCompressMWFactory(compressConfig) {
 
 /**
  *
- * @param {Object} bodyParserConfig - see: https://github.com/koajs/bodyParser#options
+ * @param {Object} bodyParserConfig - @see: https://github.com/koajs/bodyParser#options
  * @returns {Function} bodyParser middleware
  */
 function koaBodyParserMWFactory(bodyParserConfig) {
@@ -56,20 +56,26 @@ function koaBodyParserMWFactory(bodyParserConfig) {
 /**
  *
  * @param {{
- *   routePath: string,
- *   hideFields: string[],
- * }} healthConfig - see: https://github.com/alan-seymour/koa2-ping#configuration
+ *   [routePath]: string,
+ *   [customData]: object,
+ *   [healthCheckToken]: string,
+ * }} healthConfig - @see: https://www.npmjs.com/package/@appliedblockchain/koa-healthcheck#koa-healthcheck-middleware
  * @returns {Function} health middleware
  */
 function koaHealthMWFactory(healthConfig) {
-  const routePath = get(healthConfig, 'routePath');
-  const hideFields = get(healthConfig, 'hideFields');
-  return health(routePath, hideFields);
+  const customRoutePath = get(healthConfig, 'routePath', '/ping');
+  const customReportData = get(healthConfig, 'customData');
+  const healthCheckToken = get(healthConfig, 'healthCheckToken', process.env.APP_HEALTH_CHECK_TOKEN);
+
+  return healthcheck({
+    path: customRoutePath,
+    custom: customReportData,
+  }, healthCheckToken);
 }
 
 /**
  *
- * @param {Object} corsConfig - see: https://github.com/koajs/cors#corsoptions
+ * @param {Object} corsConfig - @see: https://github.com/koajs/cors#corsoptions
  * @returns {Function} cors middleware
  */
 function koaCORSMWFactory(corsConfig) {
@@ -84,7 +90,7 @@ function koaCORSMWFactory(corsConfig) {
  * @param {{
  *   root: string,
  *   options: Object,
- * }} serveStaticConfig - see: https://github.com/koajs/static#options
+ * }} serveStaticConfig - @see: https://github.com/koajs/static#options
  * @returns {Function} serveStatic middleware
  */
 function koaServeStaticMWFactory(serveStaticConfig) {

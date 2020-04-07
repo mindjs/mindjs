@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@appliedblockchain/koa-healthcheck@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@appliedblockchain/koa-healthcheck/-/koa-healthcheck-1.3.0.tgz#2d76b15fd57f8f424e6553a047640c537210298c"
+  integrity sha512-I8A5HdgpOL1dCPSU6q2juRfgObg4OVSq4YNcHaYsXJC2ZU8ftbcT6UGxQYa40DRPo4kkE5tW3bl7LX/EcZy5yA==
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
@@ -1764,11 +1769,6 @@ anymatch@^3.0.3:
   dependencies:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
-
-app-root-path@^1.0.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/app-root-path/-/app-root-path-1.4.0.tgz#6335d865c9640d0fad99004e5a79232238e92dfa"
-  integrity sha1-YzXYZclkDQ+tmQBOWnkjIjjpLfo=
 
 aproba@^1.0.3, aproba@^1.1.1:
   version "1.2.0"
@@ -5221,14 +5221,6 @@ koa-static@^5.0.0:
     debug "^3.1.0"
     koa-send "^5.0.0"
 
-koa2-ping@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/koa2-ping/-/koa2-ping-0.3.0.tgz#e9c9262d344624326c5295b459ee4988ef401e13"
-  integrity sha512-srY3CgWiKY/LNUXUZ36IhwsvDo7Jj71upJlpKEoUy9vtzhG6977mJX27HScKpwSJk3H5rRm7lU4AelppoFcI2A==
-  dependencies:
-    app-root-path "^1.0.0"
-    node-df "^0.1.1"
-
 koa@^2.11.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/koa/-/koa-2.11.0.tgz#fe5a51c46f566d27632dd5dc8fd5d7dd44f935a4"
@@ -5842,13 +5834,6 @@ nocache@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/nocache/-/nocache-2.1.0.tgz#120c9ffec43b5729b1d5de88cd71aa75a0ba491f"
   integrity sha512-0L9FvHG3nfnnmaEQPjT9xhfN4ISk0A8/2j4M37Np4mcDesJjHgEUfgPhdCyZuFI954tjokaIj/A3NdpFNdEh4Q==
-
-node-df@^0.1.1:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/node-df/-/node-df-0.1.4.tgz#79230a58a62cb0a9453f7629051e4598ce498f51"
-  integrity sha1-eSMKWKYssKlFP3YpBR5FmM5Jj1E=
-  dependencies:
-    underscore "^1.6.0"
 
 node-fetch-npm@^2.0.2:
   version "2.0.2"
@@ -7955,11 +7940,6 @@ umask@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/umask/-/umask-1.1.0.tgz#f29cebf01df517912bb58ff9c4e50fde8e33320d"
   integrity sha1-8pzr8B31F5ErtY/5xOUP3o4zMg0=
-
-underscore@^1.6.0:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
-  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
 
 union-value@^1.0.0:
   version "1.0.1"

@@ -56,7 +56,7 @@
     "koa-logger": "^3.2.1",
     "koa-router": "^8.0.8",
     "koa-static": "^5.0.0",
-    "koa2-ping": "^0.3.0",
+    "@appliedblockchain/koa-healthcheck": "^1.3.0",
     "lodash": "^4.17.15"
   },
   "peerDependencies": {

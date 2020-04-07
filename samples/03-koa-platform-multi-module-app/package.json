@@ -15,8 +15,8 @@
   "author": "Oleksandr Bondarenko",
   "license": "MIT",
   "devDependencies": {
-    "nodemon": "^1.19.1",
-    "jest": "^24.9.0"
+    "nodemon": "^2.0.2",
+    "jest": "^25.2.7"
   },
   "dependencies": {
     "@mindjs/common": "^1.0.0",

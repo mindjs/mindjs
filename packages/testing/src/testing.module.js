@@ -58,7 +58,7 @@ class TestMind {
    * @returns {Promise<*>}
    */
   static async bootstrap() {
-    if (testAppInstance.isAppMindInitiated) {
+    if (testAppInstance && testAppInstance.isAppMindInitiated) {
       return;
     }
 

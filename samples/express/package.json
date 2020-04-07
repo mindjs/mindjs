@@ -14,7 +14,7 @@
   "author": "Oleksandr Bondarenko",
   "license": "MIT",
   "devDependencies": {
-    "nodemon": "^1.19.1"
+    "nodemon": "^2.0.2"
   },
   "dependencies": {
     "@mindjs/common": "^1.0.0",
@@ -23,6 +23,6 @@
     "@mindjs/http": "^1.0.0",
     "@mindjs/testing": "^1.0.0",
     "express": "^4.17.1",
-    "pm2": "^3.5.1"
+    "pm2": "^4.2.3"
   }
 }

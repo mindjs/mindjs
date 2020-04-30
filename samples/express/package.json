@@ -9,7 +9,9 @@
     "start:env:pm2-runtime": "pm2-runtime start index.js -i 0",
     "start:dev:pm2": "npm run pm2:kill && pm2 start index.js --watch --no-daemon --node-args=\"--inspect\" -i 1 -f",
     "start:dev:nodemon": "nodemon --inspect index.js -w -L",
-    "pm2:kill": "pm2 kill"
+    "pm2:kill": "pm2 kill",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Oleksandr Bondarenko",
   "license": "MIT",
@@ -23,6 +25,8 @@
     "@mindjs/http": "^1.0.0",
     "@mindjs/testing": "^1.0.0",
     "express": "^4.17.1",
-    "pm2": "^4.2.3"
-  }
+    "pm2": "^4.2.3",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }

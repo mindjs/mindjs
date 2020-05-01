@@ -4,7 +4,9 @@
   "description": "Mind.js is a simple pure Node.js Rest API framework superpowered with DI (@platform-koa)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -57,7 +59,8 @@
     "koa-logger": "^3.2.1",
     "koa-router": "^8.0.8",
     "koa-static": "^5.0.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "snyk": "^1.316.1"
   },
   "peerDependencies": {
     "@mindjs/common": "^1.0.0",
@@ -68,5 +71,6 @@
     "access": "public"
   },
   "author": "Oleksandr Bondarenko",
-  "license": "MIT"
+  "license": "MIT",
+  "snyk": true
 }

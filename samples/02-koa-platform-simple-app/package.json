@@ -10,7 +10,9 @@
     "start:dev:pm2": "npm run pm2:kill && pm2 start index.js --watch=\"src\" --no-daemon --node-args=\"--inspect\" -i 1 -f",
     "start:dev:nodemon": "nodemon --inspect index.js -w ./src -L",
     "pm2:kill": "pm2 kill",
-    "test": "jest --config=jest.config.json"
+    "test": "jest --config=jest.config.json",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Oleksandr Bondarenko",
   "license": "MIT",
@@ -25,6 +27,8 @@
     "@mindjs/testing": "^1.0.0",
     "@mindjs/http": "^1.0.0",
     "@mindjs/platform-koa": "^1.0.0",
-    "pm2": "^4.2.3"
-  }
+    "pm2": "^4.2.3",
+    "snyk": "^1.369.3"
+  },
+  "snyk": true
 }

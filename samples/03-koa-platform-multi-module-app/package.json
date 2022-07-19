@@ -25,7 +25,7 @@
     "@mindjs/testing": "^1.0.0",
     "@mindjs/http": "^1.0.0",
     "@mindjs/platform-koa": "^1.0.0",
-    "koa-passport": "^4.1.3",
+    "koa-passport": "^5.0.0",
     "passport-local": "^1.0.0",
     "koa-redis": "^4.0.1",
     "koa-generic-session": "^2.0.4",
